@@ -1,0 +1,4944 @@
+{
+  "generatedAt": "2026-08-26T06:38:48.781Z",
+  "sourceEnvironment": "dev",
+  "sourceBaseUrl": "https://bemap-dev.benomad.org",
+  "sourceServerVersion": "4.1.0-SNAPSHOT",
+  "sourceServerBuiltAt": "2026-08-25T17:34:12.016317969",
+  "sourceServerStatus": "SNAPSHOT",
+  "sourceJsApiVersion": "3.27.0",
+  "sourceGeoSdkVersion": "6.39.1",
+  "environmentProfile": {
+    "cartoRelease": "Here Maps 2026.2",
+    "geoservers": [
+      "addok",
+      "here",
+      "herehlp",
+      "nominatim",
+      "osm",
+      "tomtom"
+    ],
+    "transportTypes": [
+      "PEDESTRIAN",
+      "BICYCLE",
+      "MOTORCYCLE",
+      "CAR",
+      "TAXI",
+      "PUBLIC_BUS",
+      "EMERGENCY",
+      "DELIVERY_TRUCK",
+      "TRUCK"
+    ],
+    "truckAttributes": true,
+    "limits": [
+      {
+        "service": "GeocodingPlace",
+        "key": "MaximumBBoxSideForCountry",
+        "value": "1150000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "GeocodingPlace",
+        "key": "MaximumBBoxSideForCity",
+        "value": "200000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "GeocodingPlaceBatch",
+        "key": "LimitMaxAddress",
+        "value": "200",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "ReverseGeocoding",
+        "key": "LimitRadius",
+        "value": "250000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "RevGeoBatch",
+        "key": "LimitRadius",
+        "value": "250000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "RevGeoBatch",
+        "key": "LimitMaxCoordinate",
+        "value": "1000",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "RoadsExtractor",
+        "key": "MaxAllowedAreaM2",
+        "value": "0",
+        "unit": "SQUARE_METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "Geofencing",
+        "key": "LimitMaxCoordinate",
+        "value": "2500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Geofencing",
+        "key": "LimitMaxFence",
+        "value": "2500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "LandFeature",
+        "key": "SvsRadiusLimit",
+        "value": "10000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitModeViaMaxVia",
+        "value": "1500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMode1ToNMaxVia",
+        "value": "101",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitModeNTo1MaxVia",
+        "value": "101",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitModeNToNMaxVia",
+        "value": "10",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitModeMatrixMaxVia",
+        "value": "100",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitModeIsoChroneMaxVia",
+        "value": "500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMaxFence",
+        "value": "2500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMaxIsochroneMeters",
+        "value": "150000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMaxIsochroneSeconds",
+        "value": "7200",
+        "unit": "SECOND",
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMaxRadius",
+        "value": "10000",
+        "unit": "METER",
+        "bound": "MAX"
+      },
+      {
+        "service": "Routing",
+        "key": "LimitMinRadius",
+        "value": "1",
+        "unit": "METER",
+        "bound": "MIN"
+      },
+      {
+        "service": "TraceRoute",
+        "key": "LimitMaxCoordinate",
+        "value": "15000",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "TraceRoute",
+        "key": "LimitMaxFence",
+        "value": "2500",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "RouteHorizon",
+        "key": "LimitMaxCoordinate",
+        "value": "50",
+        "unit": null,
+        "bound": "MAX"
+      },
+      {
+        "service": "NearPoi",
+        "key": "MaxDistance",
+        "value": "1000",
+        "unit": null,
+        "bound": "MAX"
+      }
+    ],
+    "environment": "prod",
+    "baseUrl": "https://bemap.benomad.com"
+  },
+  "counts": {
+    "pages": 231,
+    "schemas": 70,
+    "failures": 0
+  },
+  "pages": [
+    {
+      "id": "general/index.md",
+      "family": "general",
+      "file": "index.md",
+      "path": "/bgis/documentation/index.md",
+      "title": "Home",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4287,
+      "service": "index",
+      "roleInferred": false
+    },
+    {
+      "id": "general/examples-mapping-display-bemap-api.md",
+      "family": "general",
+      "file": "examples-mapping-display-bemap-api.md",
+      "path": "/bgis/documentation/examples-mapping-display-bemap-api.md",
+      "title": "Display map usingBeMap API",
+      "kind": "example",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5134,
+      "service": "mapping",
+      "roleInferred": true
+    },
+    {
+      "id": "general/examples-mapping-display-ol4.md",
+      "family": "general",
+      "file": "examples-mapping-display-ol4.md",
+      "path": "/bgis/documentation/examples-mapping-display-ol4.md",
+      "title": "Display map usingOpenLayer",
+      "kind": "example",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2283,
+      "service": "mapping",
+      "roleInferred": true
+    },
+    {
+      "id": "general/examples-mapping-display-ol4-styles.md",
+      "family": "general",
+      "file": "examples-mapping-display-ol4-styles.md",
+      "path": "/bgis/documentation/examples-mapping-display-ol4-styles.md",
+      "title": "Different styles usingOpenLayer",
+      "kind": "example",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11753,
+      "service": "mapping",
+      "roleInferred": true
+    },
+    {
+      "id": "general/examples-mapping-display-ol4-traffic.md",
+      "family": "general",
+      "file": "examples-mapping-display-ol4-traffic.md",
+      "path": "/bgis/documentation/examples-mapping-display-ol4-traffic.md",
+      "title": "Info traffic usingOpenLayer",
+      "kind": "example",
+      "role": "ROLE_TRAFFIC",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2052,
+      "service": "traffic",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-geocoding-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-geocoding-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-geocoding-service-v1_0_0.md",
+      "title": "Geocoding",
+      "kind": "example",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3422,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-reversegeocoding-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-reversegeocoding-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-reversegeocoding-service-v1_0_0.md",
+      "title": "Reverse geocoding",
+      "kind": "example",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3023,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-feature-land-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-feature-land-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-feature-land-service-v1_0_0.md",
+      "title": "Feature of land",
+      "kind": "example",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5569,
+      "service": "featureland",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-roadsextractor-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-roadsextractor-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-roadsextractor-service-v1_0_0.md",
+      "title": "Roads extractor",
+      "kind": "example",
+      "role": "ROLE_ROADS_EXTRACTOR",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4230,
+      "service": "roadsextractor",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-geofencing-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-geofencing-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-geofencing-service-v1_0_0.md",
+      "title": "Geofencing",
+      "kind": "example",
+      "role": "ROLE_GEOFENCING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1901,
+      "service": "geofencing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-routing-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-routing-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-routing-service-v1_0_0.md",
+      "title": "Routing",
+      "kind": "example",
+      "role": "ROLE_ROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9455,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-trace-route-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-trace-route-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-trace-route-service-v1_0_0.md",
+      "title": "Trace route",
+      "kind": "example",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2901,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-evreachablearea-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-evreachablearea-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-evreachablearea-service-v1_0_0.md",
+      "title": "EV reachable area",
+      "kind": "example",
+      "role": "ROLE_EVREACHABLEAREA",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4659,
+      "service": "evreachablearea",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-evsmartrouting-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-evsmartrouting-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-evsmartrouting-service-v1_0_0.md",
+      "title": "EV smart routing",
+      "kind": "example",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 18440,
+      "service": "evsmartrouting",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_2_0_0/examples-evsmartrouting-service-v2_0_0.md",
+      "family": "rest_2_0_0",
+      "file": "examples-evsmartrouting-service-v2_0_0.md",
+      "path": "/bgis/documentation/rest_2_0_0/examples-evsmartrouting-service-v2_0_0.md",
+      "title": "EV smart routing",
+      "kind": "example",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 33885,
+      "service": "evsmartrouting",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-charging-station-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-charging-station-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-charging-station-service-v1_0_0.md",
+      "title": "Charging station",
+      "kind": "example",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6738,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-charging-chargepass-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-charging-chargepass-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-charging-chargepass-service-v1_0_0.md",
+      "title": "Charge pass",
+      "kind": "example",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1403,
+      "service": "chargingchargepass",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-charging-tariffs-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-charging-tariffs-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-charging-tariffs-service-v1_0_0.md",
+      "title": "Tariffs",
+      "kind": "example",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2655,
+      "service": "chargingtariffs",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-charging-time-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-charging-time-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-charging-time-service-v1_0_0.md",
+      "title": "Charging time",
+      "kind": "example",
+      "role": "ROLE_CHARGINGTIME",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8960,
+      "service": "chargingtime",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-charging-cost-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-charging-cost-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-charging-cost-service-v1_0_0.md",
+      "title": "Charging cost",
+      "kind": "example",
+      "role": "ROLE_CHARGINGCOST",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 873,
+      "service": "chargingcost",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-near-poi-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-near-poi-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-near-poi-service-v1_0_0.md",
+      "title": "Near POI",
+      "kind": "example",
+      "role": "ROLE_NEARPOI",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5106,
+      "service": "nearpoi",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-currency-convert-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-currency-convert-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-currency-convert-service-v1_0_0.md",
+      "title": "Currency convert",
+      "kind": "example",
+      "role": "ROLE_CURRENCY",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2035,
+      "service": "currency",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/examples-weather-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "examples-weather-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/examples-weather-service-v1_0_0.md",
+      "title": "Weather",
+      "kind": "example",
+      "role": "ROLE_WEATHER",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6528,
+      "service": "weather",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-geocoding-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-geocoding-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-geocoding-bnd-v0_9_0.md",
+      "title": "Geocoding",
+      "kind": "example",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3414,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-reversegeocoding-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-reversegeocoding-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-reversegeocoding-bnd-v0_9_0.md",
+      "title": "Reverse geocoding",
+      "kind": "example",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2941,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-feature-land-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-feature-land-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-feature-land-bnd-v0_9_0.md",
+      "title": "Feature of land",
+      "kind": "example",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5168,
+      "service": "featureland",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-geofencing-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-geofencing-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-geofencing-bnd-v0_9_0.md",
+      "title": "Geofencing",
+      "kind": "example",
+      "role": "ROLE_GEOFENCING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1815,
+      "service": "geofencing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-routing-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-routing-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-routing-bnd-v0_9_0.md",
+      "title": "Routing",
+      "kind": "example",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7359,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-trace-route-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-trace-route-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-trace-route-bnd-v0_9_0.md",
+      "title": "Trace route",
+      "kind": "example",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2264,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/examples-charging-time-bnd-v0_9_0.md",
+      "family": "rest_0_9_0",
+      "file": "examples-charging-time-bnd-v0_9_0.md",
+      "path": "/bgis/documentation/rest_0_9_0/examples-charging-time-bnd-v0_9_0.md",
+      "title": "Charging time",
+      "kind": "example",
+      "role": "ROLE_CHARGINGTIME",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8273,
+      "service": "chargingtime",
+      "roleInferred": false
+    },
+    {
+      "id": "general/samples.md",
+      "family": "general",
+      "file": "samples.md",
+      "path": "/bgis/documentation/samples.md",
+      "title": "Other URL examples",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 41219,
+      "service": "samples",
+      "roleInferred": false
+    },
+    {
+      "id": "general/tutorials-mapping-wms-1_3_0-satellite.md",
+      "family": "general",
+      "file": "tutorials-mapping-wms-1_3_0-satellite.md",
+      "path": "/bgis/documentation/tutorials-mapping-wms-1_3_0-satellite.md",
+      "title": "Get a satellite image",
+      "kind": "tutorial",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 12351,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-chargingstation-service-v1_0_0-first_request.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
+      "title": "First request",
+      "kind": "tutorial",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11046,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-chargingstation-service-v1_0_0-options.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
+      "title": "Options",
+      "kind": "tutorial",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 26225,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-chargingstation-service-v1_0_0-parameters.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
+      "title": "Parameters",
+      "kind": "tutorial",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 84978,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+      "title": "Get tariffs",
+      "kind": "tutorial",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [
+        "POST"
+      ],
+      "classNames": [],
+      "bytes": 21506,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-introduction.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
+      "title": "Introduction",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2202,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+      "title": "How to send a routing request",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2322,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-criteria.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
+      "title": "Criteria",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 23959,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-events.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
+      "title": "Events",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 78965,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-modes.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
+      "title": "Modes",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 17193,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-optimized.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
+      "title": "Optimized",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 16894,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-routing-service-v1_0_0-vehicleprofile.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
+      "title": "Vehicle profile",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 15196,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+      "title": "Introduction",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3364,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-first_request.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
+      "title": "First request",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2421,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+      "title": "GPS destinations",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5667,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-parameters.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
+      "title": "Parameters",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 82384,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-options.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
+      "title": "Options",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 150154,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+      "title": "Vehicle profile",
+      "kind": "tutorial",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 65715,
+      "service": "traceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
+      "family": "rest_1_0_0",
+      "file": "tutorials-evtrip-service-v1_0_0-first_trip.md",
+      "path": "/bgis/documentation/rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
+      "title": "First trip in EV",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 21700,
+      "service": "evtrip",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
+      "family": "rest_2_0_0",
+      "file": "tutorials-evtrip-first_trip-service-v2_0_0.md",
+      "path": "/bgis/documentation/rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
+      "title": "First trip in EV",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 21382,
+      "service": "evtrip",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
+      "family": "rest_2_0_0",
+      "file": "tutorials-evtrip-conditions-service-v2_0_0.md",
+      "path": "/bgis/documentation/rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
+      "title": "Conditions",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 139406,
+      "service": "evtrip",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
+      "family": "rest_2_0_0",
+      "file": "tutorials-evtrip-truck-service-v2_0_0.md",
+      "path": "/bgis/documentation/rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
+      "title": "Trip with truck",
+      "kind": "tutorial",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4069,
+      "service": "evtrip",
+      "roleInferred": false
+    },
+    {
+      "id": "general/authentication.md",
+      "family": "general",
+      "file": "authentication.md",
+      "path": "/bgis/documentation/authentication.md",
+      "title": "Authentication",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3397,
+      "service": "authentication",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/quotas-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "quotas-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/quotas-service-v1_0_0.md",
+      "title": "Quotas",
+      "kind": "reference",
+      "role": null,
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/quotas/1.0/getAllByCurrentAccount",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.quotas.QuotasResponse"
+      ],
+      "bytes": 1979,
+      "service": "quotas",
+      "roleInferred": false
+    },
+    {
+      "id": "general/mapping-wms-1-1-1-getmap.md",
+      "family": "general",
+      "file": "mapping-wms-1-1-1-getmap.md",
+      "path": "/bgis/documentation/mapping-wms-1-1-1-getmap.md",
+      "title": "GetMap",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 13279,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-wms-1-1-1-getcapabilities.md",
+      "family": "general",
+      "file": "mapping-wms-1-1-1-getcapabilities.md",
+      "path": "/bgis/documentation/mapping-wms-1-1-1-getcapabilities.md",
+      "title": "GetCapabilities",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 5235,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-wms-1-1-1-getfeatureInfo.md",
+      "family": "general",
+      "file": "mapping-wms-1-1-1-getfeatureInfo.md",
+      "path": "/bgis/documentation/mapping-wms-1-1-1-getfeatureInfo.md",
+      "title": "GetFeatureInfo",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 16342,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-wms-1-3-0-getmap.md",
+      "family": "general",
+      "file": "mapping-wms-1-3-0-getmap.md",
+      "path": "/bgis/documentation/mapping-wms-1-3-0-getmap.md",
+      "title": "GetMap",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 13349,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-wms-1-3-0-getcapabilities.md",
+      "family": "general",
+      "file": "mapping-wms-1-3-0-getcapabilities.md",
+      "path": "/bgis/documentation/mapping-wms-1-3-0-getcapabilities.md",
+      "title": "GetCapabilities",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 5892,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-wms-1-3-0-getfeatureInfo.md",
+      "family": "general",
+      "file": "mapping-wms-1-3-0-getfeatureInfo.md",
+      "path": "/bgis/documentation/mapping-wms-1-3-0-getfeatureInfo.md",
+      "title": "GetFeatureInfo",
+      "kind": "reference",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/wms",
+      "methods": [],
+      "classNames": [],
+      "bytes": 16312,
+      "service": "wms",
+      "roleInferred": true
+    },
+    {
+      "id": "general/mapping-display-map.md",
+      "family": "general",
+      "file": "mapping-display-map.md",
+      "path": "/bgis/documentation/mapping-display-map.md",
+      "title": "Display map",
+      "kind": "other",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 784,
+      "service": "mapping",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/geocoding-service.md",
+      "family": "rest_1_0_0",
+      "file": "geocoding-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/geocoding-service.md",
+      "title": "Geocoding",
+      "kind": "reference",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocoding/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingResponse"
+      ],
+      "bytes": 3134,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/geocodingbatch-service.md",
+      "family": "rest_1_0_0",
+      "file": "geocodingbatch-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/geocodingbatch-service.md",
+      "title": "Geocoding for batch",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocodingBatch/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.GeocodingForBatchRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.GeocodingForBatchResponse"
+      ],
+      "bytes": 4324,
+      "service": "geocodingbatch",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/natgeocoding-service.md",
+      "family": "rest_1_0_0",
+      "file": "natgeocoding-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/natgeocoding-service.md",
+      "title": "Natural Geocoding",
+      "kind": "reference",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocoding/1.0/natural",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingNaturalRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingResponse"
+      ],
+      "bytes": 2988,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/autocompletegeocoding-service.md",
+      "family": "rest_1_0_0",
+      "file": "autocompletegeocoding-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/autocompletegeocoding-service.md",
+      "title": "Autocomplete geocoding",
+      "kind": "reference",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocoding/autocomplete/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.autocomplete.AutocompleteGeocodingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.autocomplete.AutocompleteGeocodingResponse"
+      ],
+      "bytes": 3034,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/reversegeocoding-service.md",
+      "family": "rest_1_0_0",
+      "file": "reversegeocoding-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/reversegeocoding-service.md",
+      "title": "Reverse geocoding",
+      "kind": "reference",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocoding/1.0/reverse",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ReverseGeocodingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ReverseGeocodingResponse"
+      ],
+      "bytes": 8777,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/reversegeocodingbatch-service.md",
+      "family": "rest_1_0_0",
+      "file": "reversegeocodingbatch-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/reversegeocodingbatch-service.md",
+      "title": "Reverse geocoding for batch",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/geocodingBatch/1.0/reverse",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.RevGeocodingBatchRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.RevGeocodingBatchResponse"
+      ],
+      "bytes": 9484,
+      "service": "geocodingbatch",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/feature-service.md",
+      "family": "rest_1_0_0",
+      "file": "feature-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/feature-service.md",
+      "title": "Feature of land",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/landFeature/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.LandFeatureRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.LandFeatureResponse"
+      ],
+      "bytes": 3369,
+      "service": "landfeature",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/roadsextractor-service.md",
+      "family": "rest_1_0_0",
+      "file": "roadsextractor-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/roadsextractor-service.md",
+      "title": "Roads extractor",
+      "kind": "reference",
+      "role": "ROLE_ROADS_EXTRACTOR",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/roadsextractor/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.roadsExtractor.RoadsExtractorRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.roadsExtractor.RoadsExtractorResponse"
+      ],
+      "bytes": 2842,
+      "service": "roadsextractor",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/geofencing-service.md",
+      "family": "rest_1_0_0",
+      "file": "geofencing-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/geofencing-service.md",
+      "title": "Geofencing",
+      "kind": "reference",
+      "role": "ROLE_GEOFENCING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/geofencing/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingResponse"
+      ],
+      "bytes": 3402,
+      "service": "geofencing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/routing-service.md",
+      "family": "rest_1_0_0",
+      "file": "routing-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/routing-service.md",
+      "title": "Routing",
+      "kind": "reference",
+      "role": "ROLE_ROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/routing/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingResponse"
+      ],
+      "bytes": 4755,
+      "service": "routing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/traceroute-service.md",
+      "family": "rest_1_0_0",
+      "file": "traceroute-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/traceroute-service.md",
+      "title": "Trace route",
+      "kind": "reference",
+      "role": "ROLE_ROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/routing/1.0/traceroute",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TraceRouteRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingResponse"
+      ],
+      "bytes": 9979,
+      "service": "routing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/routehorizon-service.md",
+      "family": "rest_1_0_0",
+      "file": "routehorizon-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/routehorizon-service.md",
+      "title": "Route horizon",
+      "kind": "reference",
+      "role": "ROLE_ROUTEHORIZON",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/routeHorizon/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routeHorizon.RouteHorizonRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routeHorizon.RouteHorizonResponse"
+      ],
+      "bytes": 2040,
+      "service": "routehorizon",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/evreachablearea-service.md",
+      "family": "rest_1_0_0",
+      "file": "evreachablearea-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/evreachablearea-service.md",
+      "title": "EV reachable area",
+      "kind": "reference",
+      "role": "ROLE_EVREACHABLEAREA",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/evreachablearea/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evReachableArea.EvReachableAreaRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evReachableArea.EvReachableAreaResponse"
+      ],
+      "bytes": 4082,
+      "service": "evreachablearea",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/evsmartrouting-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "evsmartrouting-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/evsmartrouting-service-v1_0_0.md",
+      "title": "EV smart routing",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/evsmartrouting/1.0",
+      "methods": [],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.request.EvSmartRoutingRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.response.EvSmartRoutingResponse"
+      ],
+      "bytes": 9869,
+      "service": "evsmartrouting",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_2_0_0/evsmartrouting-service-v2_0_0.md",
+      "family": "rest_2_0_0",
+      "file": "evsmartrouting-service-v2_0_0.md",
+      "path": "/bgis/documentation/rest_2_0_0/evsmartrouting-service-v2_0_0.md",
+      "title": "EV smart routing",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/2.0/evsmartrouting",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.EvSmartRoutingRequest",
+        "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.EvSmartRoutingResponse"
+      ],
+      "bytes": 10297,
+      "service": "evsmartrouting",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/evsmartrouting-vehiclebrands-list-service.md",
+      "family": "rest_1_0_0",
+      "file": "evsmartrouting-vehiclebrands-list-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/evsmartrouting-vehiclebrands-list-service.md",
+      "title": "EV brand list",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/evsmartrouting/vehiclebrands/list/1.0",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleBrandsResponse"
+      ],
+      "bytes": 5220,
+      "service": "evsmartrouting",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/evsmartrouting-vehiclemodels-list-service.md",
+      "family": "rest_1_0_0",
+      "file": "evsmartrouting-vehiclemodels-list-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/evsmartrouting-vehiclemodels-list-service.md",
+      "title": "EV model list",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/evsmartrouting/vehiclemodels/list/1.0",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleModelsResponse"
+      ],
+      "bytes": 2301,
+      "service": "evsmartrouting",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/openlrparser-service.md",
+      "family": "rest_1_0_0",
+      "file": "openlrparser-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/openlrparser-service.md",
+      "title": "OpenLR parser",
+      "kind": "reference",
+      "role": null,
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/openlrparser/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.openLrParser.OpenLrParserRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.openLrParser.OpenLrParserResponse"
+      ],
+      "bytes": 6451,
+      "service": "openlrparser",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/vehicle-getbrands-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehicle-getbrands-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehicle-getbrands-service-v1_0_0.md",
+      "title": "Get brands",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.0/getbrands",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleBrandsResponse"
+      ],
+      "bytes": 4745,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehicle-getmotortypes-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehicle-getmotortypes-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehicle-getmotortypes-service-v1_0_0.md",
+      "title": "Get motor types",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.0/getmotortypes",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+      ],
+      "bytes": 492,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehicle-findvehicles-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md",
+      "title": "Find vehicles",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.0/findvehicles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleInfo",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleDatasheet"
+      ],
+      "bytes": 3414,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehicle-getlevelvehicleinfo-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehicle-getlevelvehicleinfo-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehicle-getlevelvehicleinfo-service-v1_0_0.md",
+      "title": "Get level vehicle info",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.0/getlevelvehicleinfo",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [],
+      "bytes": 2711,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehicle-getbrands-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehicle-getbrands-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehicle-getbrands-service-v1_1_0.md",
+      "title": "Get brands",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/getbrands",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleBrandsResponse"
+      ],
+      "bytes": 4745,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehicle-getmotortypes-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehicle-getmotortypes-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehicle-getmotortypes-service-v1_1_0.md",
+      "title": "Get motor types",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/getmotortypes",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+      ],
+      "bytes": 492,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehicle-findvehicles-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md",
+      "title": "Find vehicles",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/findvehicles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleInfo",
+        "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleDatasheet"
+      ],
+      "bytes": 3414,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehicle-getlevelvehicleinfo-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehicle-getlevelvehicleinfo-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehicle-getlevelvehicleinfo-service-v1_1_0.md",
+      "title": "Get level vehicle info",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/getlevelvehicleinfo",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [],
+      "bytes": 3463,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehiclepicture-getviews-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehiclepicture-getviews-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehiclepicture-getviews-service-v1_0_0.md",
+      "title": "Get views",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/picture/1.0/getviews",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.PictureViewInfo"
+      ],
+      "bytes": 584,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehiclepicture-getall-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehiclepicture-getall-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehiclepicture-getall-service-v1_0_0.md",
+      "title": "Get all",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/picture/1.0/getall",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehiclePictureDescription"
+      ],
+      "bytes": 604,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/vehiclepicture-getone-service-v1_0_0.md",
+      "family": "rest_1_0_0",
+      "file": "vehiclepicture-getone-service-v1_0_0.md",
+      "path": "/bgis/documentation/rest_1_0_0/vehiclepicture-getone-service-v1_0_0.md",
+      "title": "Get one",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/picture/1.0/getone",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [],
+      "bytes": 724,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehiclepicture-getbrandlogolite-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehiclepicture-getbrandlogolite-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehiclepicture-getbrandlogolite-service-v1_1_0.md",
+      "title": "Brand logo",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/getbrandlogolite",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [],
+      "bytes": 405,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_1_0/vehiclepicture-getbrandlogo-service-v1_1_0.md",
+      "family": "rest_1_1_0",
+      "file": "vehiclepicture-getbrandlogo-service-v1_1_0.md",
+      "path": "/bgis/documentation/rest_1_1_0/vehiclepicture-getbrandlogo-service-v1_1_0.md",
+      "title": "Brand logo details",
+      "kind": "reference",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/vehicle/1.1/getbrandlogo",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.EvBrandLogoDescription"
+      ],
+      "bytes": 612,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/traffic-service.md",
+      "family": "rest_1_0_0",
+      "file": "traffic-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/traffic-service.md",
+      "title": "Traffic",
+      "kind": "reference",
+      "role": "ROLE_TRAFFIC",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/traffic/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.traffic.TrafficRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.traffic.TrafficResponse"
+      ],
+      "bytes": 1729,
+      "service": "traffic",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingstation-search-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingstation-search-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingstation-search-service.md",
+      "title": "Charging station",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/chargingstation/search/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationSearchRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationSearchResponse"
+      ],
+      "bytes": 9957,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingstation-connector-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingstation-connector-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingstation-connector-service.md",
+      "title": "Connector types",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ConnectorTypeResponse"
+      ],
+      "bytes": 9427,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingstation-chargepass-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingstation-chargepass-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingstation-chargepass-service.md",
+      "title": "Charge pass",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/chargingstation/chargepass/1.0/list",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationChargePassResponse"
+      ],
+      "bytes": 2265,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingstation-tariffs-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingstation-tariffs-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingstation-tariffs-service.md",
+      "title": "Tariffs",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/chargingstation/tariffs/1.0/search",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationTariffsRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationTariffsResponse"
+      ],
+      "bytes": 4111,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingstation-download-evpoi-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingstation-download-evpoi-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingstation-download-evpoi-service.md",
+      "title": "Download EV POI SVS",
+      "kind": "reference",
+      "role": "ROLE_DOWNLOAD_FILE,ROLE_EVSE_DL_SVS_OUTPUT",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadFileListRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadDescription",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadMultipleFilesRequest"
+      ],
+      "bytes": 5131,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/chargingtime-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingtime-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingtime-service.md",
+      "title": "Charging time",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGTIME",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/chargingTime/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingTime.ChargingTimeRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingTime.ChargingTimeResponse"
+      ],
+      "bytes": 1695,
+      "service": "chargingtime",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/chargingcost-service.md",
+      "family": "rest_1_0_0",
+      "file": "chargingcost-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/chargingcost-service.md",
+      "title": "Charging cost",
+      "kind": "reference",
+      "role": "ROLE_CHARGINGCOST",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/chargingcost/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingCost.ChargingCostRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingCost.ChargingCostResponse"
+      ],
+      "bytes": 3036,
+      "service": "chargingcost",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/nearpoi-service.md",
+      "family": "rest_1_0_0",
+      "file": "nearpoi-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/nearpoi-service.md",
+      "title": "Near POI",
+      "kind": "reference",
+      "role": "ROLE_NEARPOI",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/nearpoi/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.nearPoi.NearPoiRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.nearPoi.NearPoiResponse"
+      ],
+      "bytes": 2401,
+      "service": "nearpoi",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/currency-codes-service.md",
+      "family": "rest_1_0_0",
+      "file": "currency-codes-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/currency-codes-service.md",
+      "title": "Currency codes",
+      "kind": "reference",
+      "role": "ROLE_CURRENCY",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/currency/1.0/codes",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyCode"
+      ],
+      "bytes": 17120,
+      "service": "currency",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/currency-rates-service.md",
+      "family": "rest_1_0_0",
+      "file": "currency-rates-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/currency-rates-service.md",
+      "title": "Currency rates",
+      "kind": "reference",
+      "role": "ROLE_CURRENCY",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/currency/1.0/rates",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyRatesResponse"
+      ],
+      "bytes": 1364,
+      "service": "currency",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/currency-rate-service.md",
+      "family": "rest_1_0_0",
+      "file": "currency-rate-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/currency-rate-service.md",
+      "title": "Currency single rate",
+      "kind": "reference",
+      "role": "ROLE_CURRENCY",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/currency/1.0/rate",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyRateResponse"
+      ],
+      "bytes": 1118,
+      "service": "currency",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/currency-convert-service.md",
+      "family": "rest_1_0_0",
+      "file": "currency-convert-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/currency-convert-service.md",
+      "title": "Currency convert",
+      "kind": "reference",
+      "role": "ROLE_CURRENCY",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/currency/1.0/convert",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyConvertRequest"
+      ],
+      "bytes": 1241,
+      "service": "currency",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/weather-service.md",
+      "family": "rest_1_0_0",
+      "file": "weather-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/weather-service.md",
+      "title": "Weather",
+      "kind": "reference",
+      "role": "ROLE_WEATHER",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": "/bgis/service/weather/1.0",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.weather.WeatherRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.weather.WeatherResponse"
+      ],
+      "bytes": 49206,
+      "service": "weather",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/download-service.md",
+      "family": "rest_1_0_0",
+      "file": "download-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/download-service.md",
+      "title": "File download",
+      "kind": "reference",
+      "role": "ROLE_DOWNLOAD_FILE",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadFileListRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadDescription",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadMultipleFilesRequest"
+      ],
+      "bytes": 4433,
+      "service": "download",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_1_0_0/geoserverinfo-service.md",
+      "family": "rest_1_0_0",
+      "file": "geoserverinfo-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/geoserverinfo-service.md",
+      "title": "Geo server",
+      "kind": "reference",
+      "role": "ROLE_GEOSERVERINFO",
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/1.0/geoserverinfo",
+      "methods": [
+        "POST"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.GeoServerInfoRequest",
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.GeoServerInfoResponse"
+      ],
+      "bytes": 14688,
+      "service": "geoserverinfo",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_1_0_0/serverversion-service.md",
+      "family": "rest_1_0_0",
+      "file": "serverversion-service.md",
+      "path": "/bgis/documentation/rest_1_0_0/serverversion-service.md",
+      "title": "Server version",
+      "kind": "reference",
+      "role": null,
+      "isLatest": true,
+      "isRest": true,
+      "endpoint": "/bgis/service/version/server/1.0",
+      "methods": [
+        "GET"
+      ],
+      "classNames": [
+        "com.benomad.bgis.fe.protocol.service.v1_0_0.model.ServerVersionResponse"
+      ],
+      "bytes": 1165,
+      "service": "version",
+      "roleInferred": false
+    },
+    {
+      "id": "general/mapping-bnd.md",
+      "family": "general",
+      "file": "mapping-bnd.md",
+      "path": "/bgis/documentation/mapping-bnd.md",
+      "title": "BND",
+      "kind": "reference",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7650,
+      "service": "mapping",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/geocoding-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "geocoding-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/geocoding-bnd.md",
+      "title": "Geocoding",
+      "kind": "other",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9255,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/geocodingbatch-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "geocodingbatch-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/geocodingbatch-bnd.md",
+      "title": "Geocoding for batch",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10581,
+      "service": "geocodingbatch",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/natgeocoding-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "natgeocoding-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/natgeocoding-bnd.md",
+      "title": "Natural Geocoding",
+      "kind": "other",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7512,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/reversegeocoding-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "reversegeocoding-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/reversegeocoding-bnd.md",
+      "title": "Reverse geocoding",
+      "kind": "other",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 15175,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/reversegeocodingbatch-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "reversegeocodingbatch-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/reversegeocodingbatch-bnd.md",
+      "title": "Reverse geocoding for batch",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7241,
+      "service": "geocodingbatch",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/feature-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "feature-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/feature-bnd.md",
+      "title": "Feature of land",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 16911,
+      "service": "featurebnd",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/geofencing-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "geofencing-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/geofencing-bnd.md",
+      "title": "Geofencing",
+      "kind": "other",
+      "role": "ROLE_GEOFENCING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6773,
+      "service": "geofencing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/routing-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "routing-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/routing-bnd.md",
+      "title": "Routing",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 42264,
+      "service": "routing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/traceroute-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "traceroute-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/traceroute-bnd.md",
+      "title": "Trace route",
+      "kind": "other",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 33321,
+      "service": "traceroute",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/routing-bnd-response.md",
+      "family": "rest_0_9_0",
+      "file": "routing-bnd-response.md",
+      "path": "/bgis/documentation/rest_0_9_0/routing-bnd-response.md",
+      "title": "Routing response",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 41005,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "rest_0_9_0/routing-bnd-matrix-response.md",
+      "family": "rest_0_9_0",
+      "file": "routing-bnd-matrix-response.md",
+      "path": "/bgis/documentation/rest_0_9_0/routing-bnd-matrix-response.md",
+      "title": "Routing matrix response",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2551,
+      "service": "routing",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/traffic-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "traffic-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/traffic-bnd.md",
+      "title": "Traffic",
+      "kind": "other",
+      "role": "ROLE_TRAFFIC",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 20008,
+      "service": "traffic",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/chargingstation-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "chargingstation-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/chargingstation-bnd.md",
+      "title": "Charging station",
+      "kind": "other",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 22459,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/chargingtime-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "chargingtime-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/chargingtime-bnd.md",
+      "title": "Charging time",
+      "kind": "other",
+      "role": "ROLE_CHARGINGTIME",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5254,
+      "service": "chargingtime",
+      "roleInferred": true
+    },
+    {
+      "id": "rest_0_9_0/geoserverinfo-bnd.md",
+      "family": "rest_0_9_0",
+      "file": "geoserverinfo-bnd.md",
+      "path": "/bgis/documentation/rest_0_9_0/geoserverinfo-bnd.md",
+      "title": "Geo server",
+      "kind": "other",
+      "role": "ROLE_GEOSERVERINFO",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 20490,
+      "service": "geoserverinfo",
+      "roleInferred": true
+    },
+    {
+      "id": "soap_2_0_0/soaprpc.md",
+      "family": "soap_2_0_0",
+      "file": "soaprpc.md",
+      "path": "/bgis/documentation/soap_2_0_0/soaprpc.md",
+      "title": "SOAP-RPC",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 322,
+      "service": "soaprpc",
+      "roleInferred": false
+    },
+    {
+      "id": "soap_2_0_0/jsonrpc.md",
+      "family": "soap_2_0_0",
+      "file": "jsonrpc.md",
+      "path": "/bgis/documentation/soap_2_0_0/jsonrpc.md",
+      "title": "JSON-RPC",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7139,
+      "service": "jsonrpc",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/index.md",
+      "family": "jsapi_2_0_0",
+      "file": "index.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/index.md",
+      "title": "Overview",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9488,
+      "service": "index",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/install.md",
+      "family": "jsapi_2_0_0",
+      "file": "install.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/install.md",
+      "title": "Install & setup",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11422,
+      "service": "install",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/quick-start.md",
+      "family": "jsapi_2_0_0",
+      "file": "quick-start.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/quick-start.md",
+      "title": "Quick start",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4515,
+      "service": "quickstart",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/authentication.md",
+      "family": "jsapi_2_0_0",
+      "file": "authentication.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/authentication.md",
+      "title": "Authentication",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3114,
+      "service": "authentication",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/the-context.md",
+      "family": "jsapi_2_0_0",
+      "file": "the-context.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/the-context.md",
+      "title": "The Context",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5018,
+      "service": "thecontext",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/security-proxy.md",
+      "family": "jsapi_2_0_0",
+      "file": "security-proxy.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/security-proxy.md",
+      "title": "Credential-less setup",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11243,
+      "service": "securityproxy",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/error-handling.md",
+      "family": "jsapi_2_0_0",
+      "file": "error-handling.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/error-handling.md",
+      "title": "Error handling",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5031,
+      "service": "errorhandling",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/cancellation.md",
+      "family": "jsapi_2_0_0",
+      "file": "cancellation.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/cancellation.md",
+      "title": "Cancellation",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1977,
+      "service": "cancellation",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-helpers.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-helpers.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-helpers.md",
+      "title": "Helpers & value types",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9777,
+      "service": "jshelpers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/snippet-helpers.md",
+      "family": "jsapi_2_0_0",
+      "file": "snippet-helpers.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/snippet-helpers.md",
+      "title": "Snippet helpers",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3329,
+      "service": "snippethelpers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-overview.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-overview.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-overview.md",
+      "title": "Overview & access",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9764,
+      "service": "jstilesoverview",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-auth.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-auth.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-auth.md",
+      "title": "Sessions & tokens",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 14620,
+      "service": "jstilesauth",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-web-pmtiles.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-web-pmtiles.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-web-pmtiles.md",
+      "title": "Web — PMTiles",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 12146,
+      "service": "jstileswebpmtiles",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-mobile-zxy.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-mobile-zxy.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-mobile-zxy.md",
+      "title": "Mobile & fleet — z/x/y",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9559,
+      "service": "jstilesmobilezxy",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-styles.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-styles.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-styles.md",
+      "title": "Styles & BeMaputnik",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 14873,
+      "service": "jstilesstyles",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-cache.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-cache.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-cache.md",
+      "title": "Cache, slices & resilience",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 14798,
+      "service": "jstilescache",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-tiles-troubleshooting.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-tiles-troubleshooting.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-tiles-troubleshooting.md",
+      "title": "Troubleshooting",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 15592,
+      "service": "jstilestroubleshooting",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-engines.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-engines.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-engines.md",
+      "title": "Choosing an engine",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 12512,
+      "service": "jsmapengines",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-leaflet.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-leaflet.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-leaflet.md",
+      "title": "Display map (Leaflet)",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4132,
+      "service": "jsmapleaflet",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-openlayers.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-openlayers.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-openlayers.md",
+      "title": "Display map (OpenLayers)",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3379,
+      "service": "jsmapopenlayers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-maplibre.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-maplibre.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-maplibre.md",
+      "title": "Display map (MapLibre)",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10577,
+      "service": "jsmapmaplibre",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-camera.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-camera.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-camera.md",
+      "title": "Camera & viewport",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9564,
+      "service": "jsmapcamera",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-backgrounds.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-backgrounds.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-backgrounds.md",
+      "title": "Backgrounds & basemaps",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9437,
+      "service": "jsmapbackgrounds",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-layers.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-layers.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-layers.md",
+      "title": "Layers",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6380,
+      "service": "jsmaplayers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-events.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-events.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-events.md",
+      "title": "Events",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10976,
+      "service": "jsmapevents",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-interaction.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-interaction.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-interaction.md",
+      "title": "Interaction",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10238,
+      "service": "jsmapinteraction",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-markers.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-markers.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-markers.md",
+      "title": "Markers",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3968,
+      "service": "jsmapmarkers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-shapes.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-shapes.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-shapes.md",
+      "title": "Polyline",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3538,
+      "service": "jsmapshapes",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-popup.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-popup.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-popup.md",
+      "title": "Popup",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3385,
+      "service": "jsmappopup",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-draw.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-draw.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-draw.md",
+      "title": "Drawing",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9755,
+      "service": "jsmapdraw",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-styling.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-styling.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-styling.md",
+      "title": "Styling",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9758,
+      "service": "jsmapstyling",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-geojson.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-geojson.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-geojson.md",
+      "title": "GeoJSON sources",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10413,
+      "service": "jsmapgeojson",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-clustering.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-clustering.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-clustering.md",
+      "title": "Clustering",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9567,
+      "service": "jsmapclustering",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-heatmap.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-heatmap.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-heatmap.md",
+      "title": "Heatmap",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9793,
+      "service": "jsmapheatmap",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-3d.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-3d.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-3d.md",
+      "title": "3D & terrain",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11572,
+      "service": "jsmap3d",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-globe.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-globe.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-globe.md",
+      "title": "Globe projection",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7885,
+      "service": "jsmapglobe",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-animation.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-animation.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-animation.md",
+      "title": "Animation",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10529,
+      "service": "jsmapanimation",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-mapping-display-traffic.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-mapping-display-traffic.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-mapping-display-traffic.md",
+      "title": "Traffic",
+      "kind": "other",
+      "role": "ROLE_TRAFFIC",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3300,
+      "service": "traffic",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-map-attribution.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-map-attribution.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-map-attribution.md",
+      "title": "Attribution widget",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5830,
+      "service": "jsmapattribution",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-routing-v2.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-routing-v2.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-routing-v2.md",
+      "title": "Routing v2",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9849,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-routing-matrix.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-routing-matrix.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-routing-matrix.md",
+      "title": "Matrix",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4971,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-routing-isochrone.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-routing-isochrone.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-routing-isochrone.md",
+      "title": "Isochrone",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4905,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-traceroute.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-traceroute.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-traceroute.md",
+      "title": "TraceRoute",
+      "kind": "other",
+      "role": "ROLE_TRACEROUTE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6646,
+      "service": "jstraceroute",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-routing-response.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-routing-response.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-routing-response.md",
+      "title": "The response",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11501,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-geocoding.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-geocoding.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-geocoding.md",
+      "title": "Geocoder",
+      "kind": "other",
+      "role": "ROLE_AUTOCOMPLETE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5157,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-autocomplete.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-autocomplete.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-autocomplete.md",
+      "title": "Autocomplete",
+      "kind": "other",
+      "role": "ROLE_AUTOCOMPLETE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5773,
+      "service": "jsautocomplete",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-geoautocomplete.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-geoautocomplete.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-geoautocomplete.md",
+      "title": "GeoAutocomplete",
+      "kind": "other",
+      "role": "ROLE_AUTOCOMPLETE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8159,
+      "service": "jsgeoautocomplete",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-reversegeocoding.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-reversegeocoding.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-reversegeocoding.md",
+      "title": "Reverse geocoder",
+      "kind": "other",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5049,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-near-poi.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-near-poi.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-near-poi.md",
+      "title": "Near POI",
+      "kind": "other",
+      "role": "ROLE_NEARPOI",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4849,
+      "service": "nearpoi",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-charging-stations.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-charging-stations.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-charging-stations.md",
+      "title": "Charging stations",
+      "kind": "other",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7101,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-ev-smart-routing.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-ev-smart-routing.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-ev-smart-routing.md",
+      "title": "EV Smart Routing",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 9695,
+      "service": "evsmartrouting",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-charging-time.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-charging-time.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-charging-time.md",
+      "title": "Charging time",
+      "kind": "other",
+      "role": "ROLE_CHARGINGTIME",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5009,
+      "service": "chargingtime",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-ev-vehicles.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-ev-vehicles.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-ev-vehicles.md",
+      "title": "EV vehicles",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6471,
+      "service": "vehicle",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-ev-reachable-area.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-ev-reachable-area.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-ev-reachable-area.md",
+      "title": "EV reachable area",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 7780,
+      "service": "evreachablearea",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-acl-service.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-acl-service.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-acl-service.md",
+      "title": "ACL service",
+      "kind": "reference",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3138,
+      "service": "jsacl",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/js-geoserver-info.md",
+      "family": "jsapi_2_0_0",
+      "file": "js-geoserver-info.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/js-geoserver-info.md",
+      "title": "Geoserver info",
+      "kind": "other",
+      "role": "ROLE_GEOSERVERINFO",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2905,
+      "service": "geoserverinfo",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/migration-from-v1.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-from-v1.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-from-v1.md",
+      "title": "Cheat sheet",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4754,
+      "service": "migrationfromv1",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/migration-routing.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-routing.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-routing.md",
+      "title": "Routing",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3119,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/migration-evrouting.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-evrouting.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-evrouting.md",
+      "title": "EV routing",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3354,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/migration-geocoding.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-geocoding.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-geocoding.md",
+      "title": "Geocoding",
+      "kind": "other",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3464,
+      "service": "geocoding",
+      "roleInferred": true
+    },
+    {
+      "id": "jsapi_2_0_0/migration-wms-to-tiles.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-wms-to-tiles.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-wms-to-tiles.md",
+      "title": "WMS → BeNomad Tiles",
+      "kind": "other",
+      "role": "ROLE_MAPPING and ROLE_MAPPING_MPTILES",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8983,
+      "service": "wms",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/migration-ol4-to-ol10.md",
+      "family": "jsapi_2_0_0",
+      "file": "migration-ol4-to-ol10.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/migration-ol4-to-ol10.md",
+      "title": "OpenLayers 4 → 10",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6984,
+      "service": "migrationol4tool10",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/glossary-error-codes.md",
+      "family": "jsapi_2_0_0",
+      "file": "glossary-error-codes.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/glossary-error-codes.md",
+      "title": "Error codes",
+      "kind": "glossary",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3777,
+      "service": "glossaryerrorcodes",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/glossary-enums.md",
+      "family": "jsapi_2_0_0",
+      "file": "glossary-enums.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/glossary-enums.md",
+      "title": "Enums reference",
+      "kind": "glossary",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 11064,
+      "service": "glossaryenums",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/glossary-chargingstation-connectors.md",
+      "family": "jsapi_2_0_0",
+      "file": "glossary-chargingstation-connectors.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/glossary-chargingstation-connectors.md",
+      "title": "Charging connectors",
+      "kind": "glossary",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1483,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/glossary-coordinate_system.md",
+      "family": "jsapi_2_0_0",
+      "file": "glossary-coordinate_system.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/glossary-coordinate_system.md",
+      "title": "Coordinate system",
+      "kind": "glossary",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2094,
+      "service": "glossarycoordinatesystem",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/glossary-google_encoded_polyline_algorithm_format.md",
+      "family": "jsapi_2_0_0",
+      "file": "glossary-google_encoded_polyline_algorithm_format.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/glossary-google_encoded_polyline_algorithm_format.md",
+      "title": "Encoded polyline",
+      "kind": "glossary",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3066,
+      "service": "glossarygoogleencodedpolylinealgorithmformat",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/changelog.md",
+      "family": "jsapi_2_0_0",
+      "file": "changelog.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/changelog.md",
+      "title": "What's new",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6314,
+      "service": "changelog",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/credits.md",
+      "family": "jsapi_2_0_0",
+      "file": "credits.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/credits.md",
+      "title": "Credits",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 16242,
+      "service": "credits",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_2_0_0/contact.md",
+      "family": "jsapi_2_0_0",
+      "file": "contact.md",
+      "path": "/bgis/documentation/jsapi_2_0_0/contact.md",
+      "title": "Contact",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 724,
+      "service": "contact",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/index.md",
+      "family": "jsapi_1_0_0",
+      "file": "index.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/index.md",
+      "title": "Overview",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2010,
+      "service": "index",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-authentication.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-authentication.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-authentication.md",
+      "title": "Authentication",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2560,
+      "service": "jsauthentication",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-leaflet.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-leaflet.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-leaflet.md",
+      "title": "Display map",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10613,
+      "service": "jsmappingdisplayleaflet",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-leaflet-styles.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-leaflet-styles.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-leaflet-styles.md",
+      "title": "Different graphic styles",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3605,
+      "service": "jsmappingdisplayleaflet",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-markers.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-markers.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-markers.md",
+      "title": "Display marker",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2366,
+      "service": "jsmappingdisplaymarkers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-polyline.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-polyline.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-polyline.md",
+      "title": "Display polyline",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3569,
+      "service": "jsmappingdisplaypolyline",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-popup.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-popup.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-popup.md",
+      "title": "Display popup",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2013,
+      "service": "jsmappingdisplaypopup",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-layers.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-layers.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-layers.md",
+      "title": "Display layers",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 6931,
+      "service": "jsmappingdisplaylayers",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-mapping-display-traffic.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-mapping-display-traffic.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-mapping-display-traffic.md",
+      "title": "Display traffic",
+      "kind": "other",
+      "role": "ROLE_TRAFFIC",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3228,
+      "service": "traffic",
+      "roleInferred": true
+    },
+    {
+      "id": "jsapi_1_0_0/js-geoautocomplete.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-geoautocomplete.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-geoautocomplete.md",
+      "title": "GeoAutocomplete",
+      "kind": "other",
+      "role": "ROLE_AUTOCOMPLETE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8202,
+      "service": "jsgeoautocomplete",
+      "roleInferred": true
+    },
+    {
+      "id": "jsapi_1_0_0/js-autocomplete.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-autocomplete.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-autocomplete.md",
+      "title": "Autocomplete",
+      "kind": "other",
+      "role": "ROLE_AUTOCOMPLETE",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 8807,
+      "service": "jsautocomplete",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-geocoding.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-geocoding.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-geocoding.md",
+      "title": "Geocoding",
+      "kind": "other",
+      "role": "ROLE_GEOCODING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 16693,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-reversegeocoding.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-reversegeocoding.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-reversegeocoding.md",
+      "title": "Reverse geocoding",
+      "kind": "other",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10847,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-routing.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-routing.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-routing.md",
+      "title": "Routing",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 38732,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "jsapi_1_0_0/js-routing-response.md",
+      "family": "jsapi_1_0_0",
+      "file": "js-routing-response.md",
+      "path": "/bgis/documentation/jsapi_1_0_0/js-routing-response.md",
+      "title": "Routing Response",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10462,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/index.md",
+      "family": "flutterapi_1_0_0",
+      "file": "index.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/index.md",
+      "title": "Overview",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2301,
+      "service": "index",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/authentification.md",
+      "family": "flutterapi_1_0_0",
+      "file": "authentification.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/authentification.md",
+      "title": "Authentication",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2683,
+      "service": "authentification",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/charging_stations.md",
+      "family": "flutterapi_1_0_0",
+      "file": "charging_stations.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/charging_stations.md",
+      "title": "Charging station",
+      "kind": "other",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3259,
+      "service": "chargingstation",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/autocomplete.md",
+      "family": "flutterapi_1_0_0",
+      "file": "autocomplete.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/autocomplete.md",
+      "title": "Autocomplete",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1850,
+      "service": "autocomplete",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/reverse_geocoding.md",
+      "family": "flutterapi_1_0_0",
+      "file": "reverse_geocoding.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/reverse_geocoding.md",
+      "title": "Reverse geocoding",
+      "kind": "other",
+      "role": "ROLE_REVERSEGEOCODING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1608,
+      "service": "geocoding",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/mapping.md",
+      "family": "flutterapi_1_0_0",
+      "file": "mapping.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/mapping.md",
+      "title": "Mapping",
+      "kind": "other",
+      "role": "ROLE_MAPPING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3318,
+      "service": "mapping",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/near_poi.md",
+      "family": "flutterapi_1_0_0",
+      "file": "near_poi.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/near_poi.md",
+      "title": "Near POI",
+      "kind": "other",
+      "role": "ROLE_NEARPOI",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1512,
+      "service": "nearpoi",
+      "roleInferred": true
+    },
+    {
+      "id": "flutterapi_1_0_0/ev_smart_routing.md",
+      "family": "flutterapi_1_0_0",
+      "file": "ev_smart_routing.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/ev_smart_routing.md",
+      "title": "EV smart routing",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 1693,
+      "service": "evsmartrouting",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/routing.md",
+      "family": "flutterapi_1_0_0",
+      "file": "routing.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/routing.md",
+      "title": "Routing",
+      "kind": "other",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 5203,
+      "service": "routing",
+      "roleInferred": false
+    },
+    {
+      "id": "flutterapi_1_0_0/vehicle.md",
+      "family": "flutterapi_1_0_0",
+      "file": "vehicle.md",
+      "path": "/bgis/documentation/flutterapi_1_0_0/vehicle.md",
+      "title": "Vehicle",
+      "kind": "other",
+      "role": "ROLE_EVSMARTROUTING",
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 10908,
+      "service": "vehicle",
+      "roleInferred": true
+    },
+    {
+      "id": "general/glossary-coordinate_system.md",
+      "family": "general",
+      "file": "glossary-coordinate_system.md",
+      "path": "/bgis/documentation/glossary-coordinate_system.md",
+      "title": "Coordinate system",
+      "kind": "glossary",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2134,
+      "service": "glossarycoordinatesystem",
+      "roleInferred": false
+    },
+    {
+      "id": "general/glossary-google_encoded_polyline_algorithm_format.md",
+      "family": "general",
+      "file": "glossary-google_encoded_polyline_algorithm_format.md",
+      "path": "/bgis/documentation/glossary-google_encoded_polyline_algorithm_format.md",
+      "title": "Encoded polylinealgorithm format",
+      "kind": "glossary",
+      "role": "ROLE_ROUTING",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 3353,
+      "service": "glossarygoogleencodedpolylinealgorithmformat",
+      "roleInferred": true
+    },
+    {
+      "id": "general/sdk-jsiv-classids.md",
+      "family": "general",
+      "file": "sdk-jsiv-classids.md",
+      "path": "/bgis/documentation/sdk-jsiv-classids.md",
+      "title": "Class ID list",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 19307,
+      "service": "sdkjsivclassids",
+      "roleInferred": false
+    },
+    {
+      "id": "general/glossary-chargingstation-connectors.md",
+      "family": "general",
+      "file": "glossary-chargingstation-connectors.md",
+      "path": "/bgis/documentation/glossary-chargingstation-connectors.md",
+      "title": "EV connector types",
+      "kind": "glossary",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 307,
+      "service": "chargingstation",
+      "roleInferred": true
+    },
+    {
+      "id": "general/release_notes.md",
+      "family": "general",
+      "file": "release_notes.md",
+      "path": "/bgis/documentation/release_notes.md",
+      "title": "Release notes",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 122852,
+      "service": "releasenotes",
+      "roleInferred": false
+    },
+    {
+      "id": "general/credits.md",
+      "family": "general",
+      "file": "credits.md",
+      "path": "/bgis/documentation/credits.md",
+      "title": "Credits",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 2866,
+      "service": "credits",
+      "roleInferred": false
+    },
+    {
+      "id": "general/contact.md",
+      "family": "general",
+      "file": "contact.md",
+      "path": "/bgis/documentation/contact.md",
+      "title": "Need Help ?",
+      "kind": "other",
+      "role": null,
+      "isLatest": false,
+      "isRest": false,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 320,
+      "service": "contact",
+      "roleInferred": false
+    },
+    {
+      "id": "general/chargingstation-filter-v1.md",
+      "family": "general",
+      "file": "chargingstation-filter-v1.md",
+      "path": "/bgis/documentation/chargingstation-filter-v1.md",
+      "title": "Charging station filter v1",
+      "kind": "other",
+      "role": "ROLE_CHARGINGSTATION",
+      "isLatest": false,
+      "isRest": true,
+      "endpoint": null,
+      "methods": [],
+      "classNames": [],
+      "bytes": 4596,
+      "service": "chargingstation",
+      "roleInferred": true
+    }
+  ],
+  "schemas": [
+    {
+      "className": "com.benomad.bgis.be.db.scheme.vehicle.MotorType",
+      "simpleName": "MotorType",
+      "referencedBy": [
+        "rest_1_0_0/vehicle-getmotortypes-service-v1_0_0.md",
+        "rest_1_1_0/vehicle-getmotortypes-service-v1_1_0.md"
+      ],
+      "bytes": 248
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.ServerVersionResponse",
+      "simpleName": "ServerVersionResponse",
+      "referencedBy": [
+        "rest_1_0_0/serverversion-service.md"
+      ],
+      "bytes": 1721
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.autocomplete.AutocompleteGeocodingRequest",
+      "simpleName": "AutocompleteGeocodingRequest",
+      "referencedBy": [
+        "rest_1_0_0/autocompletegeocoding-service.md"
+      ],
+      "bytes": 3852
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.autocomplete.AutocompleteGeocodingResponse",
+      "simpleName": "AutocompleteGeocodingResponse",
+      "referencedBy": [
+        "rest_1_0_0/autocompletegeocoding-service.md"
+      ],
+      "bytes": 5147
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingCost.ChargingCostRequest",
+      "simpleName": "ChargingCostRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingcost-service.md"
+      ],
+      "bytes": 6430
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingCost.ChargingCostResponse",
+      "simpleName": "ChargingCostResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingcost-service.md"
+      ],
+      "bytes": 1200
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationChargePassResponse",
+      "simpleName": "ChargingStationChargePassResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-chargepass-service.md"
+      ],
+      "bytes": 1569
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationSearchRequest",
+      "simpleName": "ChargingStationSearchRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-search-service.md"
+      ],
+      "bytes": 5870
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationSearchResponse",
+      "simpleName": "ChargingStationSearchResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-search-service.md"
+      ],
+      "bytes": 23271
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationTariffsRequest",
+      "simpleName": "ChargingStationTariffsRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-tariffs-service.md"
+      ],
+      "bytes": 1620
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationTariffsResponse",
+      "simpleName": "ChargingStationTariffsResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-tariffs-service.md"
+      ],
+      "bytes": 8157
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ConnectorTypeResponse",
+      "simpleName": "ConnectorTypeResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-connector-service.md"
+      ],
+      "bytes": 1492
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingTime.ChargingTimeRequest",
+      "simpleName": "ChargingTimeRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingtime-service.md"
+      ],
+      "bytes": 4174
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingTime.ChargingTimeResponse",
+      "simpleName": "ChargingTimeResponse",
+      "referencedBy": [
+        "rest_1_0_0/chargingtime-service.md"
+      ],
+      "bytes": 590
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyCode",
+      "simpleName": "CurrencyCode",
+      "referencedBy": [
+        "rest_1_0_0/currency-codes-service.md"
+      ],
+      "bytes": 302
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyConvertRequest",
+      "simpleName": "CurrencyConvertRequest",
+      "referencedBy": [
+        "rest_1_0_0/currency-convert-service.md"
+      ],
+      "bytes": 444
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyRateResponse",
+      "simpleName": "CurrencyRateResponse",
+      "referencedBy": [
+        "rest_1_0_0/currency-rate-service.md"
+      ],
+      "bytes": 727
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.currency.CurrencyRatesResponse",
+      "simpleName": "CurrencyRatesResponse",
+      "referencedBy": [
+        "rest_1_0_0/currency-rates-service.md"
+      ],
+      "bytes": 742
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadDescription",
+      "simpleName": "DownloadDescription",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-download-evpoi-service.md",
+        "rest_1_0_0/download-service.md"
+      ],
+      "bytes": 1521
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadFileListRequest",
+      "simpleName": "DownloadFileListRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-download-evpoi-service.md",
+        "rest_1_0_0/download-service.md"
+      ],
+      "bytes": 786
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.download.DownloadMultipleFilesRequest",
+      "simpleName": "DownloadMultipleFilesRequest",
+      "referencedBy": [
+        "rest_1_0_0/chargingstation-download-evpoi-service.md",
+        "rest_1_0_0/download-service.md"
+      ],
+      "bytes": 384
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evReachableArea.EvReachableAreaRequest",
+      "simpleName": "EvReachableAreaRequest",
+      "referencedBy": [
+        "rest_1_0_0/evreachablearea-service.md"
+      ],
+      "bytes": 2470
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evReachableArea.EvReachableAreaResponse",
+      "simpleName": "EvReachableAreaResponse",
+      "referencedBy": [
+        "rest_1_0_0/evreachablearea-service.md"
+      ],
+      "bytes": 1722
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.request.EvSmartRoutingRequest",
+      "simpleName": "EvSmartRoutingRequest",
+      "referencedBy": [
+        "rest_1_0_0/evsmartrouting-service-v1_0_0.md"
+      ],
+      "bytes": 14954
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.response.EvSmartRoutingResponse",
+      "simpleName": "EvSmartRoutingResponse",
+      "referencedBy": [
+        "rest_1_0_0/evsmartrouting-service-v1_0_0.md"
+      ],
+      "bytes": 36817
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.GeoServerInfoRequest",
+      "simpleName": "GeoServerInfoRequest",
+      "referencedBy": [
+        "rest_1_0_0/geoserverinfo-service.md"
+      ],
+      "bytes": 697
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.GeoServerInfoResponse",
+      "simpleName": "GeoServerInfoResponse",
+      "referencedBy": [
+        "rest_1_0_0/geoserverinfo-service.md"
+      ],
+      "bytes": 3041
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.GeocodingForBatchRequest",
+      "simpleName": "GeocodingForBatchRequest",
+      "referencedBy": [
+        "rest_1_0_0/geocodingbatch-service.md"
+      ],
+      "bytes": 3829
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.GeocodingForBatchResponse",
+      "simpleName": "GeocodingForBatchResponse",
+      "referencedBy": [
+        "rest_1_0_0/geocodingbatch-service.md"
+      ],
+      "bytes": 21559
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.RevGeocodingBatchRequest",
+      "simpleName": "RevGeocodingBatchRequest",
+      "referencedBy": [
+        "rest_1_0_0/reversegeocodingbatch-service.md"
+      ],
+      "bytes": 3670
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingForBatch.RevGeocodingBatchResponse",
+      "simpleName": "RevGeocodingBatchResponse",
+      "referencedBy": [
+        "rest_1_0_0/reversegeocodingbatch-service.md"
+      ],
+      "bytes": 21566
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingNaturalRequest",
+      "simpleName": "GeocodingNaturalRequest",
+      "referencedBy": [
+        "rest_1_0_0/natgeocoding-service.md"
+      ],
+      "bytes": 2681
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingRequest",
+      "simpleName": "GeocodingRequest",
+      "referencedBy": [
+        "rest_1_0_0/geocoding-service.md"
+      ],
+      "bytes": 3827
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeocodingResponse",
+      "simpleName": "GeocodingResponse",
+      "referencedBy": [
+        "rest_1_0_0/geocoding-service.md",
+        "rest_1_0_0/natgeocoding-service.md"
+      ],
+      "bytes": 21363
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ReverseGeocodingRequest",
+      "simpleName": "ReverseGeocodingRequest",
+      "referencedBy": [
+        "rest_1_0_0/reversegeocoding-service.md"
+      ],
+      "bytes": 3664
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ReverseGeocodingResponse",
+      "simpleName": "ReverseGeocodingResponse",
+      "referencedBy": [
+        "rest_1_0_0/reversegeocoding-service.md"
+      ],
+      "bytes": 21363
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingRequest",
+      "simpleName": "GeofencingRequest",
+      "referencedBy": [
+        "rest_1_0_0/geofencing-service.md"
+      ],
+      "bytes": 2950
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingResponse",
+      "simpleName": "GeofencingResponse",
+      "referencedBy": [
+        "rest_1_0_0/geofencing-service.md"
+      ],
+      "bytes": 2407
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.LandFeatureRequest",
+      "simpleName": "LandFeatureRequest",
+      "referencedBy": [
+        "rest_1_0_0/feature-service.md"
+      ],
+      "bytes": 5826
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.LandFeatureResponse",
+      "simpleName": "LandFeatureResponse",
+      "referencedBy": [
+        "rest_1_0_0/feature-service.md"
+      ],
+      "bytes": 39533
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.nearPoi.NearPoiRequest",
+      "simpleName": "NearPoiRequest",
+      "referencedBy": [
+        "rest_1_0_0/nearpoi-service.md"
+      ],
+      "bytes": 2519
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.nearPoi.NearPoiResponse",
+      "simpleName": "NearPoiResponse",
+      "referencedBy": [
+        "rest_1_0_0/nearpoi-service.md"
+      ],
+      "bytes": 2144
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.openLrParser.OpenLrParserRequest",
+      "simpleName": "OpenLrParserRequest",
+      "referencedBy": [
+        "rest_1_0_0/openlrparser-service.md"
+      ],
+      "bytes": 825
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.openLrParser.OpenLrParserResponse",
+      "simpleName": "OpenLrParserResponse",
+      "referencedBy": [
+        "rest_1_0_0/openlrparser-service.md"
+      ],
+      "bytes": 1571
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.quotas.QuotasResponse",
+      "simpleName": "QuotasResponse",
+      "referencedBy": [
+        "rest_1_0_0/quotas-service-v1_0_0.md"
+      ],
+      "bytes": 1383
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.roadsExtractor.RoadsExtractorRequest",
+      "simpleName": "RoadsExtractorRequest",
+      "referencedBy": [
+        "rest_1_0_0/roadsextractor-service.md"
+      ],
+      "bytes": 2383
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.roadsExtractor.RoadsExtractorResponse",
+      "simpleName": "RoadsExtractorResponse",
+      "referencedBy": [
+        "rest_1_0_0/roadsextractor-service.md"
+      ],
+      "bytes": 2275
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routeHorizon.RouteHorizonRequest",
+      "simpleName": "RouteHorizonRequest",
+      "referencedBy": [
+        "rest_1_0_0/routehorizon-service.md"
+      ],
+      "bytes": 18101
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routeHorizon.RouteHorizonResponse",
+      "simpleName": "RouteHorizonResponse",
+      "referencedBy": [
+        "rest_1_0_0/routehorizon-service.md"
+      ],
+      "bytes": 4233
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingRequest",
+      "simpleName": "RoutingRequest",
+      "referencedBy": [
+        "rest_1_0_0/routing-service.md"
+      ],
+      "bytes": 46592
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingResponse",
+      "simpleName": "RoutingResponse",
+      "referencedBy": [
+        "rest_1_0_0/routing-service.md",
+        "rest_1_0_0/traceroute-service.md"
+      ],
+      "bytes": 89350
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TraceRouteRequest",
+      "simpleName": "TraceRouteRequest",
+      "referencedBy": [
+        "rest_1_0_0/traceroute-service.md"
+      ],
+      "bytes": 31711
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.traffic.TrafficRequest",
+      "simpleName": "TrafficRequest",
+      "referencedBy": [
+        "rest_1_0_0/traffic-service.md"
+      ],
+      "bytes": 2349
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.traffic.TrafficResponse",
+      "simpleName": "TrafficResponse",
+      "referencedBy": [
+        "rest_1_0_0/traffic-service.md"
+      ],
+      "bytes": 4861
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.PictureViewInfo",
+      "simpleName": "PictureViewInfo",
+      "referencedBy": [
+        "rest_1_0_0/vehiclepicture-getviews-service-v1_0_0.md"
+      ],
+      "bytes": 484
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleBrandsResponse",
+      "simpleName": "VehicleBrandsResponse",
+      "referencedBy": [
+        "rest_1_0_0/evsmartrouting-vehiclebrands-list-service.md",
+        "rest_1_0_0/vehicle-getbrands-service-v1_0_0.md"
+      ],
+      "bytes": 574
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleDatasheet",
+      "simpleName": "VehicleDatasheet",
+      "referencedBy": [
+        "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md"
+      ],
+      "bytes": 5219
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleInfo",
+      "simpleName": "VehicleInfo",
+      "referencedBy": [
+        "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md"
+      ],
+      "bytes": 1767
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleModelsResponse",
+      "simpleName": "VehicleModelsResponse",
+      "referencedBy": [
+        "rest_1_0_0/evsmartrouting-vehiclemodels-list-service.md"
+      ],
+      "bytes": 2101
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehiclePictureDescription",
+      "simpleName": "VehiclePictureDescription",
+      "referencedBy": [
+        "rest_1_0_0/vehiclepicture-getall-service-v1_0_0.md"
+      ],
+      "bytes": 1086
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleRequest",
+      "simpleName": "VehicleRequest",
+      "referencedBy": [
+        "rest_1_0_0/evsmartrouting-vehiclemodels-list-service.md",
+        "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md"
+      ],
+      "bytes": 1844
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.weather.WeatherRequest",
+      "simpleName": "WeatherRequest",
+      "referencedBy": [
+        "rest_1_0_0/weather-service.md"
+      ],
+      "bytes": 1893
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.weather.WeatherResponse",
+      "simpleName": "WeatherResponse",
+      "referencedBy": [
+        "rest_1_0_0/weather-service.md"
+      ],
+      "bytes": 7422
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.EvBrandLogoDescription",
+      "simpleName": "EvBrandLogoDescription",
+      "referencedBy": [
+        "rest_1_1_0/vehiclepicture-getbrandlogo-service-v1_1_0.md"
+      ],
+      "bytes": 654
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleBrandsResponse",
+      "simpleName": "VehicleBrandsResponse",
+      "referencedBy": [
+        "rest_1_1_0/vehicle-getbrands-service-v1_1_0.md"
+      ],
+      "bytes": 574
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleDatasheet",
+      "simpleName": "VehicleDatasheet",
+      "referencedBy": [
+        "rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md"
+      ],
+      "bytes": 3796
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleInfo",
+      "simpleName": "VehicleInfo",
+      "referencedBy": [
+        "rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md"
+      ],
+      "bytes": 4685
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.VehicleRequest",
+      "simpleName": "VehicleRequest",
+      "referencedBy": [
+        "rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md"
+      ],
+      "bytes": 1986
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.EvSmartRoutingRequest",
+      "simpleName": "EvSmartRoutingRequest",
+      "referencedBy": [
+        "rest_2_0_0/evsmartrouting-service-v2_0_0.md"
+      ],
+      "bytes": 28295
+    },
+    {
+      "className": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.EvSmartRoutingResponse",
+      "simpleName": "EvSmartRoutingResponse",
+      "referencedBy": [
+        "rest_2_0_0/evsmartrouting-service-v2_0_0.md"
+      ],
+      "bytes": 57222
+    }
+  ]
+}

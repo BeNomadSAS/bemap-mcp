@@ -1,0 +1,35 @@
+{
+  "$comment": "Fields present in newerRef and absent from olderRef, derived from @JsonProperty in the backend model classes. A derivation from source, not a measurement: a declared field can still be refused by a hand-written validation, so it narrows what to confirm with bemap_try_request rather than replacing it.",
+  "generatedAt": "2026-09-23T11:14:17.462Z",
+  "olderRef": "4.0.3",
+  "newerRef": "4.1.0",
+  "introduced": {
+    "ChargingCostEstimation": [
+      "chargingCost",
+      "chargingTime",
+      "energyUsed"
+    ],
+    "RoutingCrossPenaltiesCoef": [
+      "factor",
+      "type"
+    ],
+    "RoutingRequest": [
+      "startUTurnThreshold"
+    ],
+    "LevelVehicleInfoRequest": [
+      "batteryCapacity",
+      "batteryName",
+      "brandId",
+      "chargerPowerAC",
+      "chargerPowerDC",
+      "level",
+      "motorType",
+      "name",
+      "variant",
+      "year"
+    ],
+    "ConditionFront": [
+      "startUTurnThreshold"
+    ]
+  }
+}
