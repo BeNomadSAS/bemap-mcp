@@ -81,7 +81,9 @@ export function splitParts(text, size) {
     }
     current.push(line);
     length += line.length + 1;
-    const fence = line.match(/^\s*(`{3,}|~{3,})(.*)$/);
+    /* A line that ends in \r — a CRLF checkout — is a fence too: `$` did not
+       match before the \r, and a Windows clone served parts cut inside code. */
+    const fence = line.match(/^\s*(`{3,}|~{3,})(.*?)\r?$/);
     if (fence && !open) open = { marker: fence[1], line };
     else if (fence && open && fence[1].startsWith(open.marker[0]) && fence[1].length >= open.marker.length && !fence[2].trim()) open = null;
   }

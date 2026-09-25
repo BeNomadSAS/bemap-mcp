@@ -1,10 +1,10 @@
 {
   "format": 2,
-  "generatedAt": "2026-09-25T08:52:04.212Z",
-  "generator": "bemap-mcp 0.0.1-dev.82",
+  "generatedAt": "2026-09-25T14:14:09.780Z",
+  "generator": "bemap-mcp 0.0.1-dev.97",
   "build": {
-    "number": 82,
-    "commit": "af21825b",
+    "number": 97,
+    "commit": "b4d08e4a",
     "uncommitted": false
   },
   "specification": {
@@ -28,12 +28,12 @@
   },
   "enrichment": {
     "enumSites": 153,
-    "enumsFromSource": 136,
+    "enumsFromSource": 137,
     "enumsFromSpecification": 0,
     "enumValues": 1706,
-    "enumValuesDescribed": 1458,
-    "ambiguousEnums": 1,
-    "operationsWithRole": 43
+    "enumValuesDescribed": 1466,
+    "ambiguousEnums": 0,
+    "operationsWithRole": 44
   },
   "guides": {
     "sets": [
@@ -52,7 +52,7 @@
   "findings": {
     "undescribedEnums": 16,
     "partialEnums": 4,
-    "ambiguousEnums": 1,
+    "ambiguousEnums": 0,
     "enumDisagreements": 0,
     "noDescription": 7,
     "numberedIds": 30,
@@ -62,12 +62,12 @@
     "undocumentedProperties": 86,
     "untypedProperties": 1,
     "noRequired": 10,
-    "rolesMissing": 39,
+    "rolesMissing": 38,
     "tagIssues": 0,
     "hidden": 2,
-    "aliases": 26,
-    "byteNumbers": 3,
-    "total": 243
+    "aliases": 28,
+    "byteNumbers": 5,
+    "total": 245
   },
   "maps": {
     "sources": [
@@ -153,15 +153,39 @@
         "name": "BeMap WMS",
         "summary": "BeNomad's map as images from BeMap itself — for anything that shows a WMS layer or a plain image",
         "host": "bemap",
-        "detect": "/wms\\?|/bgis/wms|wmsOptions|tileLayer\\.wms|TileWMS|SERVICE[\"']?\\s*[:=]\\s*[\"']?WMS",
+        "detect": "/wms\\?|/bgis/wms|wmsOptions|tileLayer\\.wms|TileWMS|SERVICE[\"']?\\s*[:=]\\s*[\"']?WMS|bemap\\.LeafletMap|bemap\\.OpenLayersMap",
         "guides": [
           {
             "id": "examples-mapping-display-ol4-styles.md",
             "blocks": 11
           },
           {
+            "id": "jsapi_1_0_0/js-mapping-display-leaflet-styles.md",
+            "blocks": 7
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-leaflet.md",
+            "blocks": 4
+          },
+          {
             "id": "tutorials-mapping-wms-1_3_0-satellite.md",
             "blocks": 4
+          },
+          {
+            "id": "jsapi_2_0_0/js-map-leaflet.md",
+            "blocks": 3
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-traffic.md",
+            "blocks": 2
+          },
+          {
+            "id": "jsapi_1_0_0/js-routing.md",
+            "blocks": 2
+          },
+          {
+            "id": "jsapi_2_0_0/js-map-attribution.md",
+            "blocks": 2
           },
           {
             "id": "mapping-wms-1-1-1-getcapabilities.md",
@@ -170,6 +194,10 @@
           {
             "id": "mapping-wms-1-3-0-getcapabilities.md",
             "blocks": 2
+          },
+          {
+            "id": "examples-mapping-display-bemap-api.md",
+            "blocks": 1
           },
           {
             "id": "examples-mapping-display-leaflet-raw.md",
@@ -185,6 +213,54 @@
           },
           {
             "id": "flutterapi_1_0_0/mapping.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-autocomplete.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-geocoding.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-layers.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-markers.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-polyline.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-mapping-display-popup.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_1_0_0/js-reversegeocoding.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_2_0_0/install.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_2_0_0/js-map-engines.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_2_0_0/js-map-openlayers.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_2_0_0/migration-wms-to-tiles.md",
+            "blocks": 1
+          },
+          {
+            "id": "jsapi_2_0_0/quick-start.md",
             "blocks": 1
           },
           {
@@ -220,9 +296,87 @@
       }
     ]
   },
+  "filterFields": {
+    "com.benomad.bgis.be.model.chargingStation.Pool": [
+      "accessibility",
+      "addressComplement",
+      "availabilityStatus",
+      "availabilityUntil",
+      "brand",
+      "comment",
+      "countryCode",
+      "customerId",
+      "dbId",
+      "floorNumber",
+      "id",
+      "maxNominalPower",
+      "name",
+      "numberOfChargingPoint",
+      "numberOfParkingSpace",
+      "open24x7",
+      "operatorId",
+      "phoneNumber",
+      "providerName",
+      "reliabilityScore",
+      "siteCategory",
+      "siteType",
+      "sourceProvider",
+      "tags",
+      "timeZone",
+      "updateDate"
+    ],
+    "com.benomad.bgis.be.model.chargingStation.Station": [
+      "authenticationInformation",
+      "authenticationModes",
+      "availabilityStatus",
+      "bookable",
+      "floorNumber",
+      "id",
+      "operatorId",
+      "paymentInformation",
+      "paymentModes",
+      "tags"
+    ],
+    "com.benomad.bgis.be.model.chargingStation.ChargingPoint": [
+      "ampere",
+      "availabilityStatus",
+      "availabilityUntil",
+      "busyStatus",
+      "chargingSpeed",
+      "currentType",
+      "id",
+      "nominalPower",
+      "operatorId",
+      "remoteCharging",
+      "tags",
+      "usabilityStatus",
+      "voltage"
+    ],
+    "com.benomad.bgis.be.model.chargingStation.SummaryParkingVehicleAccess": [
+      "dangerousGoodsAllowed",
+      "maxHeight",
+      "maxLength",
+      "maxWeight",
+      "maxWidth",
+      "overnightParkingAllowed",
+      "parkingOrientation",
+      "parkingOrientations",
+      "transportTypes"
+    ],
+    "com.benomad.bgis.be.model.chargingStation.ParkingVehicleAccess": [
+      "dangerousGoodsAllowed",
+      "maxHeight",
+      "maxLength",
+      "maxWeight",
+      "maxWidth",
+      "overnightParkingAllowed",
+      "parkingOrientation",
+      "transportTypes"
+    ]
+  },
   "environmentProfile": {
     "environment": "prod",
-    "capturedAt": "2026-09-25T08:52:03.962Z",
+    "capturedAt": "2026-09-25T14:14:09.606Z",
     "cartoRelease": "Here Maps 2026.2",
     "geoservers": [
       "addok",

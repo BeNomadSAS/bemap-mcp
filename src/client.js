@@ -1,9 +1,15 @@
 /* ======================================================================
  * BEMAP HTTP CLIENT
  *
- * Authenticated access to the BeMap backend. The documentation site and the
- * REST services both sit behind a form login at `POST {base}/bgis/login`
- * which returns a session cookie — there is no bearer token here.
+ * Authenticated access to the BeMap backend. Every live call carries HTTP
+ * Basic, which BeMap reads on each request: measured on prod, 25 September
+ * 2026, the REST services, geoServerInfo, the entitlements and WMS all answer
+ * a Basic request that holds no session. The form login at
+ * `POST {base}/bgis/login`, which returns a session cookie, serves only a
+ * request that carries no Authorization header. It used to run before every
+ * call, so an installation without it — BeMap's own "Public" package
+ * answers `404` there — refused every call as "rejected credentials", and a
+ * wrong key never reached the `401` that says so. There is no bearer token.
  *
  * Credentials come from the environment only (BEMAP_USER / BEMAP_KEY); they
  * are never read from, or written to, any file in this repository.
@@ -65,8 +71,34 @@ export function setting(name) {
   return /^\$\{[^}]*\}$/.test(value) ? '' : value;
 }
 
-/** An origin as written by a person: no trailing slash. */
-const origin = (url) => url.replace(/\/+$/, '');
+/**
+ * A BeMap address as a person writes it, reduced to the origin the client
+ * adds `/bgis/…` to: the scheme and host as a URL parser reads them, any path
+ * prefix of a reverse proxy kept, and a trailing `/bgis` or `/bgis/service`
+ * dropped.
+ *
+ * BeMap's own pages write an installation's address with `/bgis/`, and the
+ * login then went to `/bgis/bgis/login`, which BeMap answers with its login
+ * page: every call read as a wrong key. A value the parser would repair —
+ * `http:/host`, `http:\\host` — is written as it will be sent, so the
+ * plain-HTTP guard sees what `fetch` sends.
+ *
+ * @param {string} url
+ * @returns {string} The origin and path prefix, no trailing slash; the text
+ *   itself, trimmed, when it is not an http(s) address.
+ */
+function origin(url) {
+  const text = String(url).trim();
+  let parsed;
+  try {
+    parsed = new URL(text);
+  } catch {
+    return text.replace(/\/+$/, '');
+  }
+  if (!/^https?:$/.test(parsed.protocol)) return text.replace(/\/+$/, '');
+  const prefix = parsed.pathname.replace(/\/+$/, '').replace(/\/bgis(?:\/service)?$/i, '').replace(/\/+$/, '');
+  return `${parsed.protocol}//${parsed.host}${prefix}`;
+}
 
 /**
  * Whether an origin is this machine.
@@ -84,13 +116,37 @@ export function isLoopback(url) {
 
 /**
  * Whether an account sent to an origin would travel unencrypted: plain HTTP
- * to another machine than this one.
+ * to another machine than this one — as a URL parser reads the address, not
+ * as it is spelt: `http:/host` and `http:\\host` are plain HTTP to `host`, and
+ * a pattern on the text let them through.
  *
  * @param {string} url
  * @returns {boolean}
  */
 export function unencrypted(url) {
-  return /^http:\/\//i.test(String(url)) && !isLoopback(url);
+  try {
+    const parsed = new URL(String(url).trim());
+    return parsed.protocol === 'http:' && !isLoopback(parsed.href);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Whether a host, or the host of a URL, is one of BeNomad's Tiles Workers.
+ *
+ * @param {string} hostOrUrl - `mptiles-api.benomad.net`, or a URL on it.
+ * @returns {boolean}
+ */
+export function isTilesHost(hostOrUrl) {
+  const text = String(hostOrUrl ?? '').trim();
+  let host = text;
+  try {
+    host = new URL(/^[a-z][a-z0-9+.-]*:/i.test(text) ? text : `https://${text}`).host;
+  } catch {
+    return false;
+  }
+  return Object.values(TILES).some((tiles) => new URL(tiles).host === host.toLowerCase());
 }
 
 /** The most of a response body read into memory, in bytes: past it the body is cut and says so. */
@@ -132,6 +188,12 @@ export function resolveBaseUrl(env) {
       throw new Error(
         '"own" is a BeMap installation of your own, and none is configured: set BEMAP_BASE_URL ' +
           "in this MCP server's configuration."
+      );
+    }
+    if (!/^https?:\/\//.test(origin(own))) {
+      throw new Error(
+        `BEMAP_BASE_URL, in this server's settings, is "${own.slice(0, 120)}", which is not a web address: ` +
+          'give its address before /bgis, such as https://bemap.example.com.'
       );
     }
     return origin(own);
@@ -199,7 +261,7 @@ export function environmentName(env) {
 export function environmentHosts() {
   const hosts = Object.entries(ENVIRONMENTS).map(([env, bemap]) => ({ env, bemap, tiles: TILES[env] ?? null }));
   const own = setting('BEMAP_BASE_URL');
-  if (own) hosts.push({ env: OWN, bemap: origin(own), tiles: null });
+  if (own && /^https?:\/\//.test(origin(own))) hosts.push({ env: OWN, bemap: origin(own), tiles: null });
   return hosts;
 }
 
@@ -228,44 +290,83 @@ export function resolveTilesUrl(env) {
  * is one this server knows — a BeNomad environment's or the configured `own`.
  *
  * @param {string} [target] - Environment name, or a BeNomad Tiles origin.
- * @param {{user?: string, key?: string, timeoutMs?: number}} [options]
+ * @param {{user?: string, key?: string, timeoutMs?: number, signal?: AbortSignal}} [options]
+ *   `signal` cancels it, as the tool call's client does.
  * @returns {Promise<{host: string, username: string|null, defaultMap: string|null,
  *   defaultStyle: string|null, aliases: Record<string, string>, styles: string[]}>}
- * @throws {Error} naming the status and the Worker's own message.
+ * @throws {Error} naming the status and the Worker's own message — `status` and
+ *   `workerError` carry them, so a caller explains the cause the Worker gave.
  */
 export async function discoverTiles(target, options = {}) {
   const host = /^https?:\/\//.test(target ?? '') ? origin(target) : resolveTilesUrl(target);
   if (!host) throw new Error(`No BeNomad Tiles host is paired with the environment "${environmentName(target)}".`);
   /* The account goes to BeNomad's Tiles hosts, and to a stand-in on this machine, and nowhere else — whoever calls this. */
   if (!Object.values(TILES).includes(host) && !isLoopback(host)) throw new Error(`${host} is not a BeNomad Tiles host: the account is not sent there.`);
-  const { user = setting('BEMAP_USER'), key = setting('BEMAP_KEY'), timeoutMs = 30000 } = options;
-  const login = await fetch(`${host}/api/login`, {
-    method: 'POST',
-    redirect: 'manual',
-    headers: { authorization: `Basic ${Buffer.from(`${user}:${key}`).toString('base64')}` },
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  const session = await login.json().catch(() => ({}));
-  if (!login.ok || !session.token) {
-    throw new Error(`${host}/api/login answered ${login.status}${session.error ? ` — ${session.error}` : ''}`);
-  }
-  const read = async (path) => {
-    const response = await fetch(`${host}${path}`, {
-      headers: { 'x-session-token': session.token },
-      signal: AbortSignal.timeout(timeoutMs),
+  const { user = setting('BEMAP_USER'), key = setting('BEMAP_KEY'), timeoutMs = 30000, signal } = options;
+  /* One signal for the timeout and the caller's cancel: AbortSignal.any is not in Node 18. */
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const cancel = () => controller.abort();
+  if (signal?.aborted) controller.abort();
+  else signal?.addEventListener('abort', cancel, { once: true });
+  const call = async (url, init) => {
+    try {
+      return await fetch(url, { ...init, redirect: 'manual', signal: controller.signal });
+    } catch (error) {
+      if (error?.name === 'AbortError') throw new Error(`${url} ${signal?.aborted ? 'was cancelled' : `did not answer within ${timeoutMs} ms`}.`);
+      throw new Error(`${url} could not be reached: ${failureText(error)}`);
+    }
+  };
+  try {
+    const login = await call(`${host}/api/login`, {
+      method: 'POST',
+      headers: { authorization: `Basic ${Buffer.from(`${user}:${key}`).toString('base64')}` },
     });
-    if (!response.ok) throw new Error(`${host}${path} answered ${response.status}`);
-    return response.json();
-  };
-  const [maps, styles] = await Promise.all([read('/api/maps'), read('/api/styles')]);
-  return {
-    host,
-    username: session.username ?? null,
-    defaultMap: maps.default ?? null,
-    defaultStyle: maps.defaultStyle ?? styles.defaultStyle ?? null,
-    aliases: maps.aliases ?? {},
-    styles: styles.styles ?? [],
-  };
+    const session = await login.json().catch(() => ({}));
+    if (!login.ok || !session.token) {
+      throw Object.assign(new Error(`${host}/api/login answered ${login.status}${session.error ? ` — ${session.error}` : ''}`), {
+        status: login.status,
+        workerError: session.error ?? null,
+      });
+    }
+    /* A redirect is not followed with the session token: it would carry it to
+       whatever origin the answer names. */
+    const read = async (path) => {
+      const response = await call(`${host}${path}`, { headers: { 'x-session-token': session.token } });
+      if (!response.ok) throw Object.assign(new Error(`${host}${path} answered ${response.status}`), { status: response.status });
+      return response.json();
+    };
+    const [maps, styles] = await Promise.all([read('/api/maps'), read('/api/styles')]);
+    return {
+      host,
+      username: session.username ?? null,
+      defaultMap: maps.default ?? null,
+      defaultStyle: maps.defaultStyle ?? styles.defaultStyle ?? null,
+      aliases: maps.aliases ?? {},
+      styles: styles.styles ?? [],
+    };
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', cancel);
+  }
+}
+
+/**
+ * What went wrong with a request that got no answer, cause included.
+ *
+ * Node's fetch says only "fetch failed" and keeps the reason in `cause`: a
+ * name that does not resolve, a refused connection and a certificate signed
+ * by a private CA all read the same without it.
+ *
+ * @param {Error} error
+ * @returns {string} e.g. `fetch failed (ENOTFOUND: getaddrinfo ENOTFOUND bemap.example.invalid)`.
+ */
+function failureText(error) {
+  const cause = error?.cause;
+  if (!cause) return error?.message ?? String(error);
+  const code = cause.code ?? cause.name;
+  const detail = cause.message && cause.message !== code ? `: ${cause.message}` : '';
+  return `${error.message} (${code}${detail})`;
 }
 
 /**
@@ -310,6 +411,45 @@ export class BemapAuthError extends Error {
   }
 }
 
+/** How long a live request may run, in seconds: an EV smart routing takes a minute on a long trip. */
+const DEFAULT_TIMEOUT_SECONDS = 120;
+
+/** The longest timer Node keeps, in ms: a longer one fires after 1 ms. */
+const MAX_TIMER_MS = 2 ** 31 - 1;
+
+/**
+ * The per-request timeout: BEMAP_TIMEOUT_SECONDS, or two minutes — never
+ * more than Node's longest timer, past which every call timed out at once.
+ *
+ * It was 60 seconds, while the skill documents EV calculations of 56 to 66
+ * seconds: a correct request was abandoned just before it answered.
+ *
+ * @returns {number} Milliseconds.
+ */
+export function requestTimeoutMs() {
+  const seconds = Number(setting('BEMAP_TIMEOUT_SECONDS'));
+  return Math.min((Number.isFinite(seconds) && seconds > 0 ? seconds : DEFAULT_TIMEOUT_SECONDS) * 1000, MAX_TIMER_MS);
+}
+
+/**
+ * Why the account must not be sent to a URL, or `null` when it may: plain
+ * HTTP to another machine than this one, unless the server's settings set
+ * BEMAP_ALLOW_INSECURE_HTTP=1 for a network the user trusts.
+ *
+ * The status used to warn about it, and every live call then sent the key in
+ * clear to a typed `http://` address.
+ *
+ * @param {string} url
+ * @returns {string|null}
+ */
+export function insecureTransport(url) {
+  if (!unencrypted(url) || setting('BEMAP_ALLOW_INSECURE_HTTP') === '1') return null;
+  return (
+    `${new URL(url).origin} is plain HTTP: the account would travel unencrypted, so nothing is sent. Use its https:// address, ` +
+    "or set BEMAP_ALLOW_INSECURE_HTTP=1 in this server's settings for a network you trust."
+  );
+}
+
 export class BemapClient {
   /**
    * @param {object} [options]
@@ -319,13 +459,13 @@ export class BemapClient {
    *   `$BEMAP_ENV` instead of the host it named.
    * @param {string} [options.user] - Account. Defaults to `$BEMAP_USER`.
    * @param {string} [options.key] - API key. Defaults to `$BEMAP_KEY`.
-   * @param {number} [options.timeoutMs] - Per-request timeout. Default 60000.
+   * @param {number} [options.timeoutMs] - Per-request timeout, in ms. Default {@link requestTimeoutMs}.
    */
   constructor(options = {}) {
     this.baseUrl = options.baseUrl ?? resolveBaseUrl(options.env);
     this.user = options.user ?? setting('BEMAP_USER');
     this.key = options.key ?? setting('BEMAP_KEY');
-    this.timeoutMs = options.timeoutMs ?? 60000;
+    this.timeoutMs = Math.min(options.timeoutMs ?? requestTimeoutMs(), MAX_TIMER_MS);
     /** @type {Map<string,string>} cookie name → value */
     this._cookies = new Map();
     /** @type {Promise<void>|null} in-flight login, so concurrent calls share one */
@@ -381,9 +521,16 @@ export class BemapClient {
    *
    * @returns {Promise<{status: number, headers: Headers, bytes: Buffer, truncated: boolean}>}
    */
-  async _raw(url, { method = 'GET', body, headers = {} } = {}) {
+  async _raw(url, { method = 'GET', body, headers = {}, signal } = {}) {
+    /* Every request here carries the account: a session cookie, a login form, a Basic header. */
+    const insecure = insecureTransport(url);
+    if (insecure) throw new Error(insecure);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+    /* A call its client cancels stops here too: it used to run to its end. */
+    const cancel = () => controller.abort();
+    if (signal?.aborted) controller.abort();
+    else signal?.addEventListener('abort', cancel, { once: true });
     try {
       const cookie = this._cookieHeader();
       const response = await fetch(url, {
@@ -415,21 +562,26 @@ export class BemapClient {
       return { status: response.status, headers: response.headers, bytes: Buffer.concat(chunks), truncated };
     } catch (error) {
       if (error?.name === 'AbortError') {
+        if (signal?.aborted) throw new Error(`Request to ${url} was cancelled.`);
         throw new Error(`Request to ${url} timed out after ${this.timeoutMs} ms.`);
       }
-      throw new Error(`Request to ${url} failed: ${error.message}`);
+      throw new Error(`Request to ${url} failed: ${failureText(error)}`);
     } finally {
       clearTimeout(timer);
+      signal?.removeEventListener('abort', cancel);
     }
   }
 
   /**
    * Establish a session. Concurrent callers share a single login round-trip.
    *
+   * @param {AbortSignal} [signal] - Cancels it, as the tool call's client does.
    * @returns {Promise<void>}
    * @throws {BemapAuthError} When credentials are absent or rejected.
+   * @throws {Error} When the form login answers anything else: an
+   *   installation without one (`404`), or one that is unavailable.
    */
-  async login() {
+  async login(signal) {
     if (!this.hasCredentials()) {
       throw new BemapAuthError(
         "No BeMap credentials configured. Set BEMAP_USER and BEMAP_KEY in this server's environment. " +
@@ -449,21 +601,26 @@ export class BemapClient {
       const response = await this._raw(this.url('/bgis/login'), {
         method: 'POST',
         body,
+        signal,
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
       });
 
-      // Success is a 302 towards the app; failure bounces back to login.html.
+      /* Success is a 302 towards the app; refused credentials bounce back to
+         login.html. Any other answer says nothing about the account: a 404
+         from an installation without a form login, a 503 while it restarts
+         used to read as "rejected credentials". */
       const location = response.headers.get('location') ?? '';
-      const ok = response.status === 302 && !location.includes('login.html');
-      if (!ok) {
-        this._cookies.clear();
+      if (response.status === 302 && !location.includes('login.html')) return;
+      this._cookies.clear();
+      if (response.status === 302) {
         throw new BemapAuthError(
           `BeMap rejected the credentials for account "${this.user}" on ${this.baseUrl} ` +
-            `(HTTP ${response.status}). Check BEMAP_USER / BEMAP_KEY and that the account ` +
+            `(HTTP 302 to its login page). Check BEMAP_USER / BEMAP_KEY and that the account ` +
             `is enabled on this environment.`,
           'rejected'
         );
       }
+      throw new Error(`BeMap's form login, POST ${this.url('/bgis/login')}, answered HTTP ${response.status}: nothing is said about the account.`);
     })();
 
     try {
@@ -474,13 +631,16 @@ export class BemapClient {
   }
 
   /**
-   * Authenticated request that transparently (re-)logs in as needed.
+   * Authenticated request. One that carries an Authorization header is sent
+   * as it is — BeMap reads HTTP Basic on every request; one without it logs
+   * in first, and again when the session lapsed.
    *
    * @param {string} path - Path relative to the BeMap root.
    * @param {object} [options]
    * @param {string} [options.method] - HTTP method. Default `GET`.
    * @param {string} [options.body] - Request body.
    * @param {Record<string,string>} [options.headers] - Extra headers.
+   * @param {AbortSignal} [options.signal] - Cancels the request, as its client does.
    * @returns {Promise<{status:number, text:string, bytes:Buffer, contentType:string, binary:boolean, truncated:boolean}>}
    *   `binary` when the content type is not text: `text` is then no use, and
    *   `bytes` holds the body.
@@ -493,16 +653,19 @@ export class BemapClient {
       throw new Error(`Refusing to send the account to ${new URL(path).origin}: this client talks to ${this.baseUrl} only.`);
     }
     const url = absolute ? path : this.url(path);
+    /* With Basic on the request a 302 to the login page is BeMap saying it
+       read no credentials — answered as such, never masked by a form login. */
+    const basic = Object.keys(options.headers ?? {}).some((name) => name.toLowerCase() === 'authorization');
 
-    if (this._cookies.size === 0) await this.login();
+    if (!basic && this._cookies.size === 0) await this.login(options.signal);
 
     let response = await this._raw(url, options);
 
     // A redirect to the login page means the session lapsed — retry once.
     const location = response.headers.get('location') ?? '';
-    if (response.status === 302 && location.includes('login')) {
+    if (!basic && response.status === 302 && location.includes('login')) {
       this._cookies.clear();
-      await this.login();
+      await this.login(options.signal);
       response = await this._raw(url, options);
     }
 
@@ -524,13 +687,15 @@ export class BemapClient {
    * release than the environment being called — a real risk around upgrades,
    * where documentation lands on beta weeks before prod.
    *
+   * @param {{signal?: AbortSignal}} [options] - `signal` cancels it.
    * @returns {Promise<{version:string|null, builtAt:string|null, status:string|null, jsApiVersion:string|null, geoSdkVersion:string|null, raw:string}>}
    */
-  async serverVersion() {
+  async serverVersion({ signal } = {}) {
     /* Through fetchText, so a refusal is an error that names its status —
        an "Access Denied" used to be reported as the release "unknown". */
     const auth = Buffer.from(`${this.user}:${this.key}`).toString('base64');
     const text = await this.fetchText('/bgis/service/version/server/1.0', {
+      signal,
       headers: { authorization: `Basic ${auth}` },
     });
     let parsed = {};
@@ -562,11 +727,13 @@ export class BemapClient {
    * of them — and they genuinely differ per environment, so a payload sized
    * against one environment can be rejected by another.
    *
+   * @param {{signal?: AbortSignal}} [options] - `signal` cancels it.
    * @returns {Promise<{cartoRelease:string|null, geoservers:string[], transportTypes:string[], truckAttributes:boolean|null, limits:Array<{service:string, key:string, value:string, unit:string|null, bound:string|null}>}>}
    */
-  async geoServerInfo() {
+  async geoServerInfo({ signal } = {}) {
     const auth = Buffer.from(`${this.user}:${this.key}`).toString('base64');
     const body = await this.fetchText('/bgis/service/geoServerInfo/1.0', {
+      signal,
       method: 'POST',
       body: JSON.stringify({ geoserver: 'default' }),
       headers: { authorization: `Basic ${auth}`, 'content-type': 'application/json' },
@@ -594,14 +761,45 @@ export class BemapClient {
    * @param {string} path
    * @param {object} [options] - Same shape as {@link BemapClient#request}.
    * @returns {Promise<string>}
-   * @throws {Error} On any non-2xx status.
+   * @throws {BemapAuthError} On a `401`: BeMap read the credentials and refused them.
+   * @throws {Error} On any other non-2xx status, with the message the error page carries.
    */
   async fetchText(path, options = {}) {
     const { status, text } = await this.request(path, options);
+    if (status === 401) {
+      throw new BemapAuthError(
+        `BeMap rejected the credentials for account "${this.user}" on ${this.baseUrl} (HTTP 401). ` +
+          'Check BEMAP_USER / BEMAP_KEY and that the account exists on this environment.',
+        'rejected'
+      );
+    }
     if (status < 200 || status >= 300) {
-      const detail = text.slice(0, 300).replace(/\s+/g, ' ').trim();
+      const detail = errorText(text);
       throw new Error(`${options.method ?? 'GET'} ${path} → HTTP ${status}${detail ? `: ${detail}` : ''}`);
     }
     return text;
   }
+}
+
+/**
+ * The sentence an error answer carries: a JSON `message`, the message of a
+ * Tomcat error page, an XML `<message>`, or a page's title — not the first
+ * characters of its stylesheet, which is what a `403` page used to show.
+ *
+ * @param {string} body
+ * @returns {string} At most 300 characters.
+ */
+export function errorText(body) {
+  const text = String(body ?? '');
+  try {
+    const parsed = JSON.parse(text);
+    if (parsed && typeof parsed.message === 'string') return [parsed.code, parsed.message].filter(Boolean).join(': ').slice(0, 300);
+  } catch {
+    /* not JSON */
+  }
+  const tomcat = text.match(/<b>\s*Message\s*<\/b>\s*([^<]+)/i)?.[1];
+  const message = text.match(/<message>([\s\S]*?)<\/message>/i)?.[1];
+  const title = text.match(/<title>([^<]+)<\/title>/i)?.[1];
+  const found = [tomcat, message, title].find((part) => part && part.trim());
+  return (found ?? text).replace(/\s+/g, ' ').trim().slice(0, 300);
 }

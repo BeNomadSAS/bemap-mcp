@@ -123,10 +123,12 @@ function declaredTypes(node) {
  * boolean all give the route the declared type gives. Only what it cannot
  * read is refused — `400 INVALID_ARGUMENT` for a string where an array is
  * declared, an array where an object is, `"north"` for a number, `"yes"` for
- * a boolean, base64 for a Java `byte` — and a fraction where an integer is
- * declared is read, and changes the result. Only those are reported: flagging
- * a conversion Jackson makes would send a model to change a request that
- * works.
+ * a boolean, base64 for a Java `byte`, a JSON boolean where a number is
+ * declared (`maxAlternativeRoutes: true`, a `heading` of `true`), and a
+ * string with a fraction where an integer is (`"1.5"`) — while the JSON
+ * number `1.5` for an integer is read, and changes the result. Only those are
+ * reported: flagging a conversion Jackson makes would send a model to change a
+ * request that works.
  *
  * @param {unknown} value
  * @param {object} node - The property's schema.
@@ -141,10 +143,12 @@ function typeProblem(value, node) {
   if (is('array')) return 'unreadable';
   if (typeof value === 'object') return is('object') ? null : 'unreadable';
   if (is('integer') || is('number')) {
-    if (typeof value === 'string' && !numeric(value)) return 'unreadable';
-    const number = Number(value);
-    if (is('integer') && !is('number') && typeof value !== 'boolean' && !Number.isInteger(number)) return 'fraction';
-    return null;
+    if (typeof value === 'boolean') return 'unreadable';
+    if (typeof value === 'string') {
+      if (!numeric(value)) return 'unreadable';
+      return is('integer') && !is('number') && !/^\s*[+-]?\d+\s*$/.test(value) ? 'unreadable' : null;
+    }
+    return is('integer') && !is('number') && !Number.isInteger(Number(value)) ? 'fraction' : null;
   }
   if (is('boolean') && typeof value === 'string' && !/^(?:true|false)$/i.test(value)) return 'unreadable';
   return null;
@@ -169,6 +173,34 @@ function typeIssue(problem, value, node, at) {
         ? `\`${at}\` is declared ${typeLabel(node)}, and is ${value}: BeMap reads it without its fraction, which changes the result.`
         : `\`${at}\` is declared ${typeLabel(node)}, and is ${shown}: BeMap cannot read it, and refuses the request (\`400 INVALID_ARGUMENT\`).`,
   };
+}
+
+/**
+ * The type a query value does not convert to, as Spring converts one — or
+ * `null` when it converts, or when no type is declared this can read.
+ *
+ * Spring removes every blank from a number and parses it as Java does —
+ * hexadecimal integers, exponents and `f`/`d` suffixes included — and reads
+ * `true`/`false`, `on`/`off`, `yes`/`no` and `1`/`0` as a boolean. An empty
+ * value converts to nothing: {@link checkQuery} reports it for a required
+ * parameter, the one case measured (`value=` answers `400`).
+ *
+ * @param {string} value
+ * @param {object} node - The parameter's schema, or its items'.
+ * @returns {string|null} What the parameter is declared, e.g. `"an integer"`.
+ */
+function queryTypeProblem(value, node) {
+  const types = declaredTypes(node);
+  if (!types || value.trim() === '') return null;
+  const number = value.replace(/\s+/g, '');
+  if (types.includes('integer') && !types.includes('number')) {
+    return /^[+-]?(?:\d+|0[xX][\da-fA-F]+|#[\da-fA-F]+)$/.test(number) ? null : 'an integer';
+  }
+  if (types.includes('number')) {
+    return /^[+-]?(?:NaN|Infinity|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?[fFdD]?)$/.test(number) ? null : 'a number';
+  }
+  if (types.includes('boolean')) return /^(?:true|false|on|off|yes|no|1|0)$/i.test(value.trim()) ? null : 'a boolean';
+  return null;
 }
 
 /** The single schema name a property points at, when it points at exactly one. */
@@ -303,7 +335,7 @@ export function checkBody(body, schemaName, snapshot = loadSnapshot()) {
  * @param {string} query - Without the `?`, e.g. `providerName=ecoMovement&geoServer=here`.
  * @param {Array<object>} parameters - The operation's own, from the specification.
  * @param {object} [snapshot]
- * @returns {Array<{path: string, kind: 'unknown'|'missing'|'value', message: string}>}
+ * @returns {Array<{path: string, kind: 'unknown'|'missing'|'value'|'type', message: string}>}
  */
 export function checkQuery(query, parameters, snapshot = loadSnapshot()) {
   const schemas = snapshot.spec.components?.schemas ?? {};
@@ -329,9 +361,31 @@ export function checkQuery(query, parameters, snapshot = loadSnapshot()) {
     }
     present.add(key);
     const schema = resolve(parameter.schema);
+    const itemSchema = schema.type === 'array' ? resolve(schema.items) : schema;
+    /* An empty value converts to nothing. For a required parameter that is
+       a refusal — measured on prod: `value=` on currency convert answers 400
+       "Failed to convert … empty String"; an optional one is left alone. */
+    if (value.trim() === '') {
+      if (parameter.required) issues.push({ path: key, kind: 'missing', message: `\`${key}\` is a required query parameter, and empty.` });
+      continue;
+    }
+    /* The type, as Spring converts a query value — not as Jackson reads a
+       body. Measured on prod, 25 September 2026: `value=not-a-number` for a
+       float and `switchIndex=1.5` for an int answer 400 ("Failed to convert
+       value … to required type"); `10.5` and ` 10` for a float, `yes` and
+       `1` for a boolean, convert. */
+    for (const item of schema.type === 'array' ? value.split(',') : [value]) {
+      const expected = queryTypeProblem(item, itemSchema);
+      if (expected) {
+        const shown = item.length > 40 ? `${item.slice(0, 40)}…` : item;
+        issues.push({ path: key, kind: 'type', message: `\`${key}\` is ${expected}, and "${shown}" is not: BeMap cannot convert it, and refuses the request (\`400\`).` });
+      }
+    }
     const allowed = schema.enum ?? resolve(schema.items).enum;
     if (!allowed) continue;
-    for (const item of schema.type === 'array' ? value.split(',') : [value]) {
+    /* Spring reads an enum as `valueOf(value.trim())`, and an empty item as
+       none: ` TABLE` and an empty `view` both answer 200 on prod. */
+    for (const item of (schema.type === 'array' ? value.split(',') : [value]).map((entry) => entry.trim()).filter(Boolean)) {
       if (!allowed.includes(item)) {
         issues.push({ path: key, kind: 'value', message: `\`${item}\` is not a value of the query parameter \`${key}\` (${allowed.length} declared).` });
       }

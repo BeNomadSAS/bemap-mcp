@@ -16,7 +16,8 @@ Documentation, and the small program that serves it:
 - BeMap's guides and SDK pages;
 - the service limits of BeMap's production (points per request, radii…);
 - a skill: plain-text advice on choosing a service and avoiding BeMap's traps,
-  with example requests and responses.
+  with example requests and responses — for every assistant but Claude Desktop,
+  which loads no skill from an extension.
 
 No BeMap source code, no account or customer data, no map data, no calculation
 engine: the only results in it are documentation examples. It works offline and
@@ -26,8 +27,8 @@ without an account; only sending a real request needs one.
 
 | Your assistant | How |
 |---|---|
-| Claude Desktop | double-click `benomad-bemap-<version>.mcpb`, attached to each release |
-| Claude Code — in a terminal or in VS Code | one command |
+| Claude Desktop | double-click `benomad-bemap-<version>.mcpb`, attached to each release at https://github.com/BeNomadSAS/bemap-mcp/releases |
+| Claude Code — in a terminal or in VS Code | a few commands |
 | Cursor, VS Code Copilot, Codex, Gemini CLI, Zed, Devin | a few lines of configuration |
 
 Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
@@ -57,7 +58,7 @@ Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
 | `beta` | `bemap-beta.benomad.com` |
 | `preprod` | `bemap-preprod.benomad.com` |
 | `prod` (default) | `bemap.benomad.com` |
-| `own` | your own BeMap installation, set with `BEMAP_BASE_URL` |
+| `own` | your own BeMap installation, set with `BEMAP_BASE_URL` — its address, such as `https://bemap.example.com` |
 
 ## Support
 

@@ -129,11 +129,18 @@ export const squash = (text) => String(text ?? '').toLowerCase().replace(/[^a-z0
  *
  * @param {string} query - What the caller typed.
  * @param {{operations: Array<object>, basePath: string}} [snapshot]
- * @returns {{match: object|null, candidates: Array<object>}} `match` is set
- *   only when one operation is clearly meant; `candidates` otherwise lists
- *   the plausible ones, best first.
+ * @returns {{match: object|null, candidates: Array<object>, explicit: boolean}} `match`
+ *   is set only when one operation is clearly meant; `candidates` otherwise
+ *   lists the plausible ones, best first. `explicit`: the query was an
+ *   endpoint written out, so its candidates are near spellings, never
+ *   meanings.
  */
 export function findOperation(query, snapshot = loadSnapshot()) {
+  return { explicit: false, ...lookUpOperation(query, snapshot) };
+}
+
+/** {@link findOperation}, before its answer is labelled. */
+function lookUpOperation(query, snapshot) {
   const { operations, basePath } = snapshot;
   const raw = String(query ?? '').trim();
   if (!raw) return { match: null, candidates: [] };
@@ -175,10 +182,13 @@ export function findOperation(query, snapshot = loadSnapshot()) {
      OpenLR, and a GET query checked against the POST. That one is a word. */
   const stem = (id) => String(id ?? '').replace(/_\d+$/, '').toLowerCase();
   const byId = operations.filter((op) => op.operationId && op.operationId.toLowerCase() === raw.toLowerCase());
+  /** The id's operation and its namesakes, offered when the id read as words finds nothing. */
+  let idCandidates = [];
   if (byId.length === 1) {
     const numbered = /_\d+$/.test(byId[0].operationId);
     const namesakes = operations.filter((op) => op !== byId[0] && stem(op.operationId) === stem(byId[0].operationId));
     if (numbered || namesakes.length === 0) return { match: byId[0], candidates: byId };
+    idCandidates = [byId[0], ...namesakes];
   }
 
   const subject = verb ? verb[2] : raw;
@@ -220,8 +230,25 @@ export function findOperation(query, snapshot = loadSnapshot()) {
   const candidates = scored.slice(0, 8).map((entry) => entry.op);
   /* A path that exists nowhere is not rounded to the nearest one that does:
      `POST /routing/2.0` would have been answered, and sent, as `/routing/1.0`. */
-  if (scored.length === 0 || explicit) return { match: null, candidates };
-  if (scored.length === 1 || scored[0].score >= scored[1].score + 10) return { match: scored[0].op, candidates };
+  if (scored.length === 0) return { match: null, candidates: idCandidates };
+  if (explicit) return { match: null, candidates, explicit: true };
+
+  /* Words name an operation only when they are all its own: each a word of
+     its summary, description or tags, or a whole segment of its path — and a
+     single word, only by an exact hit. "toll cost" was answered as charging
+     cost, which holds no "toll"; "route" as traceroute, a path that merely
+     contains it. */
+  const meaningful = words.filter((word) => word.length >= 2);
+  const covers = (op) => {
+    const vocabulary = new Set(
+      `${op.summary} ${op.description} ${op.tags.join(' ')} ${op.path}`.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)
+    );
+    const segments = op.path.split('/').filter(Boolean).map(squash);
+    if (meaningful.length === 0) return false;
+    if (meaningful.length === 1) return squash(op.summary) === needle || segments.includes(needle) || op.tags.map(squash).includes(needle);
+    return meaningful.every((word) => vocabulary.has(word));
+  };
+  if ((scored.length === 1 || scored[0].score >= scored[1].score + 10) && covers(scored[0].op)) return { match: scored[0].op, candidates };
 
   /* A tie between an operation and variants of its own path —
      `/routing/1.0` against `/routing/1.0.csv` — is settled by structure: the
@@ -229,7 +256,7 @@ export function findOperation(query, snapshot = loadSnapshot()) {
      listed beside it. */
   const top = scored.filter((entry) => entry.score >= scored[0].score - 10);
   const general = top.find((entry) => top.every((other) => other === entry || other.op.path.startsWith(entry.op.path)));
-  return { match: general ? general.op : null, candidates };
+  return { match: general && covers(general.op) ? general.op : null, candidates };
 }
 
 /**
@@ -239,7 +266,9 @@ export function findOperation(query, snapshot = loadSnapshot()) {
  * @param {string} name - E.g. `RoutingRequest`, `routingrequest`, `Routing`,
  *   `com.benomad….v2_0_0….EvSmartRoutingRequest`.
  * @param {{spec: object}} [snapshot]
- * @returns {{name: string|null, schema: object|null, candidates: string[]}}
+ * @returns {{name: string|null, schema: object|null, candidates: string[], property?: string}}
+ *   `property`: the query was `Schema.field`, the form search titles a field
+ *   with, and this is the field.
  */
 export function findSchema(name, snapshot = loadSnapshot()) {
   const schemas = snapshot.spec.components?.schemas ?? {};
@@ -251,7 +280,22 @@ export function findSchema(name, snapshot = loadSnapshot()) {
   if (raw.includes('.')) {
     const byClass = Object.keys(schemas).find((candidate) => schemas[candidate]?.['x-javaClass'] === raw);
     if (byClass) return { name: byClass, schema: schemas[byClass], candidates: [byClass] };
+    /* `Schema.field`, as a search hit is titled: the schema, at that field.
+       Read as a class, it answered with whichever schema is named like the
+       field — `EvSmartRoutingRequest.vehicle` gave v2's vehicle object for
+       v1's string. */
+    const owner = raw.slice(0, raw.lastIndexOf('.'));
+    const ownerName = Object.hasOwn(schemas, owner) ? owner : Object.keys(schemas).find((candidate) => candidate.toLowerCase() === owner.toLowerCase());
+    if (ownerName) {
+      const field = fieldsOf(schemas[ownerName], snapshot).find((entry) => entry.name.toLowerCase() === wanted.toLowerCase());
+      return field
+        ? { name: ownerName, schema: schemas[ownerName], candidates: [ownerName], property: field.name }
+        : { name: null, schema: null, candidates: [ownerName] };
+    }
     if (Object.hasOwn(schemas, wanted) && schemas[wanted]?.['x-javaClass']) return { name: null, schema: null, candidates: [wanted] };
+    /* A class no schema was built from is answered by its exact simple name
+       or not at all: a case-folded or partial match is a guess. */
+    if (!Object.hasOwn(schemas, wanted)) return { name: null, schema: null, candidates: [] };
   }
   /* Own properties only: `constructor` or `toString` would otherwise be
      answered as schemas with no fields. */
@@ -362,7 +406,21 @@ export function fieldsOf(schema, snapshot = loadSnapshot(), depth = 0) {
  * @returns {Array<{name: string, description: string, operations: Array<object>}>}
  */
 export function services(snapshot = loadSnapshot()) {
-  const described = new Map((snapshot.spec.tags ?? []).map((tag) => [tag.name, tag.description ?? '']));
+  /* A tag declared several times — one per controller — keeps every text,
+     each marked as one declaration: the last one used to win, and Vehicle
+     read "Deprecated, see the next version 1.1" above its own 1.1 operations. */
+  const texts = new Map();
+  for (const tag of snapshot.spec.tags ?? []) {
+    const text = String(tag.description ?? '').trim();
+    if (!texts.has(tag.name)) texts.set(tag.name, []);
+    if (text && !texts.get(tag.name).includes(text)) texts.get(tag.name).push(text);
+  }
+  const described = new Map(
+    [...texts].map(([name, list]) => [
+      name,
+      list.length > 1 ? `The specification declares this service ${list.length} times:\n\n${list.map((text) => `- ${text}`).join('\n')}` : list[0] ?? '',
+    ])
+  );
   const byTag = new Map();
   for (const op of snapshot.operations) {
     for (const tag of op.tags.length ? op.tags : ['(untagged)']) {
@@ -390,18 +448,53 @@ export function findGuide(query, snapshot = loadSnapshot()) {
   const needle = raw.toLowerCase();
   const byTitle = guides.filter((guide) => guide.title.toLowerCase() === needle);
   if (byTitle.length === 1) return { match: byTitle[0], candidates: byTitle };
+  /* A title two pages share is a choice, not an answer. */
+  if (byTitle.length > 1) return { match: null, candidates: byTitle };
   const words = needle.split(/[^a-z0-9]+/).filter(Boolean);
+  /* A page BeMap retired — its title says so — or one a newer version of the
+     same page stands beside comes after the current one. The shortest id used
+     to win every tie, and "wms" opened BND 0.9's deprecated mapping page. */
+  const superseded = supersededGuides(guides);
+  const retired = (guide) => /\bdeprecat/i.test(guide.title) || superseded.has(guide.id);
   const scored = guides
     .map((guide) => {
       const hay = `${guide.id} ${guide.title}`.toLowerCase();
       const hits = words.filter((word) => hay.includes(word)).length;
-      return { guide, score: hits === words.length ? hits * 10 - guide.id.length / 100 : hits };
+      return { guide, score: hits === words.length ? hits * 10 - (retired(guide) ? 5 : 0) : hits };
     })
     .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.score - a.score || a.guide.id.length - b.guide.id.length);
   const candidates = scored.slice(0, 10).map((entry) => entry.guide);
   const clear = scored.length > 0 && (scored.length === 1 || scored[0].score > scored[1].score);
   return { match: clear ? scored[0].guide : null, candidates };
+}
+
+/**
+ * The guides a newer version of the same page stands beside:
+ * `jsapi_1_0_0/js-geocoding.md` beside `jsapi_2_0_0/js-geocoding.md`,
+ * `rest_1_0_0/evsmartrouting-service-v1_0_0.md` beside
+ * `rest_2_0_0/evsmartrouting-service-v2_0_0.md` — read from the names alone,
+ * a page's own version suffix set aside. A whole family is never superseded
+ * by a newer one: `rest_2_0_0` holds five pages on EV smart routing, and
+ * `rest_1_0_0` the rest of the API.
+ *
+ * @param {Array<{id: string, family: string}>} guides
+ * @returns {Set<string>} Guide ids.
+ */
+export function supersededGuides(guides) {
+  const parse = (guide) => {
+    const m = String(guide.family ?? '').match(/^(.*)_(\d+)_(\d+)_(\d+)$/);
+    if (!m || !guide.id.startsWith(`${guide.family}/`)) return null;
+    const page = guide.id.slice(guide.family.length + 1).replace(/-v\d+_\d+_\d+(?=\.md$)/, '');
+    return { id: guide.id, key: `${m[1]}/${page}`, version: [Number(m[2]), Number(m[3]), Number(m[4])] };
+  };
+  const compare = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+  const pages = guides.map(parse).filter(Boolean);
+  const newest = new Map();
+  for (const page of pages) {
+    if (!newest.has(page.key) || compare(page.version, newest.get(page.key)) > 0) newest.set(page.key, page.version);
+  }
+  return new Set(pages.filter((page) => compare(page.version, newest.get(page.key)) < 0).map((page) => page.id));
 }
 
 /**
@@ -416,7 +509,9 @@ export function readGuide(id) {
   const file = normalize(join(root, id));
   if (!file.startsWith(root + sep)) throw new Error(`Not a guide: ${id}`);
   if (!existsSync(file)) throw new SnapshotMissingError(`guide ${id} is listed but missing`);
-  return readFileSync(file, 'utf8');
+  /* A Windows checkout of the delivery repository holds CRLF, and a fence
+     line ending in \r was never seen as one: parts were cut inside code. */
+  return readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
 }
 
 /**
@@ -464,6 +559,29 @@ function classToSchema(snapshot) {
 }
 
 /**
+ * A guide's links to other pages, written so that this server can follow them.
+ *
+ * BeMap's documentation site links a page as `index.html#page-<id>` or
+ * `index.html#subpage-<family>-<page>`, in Markdown or in HTML, which lead
+ * nowhere outside that site: 854 + 150 such links sat in the guides served.
+ * One to a page the snapshot holds
+ * becomes `guide:<id>`, read with `bemap_read_guide`; the others — a page
+ * BeMap does not publish, a misspelt name — stay as BeMap wrote them.
+ *
+ * @param {string} text - A guide.
+ * @param {object} [snapshot]
+ * @returns {string}
+ */
+export function guideLinks(text, snapshot = loadSnapshot()) {
+  const ids = new Set(snapshot.guides.map((guide) => guide.id));
+  return String(text).replace(/(\]\(|href=")index\.html#+([^)"\s#]+?\.md)(?:#[^)"\s]*)?(?=[)"])/g, (whole, opening, anchor) => {
+    const sub = anchor.match(/^subpage-([a-z0-9_]+?_\d+_\d+_\d+)-(.+)$/i);
+    const id = sub ? `${sub[1]}/${sub[2]}` : anchor.replace(/^page-/, '');
+    return ids.has(id) ? `${opening}guide:${id}` : whole;
+  });
+}
+
+/**
  * Replace the instructions BeMap's pages leave for their own documentation
  * site with something a reader of the text can use.
  *
@@ -482,6 +600,17 @@ export function resolveIncludes(text, snapshot = loadSnapshot()) {
   const toSchema = classToSchema(snapshot);
   return text.replace(/^(`{3,}|~{3,})[^\n]*\n\s*(\{"bemap":\{"language":"!include"[^\n]*\})\s*\n\1[ \t]*$/gm, (_, fence, include) => {
     const fqn = include.match(/className=([A-Za-z0-9_.$]+)/)?.[1];
+    /* Not a field table: the list of fields a charging-station filter may
+       name, which the build reads from the same annotations BeMap's site
+       builds it from. It was served as "this class is not in the
+       specification", and the filter pages gave the syntax and no field. */
+    if (fqn && /buildchargingstationfilters\.md/.test(include)) {
+      const names = snapshot.manifest?.filterFields?.[fqn];
+      const simple = fqn.split('.').pop();
+      return names?.length
+        ? `> **Fields a filter may name on \`${simple}\`**, read from BeMap's source: ${names.map((name) => `\`${name}\``).join(', ')}.`
+        : `> _The fields a filter may name on \`${simple}\` — BeMap's documentation site builds this list; this snapshot does not hold it._`;
+    }
     if (!fqn) return '> _A part of this page that BeMap\'s documentation site generates when it is displayed — not in this snapshot._';
     const name = toSchema(fqn);
     return name

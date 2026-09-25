@@ -39,17 +39,19 @@ and required field against the specification before it sends anything, and
 ### Requiredness is the specification's, and the service has the last word
 
 `required` in these tools is what the specification declares. It is right for
-most request classes and wrong for a few, in both directions — charging-station
-search refuses a body without `coordinate` although the specification calls it
-optional, and currency conversion accepts one without `from` although it is
-marked required. When a `400` names a field, that is the service's verdict and
-it wins. Settle any doubt with `bemap_try_request`: send the body that works,
-delete one field, send it again.
+most request classes and wrong for some, in both directions — forward
+geocoding refuses an address with no country and no bounding box although only
+`address` is marked required, charging-station search needs one of
+`coordinate`, `corridor` or `bbox` although none of them is, and currency
+conversion without `from` answers `200` with the amount unconverted. When a
+`400` names a field, that is the service's verdict and it wins. A `200` for a
+body missing a field proves only that BeMap answered: compare its result with
+one where the field is present.
 
-If the `bemap` MCP is not available in the session, say so — and fall back to
-the public reference at `https://docs.benomad.com`, which needs no credentials
-and serves every page as raw Markdown at `<page-url>.md` plus the bundled
-specification at `/_bundle/openapi.yaml`. It is the same material, published.
+If the `bemap` MCP is not available in the session, say so and help the user
+repair its installation. `https://docs.benomad.com` is a partial public
+reference: a service or field missing there may still exist, and the rule above
+holds for the MCP alone.
 
 ## Which tool answers which question
 
@@ -101,9 +103,13 @@ never asks for the account or the key, and neither should you. Then it gives:
   has an SDK for yours (JavaScript, Flutter…), its pages are among them.
 
 Signing in to the map: `POST <tiles host>/api/login` with the same HTTP Basic
-credentials as the REST calls returns a token valid one hour; send it with every
-style, tile and font request as `X-Session-Token` (or `?token=`), and sign in
-again before it expires.
+credentials as the REST calls returns a token valid one hour. `GET /api/maps`
+names the default style, a path on the tiles host; fetch it from there. The URLs
+inside the style — each source's `tiles`, `glyphs`, `sprite` — may be relative to
+the tiles host: make each absolute and add the token (`X-Session-Token`, or
+`?token=`) before handing the style to the map, which resolves none of them —
+left relative, the map draws nothing and reports no error. Sign in again, and
+set the style again, before the hour is up.
 
 ## Before calling an application done
 
@@ -186,8 +192,8 @@ The ones that bite hardest, because they are far lower than people assume:
 same direction — beta is *more* permissive on `MODE_MATRIX` and *less* on
 everything else. So a payload validated on beta can be rejected in prod, and a
 payload sized for prod can be rejected on beta. When it matters, check the
-target environment: `bemap_limits` with `live: true` and the right `env` flags
-every value that differs from the snapshot.
+target environment: `bemap_limits` with `live: true` and the right `env` prints
+that environment's values instead of the snapshot's — compare the two by eye.
 
 ## Traps that silently produce wrong results
 
@@ -229,7 +235,7 @@ A developer writing `weight: 3500` for a 3.5-tonne van is asking for a
 error. This is the single most costly mistake on this API. Convert explicitly
 and comment the conversion in generated code.
 
-`maxSpeed` is plain km/h.
+`routingVehicleProfile.maxSpeeds[].maxSpeed` is plain km/h.
 
 ### Battery state comes in two units, and the field name tells you which
 
@@ -325,14 +331,14 @@ them are not an object at all. Read off the specification:
 | Spelling | Where |
 |---|---|
 | `coordinate` | nearpoi, chargingstation search, autocomplete, vehicle; routing inside `routingRoadBlocks[]` |
-| `coordinateSat` | reverse geocoding; routing and traceroute inside `destinations[]`. **Not** forward geocoding, which takes no coordinate at all — it takes `address` plus optional structured components (`city`, `postalCode`, `street`, …) |
+| `coordinateSat` | reverse geocoding; routing and traceroute inside `destinations[]`. **Not** forward geocoding, which takes no coordinate at all — it takes an `address` object (`address.city`, `address.postalCode`, `address.street`, …) and needs `address.countryCode`, `address.country` or a `boundingBox`: without one it answers `400` "Country is missing for the service" |
 | `coordinatesSat` | reverse geocoding **batch** (plural) |
 | `coordinates` | roadsextractor, landFeature |
 | `coord` | weather — singular and truncated, unlike everything else |
 | `positions` | geofencing (`GeofencingPos`), beside `fenceShapes[].vertices` and `fenceShapes[].center` |
 | `corridor` | chargingstation search — a list of coordinates describing a route corridor |
 | `gps` | routeHorizon |
-| `start` / `stop` / `vias` | evsmartrouting **v2** (`PlaceFront`, `ViaFront`) |
+| `start` / `stop` / `vias` | evsmartrouting **v2** (`Place`, `Via`) |
 | `startLat` · `startLon` · `stopLat` · `stopLon` | evsmartrouting **v1** and evreachablearea — four bare doubles, no coordinate object |
 
 Two consequences worth naming. **evsmartrouting changes shape between versions**:
@@ -350,6 +356,17 @@ different nesting levels.
 Coordinates are named objects (`{"lon": …, "lat": …}`), so REST has no
 lon/lat ordering trap — but the **JS SDK does**: `bemap.Coordinate(lon, lat)`
 and `map.move(lon, lat, zoom)` take longitude first.
+
+### EV smart routing needs `csps` for any trip that needs a charge
+
+On v1 and v2, a trip that needs a charge answers `400 NO_REACHABLE_STEP_POINT`
+— "All charging stations found cannot be reachable" — unless `csps` lists the
+charging providers to use: the keys of `chargingStationProviders` in
+`GET /bgis/service/acl/1.0/user/details`. The specification shows `csps` as
+optional, so a check passes without it. Measured on prod, Paris → Lyon in a Zoe
+at 80 %: without `csps`, 400 on both versions; with `["gireve"]`, 200 and two
+charging stops. Check it first when that error comes back, before the filter
+traps below.
 
 ### A charging-station filter with no action excludes, and excluding can mean no route at all
 
@@ -419,6 +436,14 @@ Prefer v2 for new work.
 or an ISO local date-time string: `2011-12-03T10:15:30`,
 `2011-12-03T10:15:30+01:00`, or `2011-12-03T10:15:30+01:00[Europe/Paris]`.
 
+**The answer's times are not in the request's unit.** Routing answers
+`routingRoutes[].departureTime` and `arrivalTime` in epoch **seconds** of the
+start point's **local** clock, written as if it were UTC — measured on prod, a
+Paris departure at 06:00 UTC answers `1790841600`, which reads 08:00 UTC. Do not
+pass them to `new Date()` as milliseconds, nor feed one back as the next leg's
+`departureTime`. EV smart routing v2's `journeys[].summary.departureTime` is
+UTC milliseconds.
+
 **`arrivalTime` is honoured only for 1-to-1 routing** — `MODE_VIAS` with
 exactly two destinations. Everywhere else it is not rejected and not ignored:
 it is **silently read as a departure time**. Add one via, or switch to
@@ -442,15 +467,13 @@ Verified against the live API:
 ```
 
 Treat every "comma-separated list" as a JSON array — the prose is wrong, the
-JSON shape is a list. Do **not** extend that to the `list or array of …` type
-string, which is a Java declaration and not a wire format: `list or array of
-byte` is a single **base64 string** (every brand logo and vehicle photo comes
-back that way), and a name being plural is a heuristic, not a fact. Three
-fields break the grammar: `status` ends in `s` and is a **scalar**;
-`hazardousMaterials` is plural and takes exactly **one** value; `dayOfWeek` is
-singular and takes a **list** (`"MONDAY"` → `400 Invalid request`, `["MONDAY"]`
-→ `200`). Audited across 23 services, these are the fields verified to
-require arrays:
+JSON shape is a list. A `{type: string, format: byte}` field is one **base64
+string** (every brand logo and vehicle photo comes back that way), except the
+ones the tools show as `integer (Java byte)`, which take a number. A name being
+plural is a heuristic, not a fact: `hazardousMaterials` is plural and takes
+exactly **one** value; `dayOfWeek` is singular and takes a **list** (`"MONDAY"`
+→ `400 Invalid request`, `["MONDAY"]` → `200`). Audited across 23 services,
+these are the fields verified to require arrays:
 
 `routing.options` · `routing.routingCriterias` · `traceroute.options` ·
 `reversegeocoding.options` · `geocodingBatch/reverse.options` ·
@@ -459,14 +482,8 @@ require arrays:
 `traffic.options` · `landfeature.options` · `geofencing.options` ·
 `geoServerInfo.options`
 
-Thirteen fields, and the last one on `evsmartrouting` sits on the nested
+Thirteen fields, and the one on `evsmartrouting` sits on the nested
 `condition` object rather than at the request root — see the path table below.
-
-Only five fields in the whole corpus use the misleading "Comma-separated list"
-wording — `routing.options`, `routing.routingCriterias`,
-`reversegeocoding.options`, `geocodingBatch/reverse.options`,
-`geofencing.options` — and all five are arrays. The other 65 list-typed fields
-say `list or array of …`, which is unambiguous.
 
 Everything else audited is a plain scalar — `routingMode`, `transportMode`,
 `transportType`, `orderBy`, `searchType`, `emissionClass`, `hazardousMaterials`,
@@ -505,12 +522,8 @@ All three answer `400 Invalid value for field 'options'` with the full accepted
 list, so a bad option name is always reported. What is *not* reported is a bad
 field name — see below.
 
-Three values are accepted by `routing.options`, `traceroute.options` and
-`chargingstation.options` and are documented nowhere, the published
-specification included: **`EVT_CHARGING_STATION`** and
-**`EVT_CHARGING_STATION_DYNAMIC`** on the first two, **`PATH_AUTO`** on the
-third. The backend does list them when it rejects a bad value, which is the only
-place they surface.
+`EVT_CHARGING_STATION` and `EVT_CHARGING_STATION_DYNAMIC` are deprecated: use
+`/bgis/service/chargingstation/search/1.0` instead.
 
 ### Every enum is validated — but only at its real path
 
@@ -543,14 +556,16 @@ field took effect, send a deliberately invalid *value* and check the backend
 objects. Silence means it never saw the field.
 
 When an option name is in doubt, do not trust prose — get the authoritative
-list from the backend with the trick in the next section.
+list from the backend with the trick in *Getting the authoritative enum list out
+of the backend*, below.
 
 ## New in 4.1.0 — what to reach for and what to distrust
 
-Each bullet carries the measurement behind it, and says which release it was
-measured on — several of these changes turn out to be already true on 4.0.3.
-Query `bemap_get_schema` for the fields themselves; this is the judgment
-around them.
+BeNomad's environments run 4.1.0 since September 2026 — `bemap_status` with
+`checkLive` says what a target runs — so the 4.0.3 notes below concern an
+installation of a customer's own that has not been upgraded. Each bullet carries
+the measurement behind it and the release it was measured on. Query
+`bemap_get_schema` for the fields themselves; this is the judgment around them.
 
 - **`startUTurnThreshold`** — the extra cost **above** which BeMap gives up on
   the departure direction you asked for and turns around anyway. It applies at
@@ -573,13 +588,11 @@ around them.
   - **`0` and negatives disable it**, they do not mean "never detour": at `0` and
     at `-1` the heading is honoured exactly as at `99999`. Only a value at or
     above `1` and below the detour cost makes the direction be abandoned.
-  - **On 4.0.3 the field is not read at all.** Every environment a caller can
-    reach today runs 4.0.3, and there the route is byte-identical whatever you
-    send. There is no error: the request answers `200`, and this backend ignores
-    an unknown key silently. **The response is the only witness** — it carries
-    `routingRoutes[].startUTurnThreshold`, which echoes your value back on 4.1
-    and stays pinned at `3000` on 4.0.3. Read the echo before believing the
-    field took effect.
+  - **On 4.0.3 the field is not read at all**: the route is byte-identical
+    whatever you send, and the request answers `200`. **The response is the
+    only witness** — it carries `routingRoutes[].startUTurnThreshold`, which
+    echoes your value back on 4.1 and stays pinned at `3000` on 4.0.3. Read the
+    echo before believing the field took effect.
 
   Where it lives also differs by service: on routing it is a root field of
   `RoutingRequest`, but on EV smart routing it exists on **v2 only** and **only
@@ -592,14 +605,14 @@ around them.
   intersections, **added in 4.1.0**. On an older release the whole object is an
   unknown field name: it is silently dropped and the call answers `200` with the
   unchanged route, so a caller cannot tell the parameter was refused. Check the
-  release with `bemap_limits` before relying on it. Where it does exist it
-  behaves exactly as documented — `factor` defaults to `1` and a `1` reproduces
-  the control route to the metre, `CAL` and `ALL` change the route chosen while
-  `ETA` leaves it identical and adjusts only the travel time. Its
-  `RoutingCrossPenaltiesCoef` object exposes only `factor` and `type` even though
-  the description mentions the road element's classification. Treat any
-  assumption about `level` or `roadType` as wrong until `bemap_get_schema`
-  shows it.
+  release with `bemap_status` and `checkLive` before relying on it. Where it
+  does exist it behaves exactly as documented — `factor` defaults to `1` and a
+  `1` reproduces the control route to the metre, `CAL` and `ALL` change the
+  route chosen while `ETA` leaves it identical and adjusts only the travel time.
+  Its `RoutingCrossPenaltiesCoef` object exposes `factor`, `type` and `ptype`
+  (write-only, the same values) even though the description mentions the road
+  element's classification. Treat any assumption about `level` or `roadType` as
+  wrong until `bemap_get_schema` shows it.
 - **Charging cost from charging-station tariffs (OCPI)** — a real tariff-based
   cost, distinct from `chargingtime`. There is a dedicated tutorial; search
   `charging cost tariffs`.
@@ -611,15 +624,18 @@ around them.
   (the environment default is not eligible). The error text is unhelpful either
   way — `no protocol: /selectSignatures?Supplier=Here` on 4.0.3, `This service
   is not configured on this server.` on 4.1.0 — so read a 400 here as "wrong
-  geocoder" before touching the payload.
-  Two things the eligibility list does not tell you, both verified live:
-  **`nominatim` is eligible and empty** — it answers `200 {"items":[]}` for
-  queries `addok` and `herehlp` resolve, so a 200 is not a result; and
-  **`/geocoding/1.0/natural` does *not* share the rule**. Its query field is
+  geocoder" before touching the payload. `herehlp` also needs `coordinate`;
+  `addok` and `nominatim` do not. **`photon` labels a suggestion with a
+  feature's name, not an address**: measured on prod, a house-number address
+  comes back with a coordinate and no `place` at all, and a named place with its
+  name — for a street-address type-ahead, use `addok` or `herehlp`.
+  **`/geocoding/1.0/natural` does *not* share the rule.** Its query field is
   `naturalQuery`, it takes `herehlp`, `nominatim` and `addok`, and it refuses
-  `photon` with `Photon server error: Unknown query parameter ''` — on prod,
-  preprod and beta alike, measured on 24 September 2026: an environment that
-  has `photon` still fails on one of the two endpoints.
+  `photon` with `Photon server error: Unknown query parameter ''` — on prod and
+  beta, measured on 25 September 2026: an environment that has `photon` still
+  fails on one of the two endpoints. Reverse geocoding takes every geocoder but
+  `nominatim`; the structured `/geocoding/1.0` takes `here`, `herehlp`, `osm`
+  and `tomtom`.
 - **Charging cost now honours the tariff restrictions it used to ignore — a
   fix, and a visible one.** `PARKING_TIME` is no longer billed at all in an
   estimate (in OCPI it means *plugged in without charging*, which an estimate
@@ -629,8 +645,8 @@ around them.
   still billed, so this is a targeted fix and not a dropped feature.
 
   **Be precise about *which* restrictions — 4.0.3 already evaluates most of the
-  block.** Measured on prod and beta (both 4.0.3), one `FLAT` 5 EUR item added to
-  an `ENERGY` baseline of 14.04 EUR at a Friday 14:00 UTC `time`: `startDate`,
+  block.** Measured on prod and beta while both ran 4.0.3, one `FLAT` 5 EUR item
+  added to an `ENERGY` baseline of 14.04 EUR at a Friday 14:00 UTC `time`: `startDate`,
   `endDate`, `dayOfWeek`, `startTime`/`endTime`, `minPower` and `maxPower` each
   drop the item, leaving 14.04. Only `minDuration`, `maxDuration`, `minKwh` and
   `maxKwh` are ignored — the item is billed and the total reaches 19.04. So an
@@ -641,12 +657,11 @@ around them.
   If anyone reports that charging costs **fell** after the upgrade, this is why
   — and the older figure was the wrong one. Through 4.0.3 an occupancy penalty
   reserved for sessions over 45 minutes was billed on a 20-minute stop. On the
-  reference
-  journey the estimate goes from 25.63 EUR to 21.14 EUR: 19 % of the old total
-  was a fee the tariff forbade. Operators that penalise occupancy are the most
+  reference journey the estimate goes from 25.63 EUR to 21.14 EUR: 19 % of the
+  old total was a fee the tariff forbade. Operators that penalise occupancy are the most
   affected, and the shorter the stop the larger the former error.
-  `ChargingCostResponse` also gained `energyUsed`, so energy no longer has to be
-  inferred from battery percentages.
+  `ChargingCostResponse` also gained `estimations[].energyUsed`, so energy no
+  longer has to be inferred from battery percentages.
 
 - **The charging point is identified by its ID when pricing (EVMOVE-465).**
   Before 4.1.0 an EV smart routing stop could be priced with a tariff belonging
@@ -666,10 +681,11 @@ around them.
   What can differ is `availableGeoServerNames` — the same seven on prod,
   preprod and beta since September 2026, after months apart — and the limit
   values. It is a **POST**; a GET answers `405`.
-- **Autocomplete names the missing parameter** (BEMAP-1887) — but 4.0.3 does
-  too, so do not use the message to tell the releases apart. On prod today,
-  omitting `place` answers `400` with
-  `ServiceException / "Invalid parameters for the service: Place parameter is mandatory"`.
+- **Autocomplete names the missing parameter** (BEMAP-1887), in words that
+  depend on the geocoder: omitting `place` answers `400 ServiceException` with
+  "Invalid parameters for the service: Place parameter is mandatory" on
+  `herehlp`, and "The place field is mandatory and must not be empty!" on
+  `addok`, `nominatim` and `photon` (prod, 4.1.0, 25 September 2026).
 - **`reversegeocodingbatch` is a documentation filename, not an endpoint.**
   4.1.0 renamed the *page* `reversegeocodingbacth-service.md` to
   `reversegeocodingbatch-service.md` (BEMAP-1893); no caller's code ever carried
@@ -678,18 +694,17 @@ around them.
   capital `B` is required, `geocodingbatch` answers `404`.
 - **Vehicles** — `LevelVehicleInfoRequest` is new, and `getlevelvehicleinfo`
   v1.1 gains `variant`. The field *name* is not new: `variant` already exists on
-  `VehicleRequest`, `VehicleInfo` and `VehicleInfoFront` in 4.0.3, and already
-  filters as a query parameter there. What 4.1.0 adds is the POST body form —
-  see the method caveat above. v1.0 has neither.
+  `VehicleRequest` and `VehicleInfo` in 4.0.3, and already filters as a query
+  parameter there. What 4.1.0 adds is the POST body form — see the `405` bullet
+  in *Reading BeMap errors*. v1.0 has neither.
 - **Timezone retrieval and the WMS satellite layer** are documented from 4.1.0;
   search rather than assuming they are absent.
 
 Roles are granted **per operation, not per service**: `/geocoding/1.0` needs
 `ROLE_GEOCODING` while `/geocoding/1.0/reverse` needs `ROLE_REVERSEGEOCODING`,
-though both belong to the `geocoding` service. When `bemap_list_services` marks
-a role *(inferred)*, it was propagated from a sibling page — treat it as a
-strong hint, not as provisioning truth, and read the account's real list from
-`/bgis/service/acl/1.0/user/details` (see *Reading BeMap errors*).
+though both belong to the `geocoding` service. `bemap_get_operation` shows the
+role an endpoint declares, or says it is checked deeper in BeMap; the account's
+real list is `/bgis/service/acl/1.0/user/details` (see *Reading BeMap errors*).
 
 ## Getting the authoritative enum list out of the backend
 
@@ -703,7 +718,7 @@ with the correct type, and read the answer.
 
 ```
 INVALID_ARGUMENT
-Invalid value for field 'options'. Accepted values : [MAPMATCH_AVOID_TUNNEL,
+Invalid value for field 'options'. Accepted values: [MAPMATCH_AVOID_TUNNEL,
 MAPMATCH_AVOID_BRIDGE, … EVT_CHARGING_STATION, … EVT_WAYPOINTS]
 ```
 
@@ -719,10 +734,11 @@ earlier, with no list.
 for".** This is the trap that wastes the most debugging time — BeMap returns
 400 where most APIs return 403, under the generic code `INTERNAL_ERROR`.
 Usually it is a missing service role, which must be provisioned server-side and
-is not an integration bug. But *what you asked for* can be a payload value — an
-unavailable or misspelt `geoserver` returns the identical message, because it
-resolves to a back-end the account cannot use. Rule the geocoder out before
-raising a provisioning ticket.
+is not an integration bug. But *what you asked for* can be a payload value — a
+geocoder this environment or account does not expose returns the identical
+message. A `geoserver` BeMap does not know at all answers differently:
+`400 GeoServerNotFoundException`, "GeoServer not found for '<name>'". Rule the
+geocoder out before raising a provisioning ticket.
 
 **Ask the account what it holds rather than inferring it.**
 `GET /bgis/service/acl/1.0/user/details`, with the same HTTP Basic credentials
@@ -743,11 +759,9 @@ environment, which is why the same payload can work on beta and fail on prod.
 Without credentials the call answers `302` to the login page, like every other
 BeMap endpoint.
 
-The role names are the vocabulary, not a mapping: nothing exposes which role
-each endpoint requires. `bemap_list_services` reports the role the
-*documentation* gates a page behind, which coincides with the endpoint's for
-most services and is left empty where no page of that service declares one.
-Treat a role marked *(inferred)* as a strong hint and this list as the fact.
+The role names are the vocabulary, not a mapping: `bemap_get_operation` shows
+the role where the endpoint declares one, and this list is what the account
+holds.
 
 - **`302` and `401` mean different things.** A request carrying no Basic
   credentials — no `Authorization` header, or a scheme BeMap does not read,
@@ -765,13 +779,17 @@ Treat a role marked *(inferred)* as a strong hint and this list as the fact.
 
   | Message | Means | Fix |
   |---|---|---|
-  | `Invalid value for field 'X'. Accepted values : [ … ]` | Right type, unrecognised enum value — and it hands you the full list | Pick from the list |
+  | `Invalid value for field 'X'. Accepted values: [ … ]` | Right type, unrecognised enum value — and it hands you the full list | Pick from the list |
   | `Invalid request`, nothing more | A **type** mismatch — most often a string where a JSON array belongs | Check the shape, not the values |
 
   A bare `Invalid request` never names the offending field, so do not hunt for
-  a typo: suspect the structure first. Errors come back as XML
-  (`<ErrorResponse><code>…</code><message>…</message></ErrorResponse>`) even
-  though requests are JSON.
+  a typo: suspect the structure first. Errors come back as JSON,
+  `{"code": "…", "message": "…"}`; the one known exception is evsmartrouting
+  v1 given a string `vehicle`, which answers an XML `<error>` body.
+- **`403 "Wrong site"`** — per BeMap's source, the key's usage is locked to a
+  web site (an HTTP referer), and a call that sends none — from a server, a
+  script, these tools — is refused. Test with a key whose usage has no such
+  lock. A missing entitlement is a `400`, not a `403`.
 - `400 INTERNAL_ERROR "This service is not configured on this server."` — 4.1.0's
   wording for an **ineligible geocoder**, despite what it says. The service *is*
   configured; the `geoserver` you named is not eligible for it. 4.0.3 reports the
@@ -783,13 +801,11 @@ Treat a role marked *(inferred)* as a strong hint and this list as the fact.
   distinguishable.
 - `405` — wrong HTTP method. Most services are POST with
   `Content-Type: application/json`; a few (quotas, some vehicle endpoints)
-  are GET. Since 4.1.0 each reference page declares its method, so
-  `bemap_list_services` shows it and `bemap_try_request` uses it by default —
-  check there before assuming POST. The method can differ *between versions of
-  the same service* — but only from 4.1.0: there `getlevelvehicleinfo` accepts
-  POST on v1.1 and answers `405` for it on v1.0. On 4.0.3, which is what every
-  environment a customer can call runs today, POST answers `405` on **both**
-  versions and only GET works.
+  are GET. The method comes from the specification: `bemap_list_services` and
+  `bemap_get_operation` show it, and `bemap_try_request` sends only a declared
+  one. It can differ *between versions of the same service*: on 4.1.0
+  `getlevelvehicleinfo` accepts POST on v1.1 and answers `405` for it on v1.0;
+  on 4.0.3 POST answers `405` on both.
 - **A `200` is not proof a parameter took effect.** An unknown *field name* is
   dropped in silence at every nesting level, so a payload written for a newer
   release still answers `200` on an older one, with the newer parameters
@@ -814,38 +830,25 @@ policy if you like, but **do not build backpressure on receiving a `429`** —
 there is nothing today that sends one.
 
 If credentials that work on one environment fail on another, suspect that the
-account is not provisioned there rather than a malformed request — check
-against `beta` first, which is where accounts are usually enabled.
+account is not provisioned there rather than a malformed request — test on the
+environment the account was provisioned for: prod, unless BeNomad said
+otherwise.
 
 **Authentication (4.1.0).** HTTP Basic on every call remains the supported
-route. 4.1.0 adds an auth API — `GET /bgis/service/acl/1.0/auth` returns an
-`X-Auth-ID` — and deprecates both URL-based credentials and session reuse. That
-endpoint returns 404 on 4.0.3, so do not build on it until the target
-environment is on 4.1.0; `bemap_status` says which release the environment
-runs. Only `auth` is new: `GET /bgis/service/acl/1.0/user/details` answers
-`200` on 4.0.3 too — see *Reading BeMap errors*. The header is `X-Auth-ID` — the documentation spelled it `X-Aith-ID`
-until 4.1.0 fixed the typo, and the misspelling still circulates in older
-integration code.
+route. 4.1.0 adds `GET /bgis/service/acl/1.0/auth`, which returns an
+`X-Auth-ID`, and deprecates URL-based credentials and session reuse; that
+endpoint answers 404 on 4.0.3.
 
 ## Keeping the reference current
 
-The MCP serves a snapshot of one release, so it can lag the live API. If a
-field is disputed or newly added, check `bemap_status` for the release and the
-build date, then use a snapshot built from the release you call rather than
-working around a stale one — the snapshot is rebuilt from BeMap's own
-specification for every release.
-
-`bemap_status` also says whether the snapshot is **ahead of** or **behind** the
-environment being called. Ahead is the normal state while a release rolls out —
-the fields are real, they just do not exist on that environment yet, which is a
-different problem from a wrong field name and needs a different answer.
+`bemap_status` names the release the snapshot describes and, with `checkLive`,
+the one an environment runs, and says whether the snapshot is **ahead of** or
+**behind** it. On an environment older than the snapshot, a field added since
+is ignored in silence — a different problem from a wrong field name, settled by
+sending an invalid value in it: a `400` shows the field is read.
 
 ## Out of scope
 
-- **Vector tiles, map display, authentication for tiles** → skill
-  `benomad-tiles-integration`.
-- **Frontend project conventions** (DAO layer, namespace, structure) → skill
-  `benomad-frontend`.
-- **JS SDK class reference** (`bemap.RoutingV2`, `bemap.Geocoder`, …) → the
-  SDK's own `llms.txt` and `benomad-tiles-integration`. This skill and the
-  `bemap` MCP cover the REST API underneath.
+Map display and the tiles sign-in start with `bemap_map_setup`; the JavaScript
+and Flutter SDK pages are read with `bemap_read_guide`. This skill covers the
+REST API they call.

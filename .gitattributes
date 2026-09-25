@@ -1,0 +1,6 @@
+# Written by the release. Line endings are part of the data, not a checkout preference.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.tgz binary
+*.mcpb binary

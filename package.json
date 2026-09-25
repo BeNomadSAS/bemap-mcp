@@ -21,7 +21,8 @@
     "README.md",
     "INSTALL.md",
     "CHANGELOG.md",
-    "LICENSE.md"
+    "LICENSE.md",
+    "npm-shrinkwrap.json"
   ],
   "scripts": {
     "start": "node src/index.js",
@@ -31,5 +32,10 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
     "zod": "3.25.76"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeNomadSAS/bemap-mcp.git"
+  },
+  "homepage": "https://github.com/BeNomadSAS/bemap-mcp"
 }

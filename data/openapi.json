@@ -2776,6 +2776,13 @@
        }
       }
      }
+    },
+    "x-bemap-roles": {
+     "expression": "hasAuthority('ROLE_TELEMETRIC_EXTERNAL_APP_INCREASE')",
+     "roles": [
+      "ROLE_TELEMETRIC_EXTERNAL_APP_INCREASE"
+     ],
+     "declaredIn": "com.benomad.bgis.fe.protocol.service.v1_0_0.TelemetricController"
     }
    }
   },
@@ -4391,7 +4398,8 @@
       "schema": {
        "type": "string",
        "format": "byte",
-       "default": 1
+       "default": 1,
+       "x-javaType": "byte"
       }
      },
      {
@@ -4401,7 +4409,8 @@
       "schema": {
        "type": "string",
        "format": "byte",
-       "default": 1
+       "default": 1,
+       "x-javaType": "byte"
       }
      },
      {
@@ -5762,7 +5771,8 @@
       "type": "string",
       "description": "ISO-3 country code. Used to filter vehicle data such as available connectors in this country."
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleRequest"
    },
    "VehicleInfo": {
     "type": "object",
@@ -5845,7 +5855,8 @@
       "format": "double",
       "description": "Maximum charge power (in kW) in DC current type."
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleInfo"
    },
    "VehicleModelsResponse": {
     "type": "object",
@@ -5858,7 +5869,8 @@
        "$ref": "#/components/schemas/VehicleInfo"
       }
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleModelsResponse"
    },
    "BoundingBox": {
     "type": "object",
@@ -11510,7 +11522,8 @@
       "deprecated": true,
       "description": "Switch index."
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.ServiceRequest"
    },
    "IsAliveGeoResponse": {
     "type": "object",
@@ -12514,7 +12527,10 @@
      "stepPointPluggingTime": {
       "type": "integer",
       "format": "int32",
-      "description": "Defines the fixed additional time in seconds for each charging stop."
+      "description": "Defines the fixed additional time in seconds for each charging stop.",
+      "x-aliases": [
+       "stepPointPlugingTime"
+      ]
      },
      "payload": {
       "type": "integer",
@@ -12525,7 +12541,10 @@
       "type": "integer",
       "format": "int32",
       "deprecated": true,
-      "description": "Additional load weight in kg (like passengers, luggage or tools). Deprecated and not supported anymore, use the `payload` field."
+      "description": "Additional load weight in kg (like passengers, luggage or tools). Deprecated and not supported anymore, use the `payload` field.",
+      "x-aliases": [
+       "extraPayLoad"
+      ]
      },
      "startLon": {
       "type": "number",
@@ -12641,7 +12660,8 @@
      "startLon",
      "stopLat",
      "stopLon"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.request.EvSmartRoutingRequest"
    },
    "StepPointTimeSlot": {
     "type": "object",
@@ -13560,7 +13580,8 @@
       "$ref": "#/components/schemas/EvSmartRoutingDebugStat",
       "description": "Performance statistics of EV Smart Routing service. It's of BeNomad debug only."
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.response.EvSmartRoutingResponse"
    },
    "ImageUrl": {
     "type": "object",
@@ -13690,7 +13711,8 @@
       "format": "double",
       "description": "Saved CO2 Emissions (kg). This value is calculated from the amount of energy consumed for this journey using the profile of an ICE vehicle similar to the selected electric vehicle."
      }
-    }
+    },
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.response.JourneyFront"
    },
    "LocalWeather": {
     "type": "object",
@@ -15363,7 +15385,7 @@
     "required": [
      "duration"
     ],
-    "x-javaClass": "com.benomad.bgis.be.model.evSmartRouting.ChargeTimeSlot"
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.ChargeTimeSlotFront"
    },
    "Condition": {
     "type": "object",
@@ -15764,7 +15786,8 @@
     "required": [
      "lat",
      "lon"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.PlaceFront"
    },
    "SpeedPonderationFront": {
     "type": "object",
@@ -16280,7 +16303,7 @@
        "DELIVERY_TRUCK": "Delivery truck.",
        "TRUCK": "Truck."
       },
-      "x-enumSource": "com.benomad.bgis.be.model.TransportType"
+      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.TransportTypeFront"
      },
      "maxSpeed": {
       "type": "integer",
@@ -16296,7 +16319,7 @@
      "lat",
      "lon"
     ],
-    "x-javaClass": "com.benomad.bgis.be.model.evSmartRouting.Via"
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.ViaFront"
    },
    "BoundingBoxFront": {
     "type": "object",
@@ -16387,12 +16410,24 @@
        "TOLL",
        "EXCEPTION",
        "NOT_SUPPORTED_ENUM"
-      ]
+      ],
+      "x-enumDescriptions": {
+       "START": "Start point, event contains information about the start location of trip.",
+       "STOP": "Stop point, event contains information about the stop location of trip.",
+       "VIA": "Via point, event contains information about the way-point location of trip.",
+       "CHARGE": "Charge step, event contains information about the charge step location of trip.",
+       "ROUTE": "Route, that represent the route information about part of trip.",
+       "TOLL": "Toll along the journey.",
+       "EXCEPTION": "Exception event can show the information about a error on the API conversion between backend and frontend.",
+       "NOT_SUPPORTED_ENUM": "The event type is not supported by this API version, please check if a newer API is already released."
+      },
+      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.events.EventTypeFront"
      }
     },
     "required": [
      "eventType"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.events.EventFront"
    },
    "Journey": {
     "type": "object",
@@ -16420,7 +16455,8 @@
     "required": [
      "events",
      "summary"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.JourneyFront"
    },
    "Summary": {
     "type": "object",
@@ -16493,7 +16529,8 @@
      "distance",
      "duration",
      "vehicleInfo"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.SummaryFront"
    },
    "TimeSlotWarning": {
     "type": "object",
@@ -16511,7 +16548,8 @@
     "required": [
      "message",
      "statusCode"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.TimeSlotWarningFront"
    },
    "TollSumFeesFront": {
     "type": "object",
@@ -17294,7 +17332,8 @@
     "required": [
      "id",
      "label"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.BrandInfo"
    },
    "VehicleBrandsResponse": {
     "type": "object",
@@ -17310,7 +17349,8 @@
     },
     "required": [
      "brands"
-    ]
+    ],
+    "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.VehicleBrandsResponse"
    },
    "QuotasJailFront": {
     "type": "object",

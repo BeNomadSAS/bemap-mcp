@@ -11,16 +11,13 @@
  * script was written, and the first line it disagreed on was the `401`/`403`
  * passage.
  *
- * Claude reads two scopes, and five other assistants read a third. This script
- * must be able to write any of them: `--agents` targets `~/.agents/skills`, the
- * directory the Agent Skills standard defines, which Codex, Cursor, Copilot,
- * VS Code and Gemini CLI read.
- *
- * Claude reads two scopes, and this script must be able to write either. The
- * user scope (`~/.claude/skills/`) is the default because it applies to every
- * project; the project scope (`<cwd>/.claude/skills/`) is what a customer
- * checking a skill into their own repository wants. Writing one while a
- * different copy sits in the other is the duplicate-definition hazard this
+ * Claude reads two scopes, and five other assistants read a third, so this
+ * script writes any of them. The default is the user scopes — `~/.claude/skills`
+ * and `~/.agents/skills`, the directory the Agent Skills standard defines,
+ * which Codex, Cursor, Copilot, VS Code and Gemini CLI read — because they
+ * apply to every project; `--project` writes `<cwd>/.claude/skills/`, for a
+ * customer checking the skill into their own repository. Writing one while a
+ * different copy sits in another is the duplicate-definition hazard this
  * script exists to prevent, so the other scope is inspected and reported even
  * though it is never touched.
  *
@@ -41,10 +38,10 @@
  * loader ever declines to follow one the skill disappears instead of going
  * stale, which is a worse failure and a silent one. A copy always loads.
  *
- * Run:  npx bemap-install-skill
- *       npx bemap-install-skill --check           (report only, non-zero on drift)
- *       npx bemap-install-skill --project         (into <cwd>/.claude/skills)
- *       npx bemap-install-skill /some/other/dir
+ * Run:  npx --no-install bemap-install-skill        (from the folder the package is installed in)
+ *       npx --no-install bemap-install-skill --check (report only, non-zero on drift)
+ *       node <that folder>/node_modules/@benomad/bemap-mcp/scripts/install-skill.js --project  (from the project: into <cwd>/.claude/skills)
+ *       npx --no-install bemap-install-skill /some/other/dir
  */
 
 import {
@@ -56,6 +53,7 @@ import {
   statSync,
   copyFileSync,
   realpathSync,
+  renameSync,
 } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, dirname, resolve } from 'node:path';
@@ -90,11 +88,22 @@ export const AGENTS_TARGET = join(homedir(), '.agents', 'skills');
  *   scope, one otherwise. `target` is the first of them, kept for callers that
  *   only need to name the scope. `other` is a scope not being written,
  *   inspected for a competing copy.
+ * @throws {Error} for an option it does not know, or two destinations: a
+ *   misspelt `--projcet` used to install into the user scope in silence.
  */
 export function parseTarget(argv, cwd = process.cwd()) {
   const check = argv.includes('--check');
-  const flags = new Set(argv.filter((a) => a.startsWith('--')));
-  const path = argv.find((a) => !a.startsWith('--'));
+  /* One dash is an option too: `-check` was a directory, written and called "installed". */
+  const flags = new Set(argv.filter((a) => a.startsWith('-')));
+  const paths = argv.filter((a) => !a.startsWith('-'));
+  const unknown = [...flags].filter((flag) => !['--check', '--agents', '--project'].includes(flag));
+  if (unknown.length) {
+    throw new Error(`unknown option ${unknown.join(', ')} — the options are --project, --agents and --check; a directory whose name starts with - is written ./-name`);
+  }
+  if (paths.length + (flags.has('--agents') ? 1 : 0) + (flags.has('--project') ? 1 : 0) > 1) {
+    throw new Error('name one destination: a directory, --project or --agents');
+  }
+  const path = paths[0];
   const project = join(cwd, '.claude', 'skills');
 
   if (path) {
@@ -119,6 +128,22 @@ export function parseTarget(argv, cwd = process.cwd()) {
     scope: 'user',
     check,
   };
+}
+
+/**
+ * The command that refreshes the destination a check found stale.
+ *
+ * @param {string} scope - From {@link parseTarget}.
+ * @param {string} target - The directory checked.
+ * @param {string} [script] - This script's own path.
+ * @returns {string}
+ */
+export function refreshCommand(scope, target, script = fileURLToPath(import.meta.url)) {
+  const base = `node "${script}"`;
+  if (scope === 'project') return `${base} --project`;
+  if (scope === 'agents') return `${base} --agents`;
+  if (scope === 'explicit') return `${base} "${target}"`;
+  return base;
 }
 
 /**
@@ -210,9 +235,9 @@ export function provenance(name, text) {
 /**
  * Compare an installed copy with the source, by version and by digest.
  *
- * A version alone cannot settle it — an edit that forgets to bump the version
- * is exactly the drift being hunted — so the digest decides and the version
- * explains.
+ * A version alone cannot settle it — between releases every build declares
+ * the same pre-release, and a customer's copy is the workshop's, rewritten —
+ * so the digest decides and the version explains.
  *
  * @param {string} source - Source SKILL.md text.
  * @param {string|null} installed - Installed text, or null when absent.
@@ -229,7 +254,7 @@ export function compareInstalled(source, installed) {
     state: 'stale',
     detail:
       was === now
-        ? `both declare v${now} but the text differs — a version bump was missed`
+        ? `both declare v${now}, and the text differs from this package's copy — another build, or the other distribution`
         : `installed v${was}, source v${now}`,
   };
 }
@@ -285,7 +310,14 @@ function main() {
     process.exit(1);
   }
 
-  const { targets, other, scope, check } = parseTarget(withNpmFlags(process.argv.slice(2)));
+  let parsed;
+  try {
+    parsed = parseTarget(withNpmFlags(process.argv.slice(2)));
+  } catch (error) {
+    console.error(`install-skill: ${error.message}`);
+    process.exit(2);
+  }
+  const { targets, other, scope, check } = parsed;
   const secrets = secretValues();
   const dirs = readdirSync(SOURCE).filter((d) => statSync(join(SOURCE, d)).isDirectory());
   let installed = 0;
@@ -350,7 +382,7 @@ function main() {
           console.log(`  = ${label(target)} ${name}: current (${verdict.detail})`);
           unchanged++;
         } else {
-          console.log(`  ✗ ${name}: ${verdict.state} — ${verdict.detail}`);
+          console.log(`  ✗ ${label(target)} ${name}: ${verdict.state} — ${verdict.detail}`);
           stale++;
         }
         continue;
@@ -368,19 +400,25 @@ function main() {
          was being told before this run, which is what makes a regression
          attributable. */
       if (current !== null) {
-        /* To the second: two replacements on one day kept one backup. */
+        /* To the second, and numbered within one: two replacements on one
+           day kept one backup, and two in the same second still overwrote it. */
         const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-        const backup = join(destDir, `SKILL.md.replaced-${stamp}`);
-        copyFileSync(dest, backup);
+        let backup = `SKILL.md.replaced-${stamp}`;
+        for (let n = 2; existsSync(join(destDir, backup)); n++) backup = `SKILL.md.replaced-${stamp}-${n}`;
+        copyFileSync(dest, join(destDir, backup));
         console.log(
           `  → ${label(target)} ${name}: ${Buffer.byteLength(current)} B → ${Buffer.byteLength(text)} B ` +
-            `(${verdict.detail}; previous kept as SKILL.md.replaced-${stamp})`
+            `(${verdict.detail}; previous kept as ${backup})`
         );
       } else {
         console.log(`  + ${label(target)} ${name}: installed (${Buffer.byteLength(text)} B)`);
       }
 
-      writeFileSync(dest, text);
+      /* Written aside, then renamed over the old copy: an assistant starting
+         during the write read half a skill, and an interrupted run left one. */
+      const partial = `${dest}.partial-${process.pid}`;
+      writeFileSync(partial, text);
+      renameSync(partial, dest);
       writeFileSync(join(destDir, '.installed-from'), `${JSON.stringify(provenance(name, text), null, 2)}\n`);
       installed++;
     }
@@ -391,9 +429,11 @@ function main() {
     console.log(`install-skill --check: ${unchanged} current, ${stale} needing install`);
     console.log(`target: ${targets.join(', ')} (${scope} scope)`);
     if (stale > 0) {
-      /* The customer has no npm scripts: this ships as a dependency of their
-         project, so the binary is the only form they can run. */
-      console.log('Run `npx bemap-install-skill` to refresh, then restart Claude Code.');
+      /* The command for the destination checked: the default one wrote the
+         user scopes and left a stale project copy loading beside them. By
+         this script's own path, which works from any folder — `npx` from
+         anywhere but the install folder asks the public registry for the name. */
+      console.log(`Run \`${refreshCommand(scope, targets[0])}\`${scope === 'project' ? ' from the project' : ''} to refresh, then start a new session of your assistant.`);
       process.exitCode = 1;
     }
     return { installed, unchanged, stale };
@@ -401,7 +441,7 @@ function main() {
   console.log(`install-skill: ${installed} installed, ${unchanged} already current`);
   console.log(`target: ${targets.join(', ')} (${scope} scope)`);
   if (installed > 0) {
-    console.log('Restart Claude Code to load the new text: a skill is read at startup.');
+    console.log('A session already open may keep the previous text: start a new one.');
   }
   return { installed, unchanged, stale };
 }

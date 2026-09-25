@@ -54,7 +54,7 @@ BeNomad SAS.
 
 Third-party components installed with the package, such as the Model Context
 Protocol SDK and zod, remain under their own licences. Where the package
-bundles them — the Claude Desktop extension, the plugin — their notices are in
+bundles them, as the Claude Desktop extension does, their notices are in
 `THIRD_PARTY_NOTICES.md`.
 
 ## 4. Personal data

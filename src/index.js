@@ -33,6 +33,9 @@ import {
   environmentHosts,
   environmentName,
   environmentNames,
+  errorText,
+  insecureTransport,
+  isTilesHost,
   OWN,
   resolveBaseUrl,
   resolveTilesUrl,
@@ -50,6 +53,7 @@ import {
   findSchema,
   loadSnapshot,
   readGuide,
+  guideLinks,
   resolveIncludes,
   schemasNamedIn,
   SnapshotMissingError,
@@ -67,6 +71,9 @@ import { checkBody, checkQuery, groupIssues } from './validate.js';
  * @returns {import('zod').ZodObject}
  */
 const strict = (shape) => z.object(shape).strict();
+
+/** The longest request body `bemap_try_request` takes, in characters: a long trace is a few megabytes. */
+const MAX_BODY_CHARS = 5_000_000;
 
 /** Wrap Markdown as an MCP text result. */
 const text = (body) => ({ content: [{ type: 'text', text: body }] });
@@ -106,12 +113,15 @@ function sourceLine() {
     source.commit ? `source ${source.ref}@${source.commit.slice(0, 8)} (${String(source.committedAt).slice(0, 10)})` : null,
     `built ${String(manifest.generatedAt).slice(0, 10)}`,
   ].filter(Boolean);
+  /* A pre-release label does not say a field is missing anywhere, and a 200
+     does not say one was read: what settles it is said, not a check that
+     cannot. */
   const prerelease = /SNAPSHOT/i.test(spec.version ?? '')
-    ? ' This is a pre-release: a field it lists may not exist yet on the environment you call.'
+    ? ' The specification is a pre-release build: a `200` does not prove a field was read — an invalid value in it answering `400` does.'
     : '';
   provenanceLine =
-    `\n\n---\n_Source: ${parts.join(' · ')} — a snapshot, not the live service. ` +
-    `Confirm with \`bemap_try_request\`.${prerelease}_`;
+    `\n\n---\n_Source: ${parts.join(' · ')} — a snapshot, not the live service: ` +
+    `\`bemap_try_request\` shows what the service does.${prerelease}_`;
   return provenanceLine;
 }
 
@@ -229,7 +239,7 @@ server.registerTool(
       'The catalogue: every BeMap service with its operations — HTTP method, full endpoint and what each ' +
       'does. Use it to see what exists before choosing an operation, or pass `service` to list one service.',
     inputSchema: strict({
-      service: z.string().optional().describe('Only services whose name contains this, e.g. "routing", "charging".'),
+      service: z.string().max(200).optional().describe('Only services whose name contains this, e.g. "routing", "charging".'),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false, idempotentHint: true },
   },
@@ -261,7 +271,7 @@ server.registerTool(
     }),
     annotations: { readOnlyHint: true, openWorldHint: true },
   },
-  async ({ checkLive = false, env }) =>
+  async ({ checkLive = false, env }, extra) =>
     guard(async () => {
       /* The one tool that must answer when the snapshot is gone: every other
          tool failing is the symptom, and a diagnostic that fails the same way
@@ -301,15 +311,19 @@ server.registerTool(
           : null,
         settingsProblem() ? `- ⚠️ **Settings:** ${settingsProblem()}` : null,
         unencrypted(setting('BEMAP_BASE_URL'))
-          ? `- ⚠️ **\`${setting('BEMAP_BASE_URL')}\` is plain HTTP:** the account would travel unencrypted. Use its \`https://\` address if it has one.`
+          ? setting('BEMAP_ALLOW_INSECURE_HTTP') === '1'
+            ? `- ⚠️ **\`${setting('BEMAP_BASE_URL')}\` is plain HTTP**, and BEMAP_ALLOW_INSECURE_HTTP=1 sends the account to it unencrypted. Use its \`https://\` address if it has one.`
+            : `- ⚠️ **\`${setting('BEMAP_BASE_URL')}\` is plain HTTP:** no live call is sent to it, since the account would travel unencrypted. Use its \`https://\` address, or set BEMAP_ALLOW_INSECURE_HTTP=1 for a network you trust.`
           : null,
-        hasAccount()
-          ? '- Account: **set** in this server — live calls are possible.'
-          : "- Account: **none set** — nothing can be sent to BeMap. Live calls (`bemap_try_request`, the live checks, the map's live " +
-            "defaults) need BEMAP_USER / BEMAP_KEY in this server's settings — the extension's settings in Claude Desktop — never in the conversation.",
+        !hasAccount()
+          ? "- Account: **none set** — nothing can be sent to BeMap. Live calls (`bemap_try_request`, the live checks, the map's live " +
+            "defaults) need BEMAP_USER / BEMAP_KEY in this server's settings — the extension's settings in Claude Desktop — never in the conversation."
+          : liveRefused()
+            ? `- Account: **set** in this server, and not used in this session. ${liveRefused()}`
+            : '- Account: **set** in this server — live calls are possible.',
         `- Describes: **${spec.title ?? 'BeMap'} ${spec.version ?? 'unknown'}** — ${spec.operations} operations, ${spec.schemas} schemas`,
         /SNAPSHOT/i.test(spec.version ?? '')
-          ? '- ⚠️ **Pre-release.** A field this lists may not exist yet on beta, preprod or prod — confirm with `bemap_try_request` against the environment you target.'
+          ? '- ⚠️ **A pre-release specification.** `checkLive` names the release an environment runs; on one older than this, a field added since is ignored in silence — send an invalid value in it: a `400` shows it is read.'
           : null,
         source.commit ? `- Built from: \`${source.repo}\` at \`${source.ref}\` = \`${source.commit.slice(0, 10)}\` (${String(source.committedAt).slice(0, 10)})` : null,
         `- Snapshot: built **${manifest.generatedAt}** (${ageDays} day(s) ago)`,
@@ -360,14 +374,14 @@ server.registerTool(
         } else {
           lines.push(`- Target: ${client.baseUrl}`);
           try {
-            const live = await client.serverVersion();
+            const live = await client.serverVersion({ signal: extra?.signal });
             lines.push(`- Runs: **bgis ${live.version ?? 'unknown'}**${live.builtAt ? ` (built ${live.builtAt})` : ''}`);
             if (spec.version && live.version && spec.version !== live.version) {
               const { order } = compareBgisVersions(spec.version, live.version);
               lines.push(
                 '',
                 order > 0
-                  ? `> ⚠️ The snapshot is **ahead** of this environment (${spec.version} against ${live.version}): fields added since are refused there, or ignored — BeMap accepts an unknown field name in silence.`
+                  ? `> ⚠️ The snapshot is **ahead** of this environment (${spec.version} against ${live.version}): a field added since is ignored there in silence — BeMap accepts an unknown field name — and an enum value added since is refused.`
                   : order < 0
                     ? `> ⚠️ The snapshot is **behind** this environment (${spec.version} against ${live.version}): fields added since are missing here.`
                     : `> The snapshot and this environment are the same release (${spec.version}), different builds.`
@@ -394,13 +408,13 @@ server.registerTool(
       'it is in the specification and it differs between environments. Use it before sizing a request, and ' +
       'whenever a payload works on one environment and not another.',
     inputSchema: strict({
-      service: z.string().optional().describe('Only limits of services whose name contains this, e.g. "Routing".'),
+      service: z.string().max(200).optional().describe('Only limits of services whose name contains this, e.g. "Routing".'),
       live: z.boolean().optional().describe('Read them from an environment now instead of the snapshot. Needs credentials. Default false.'),
       env: z.enum(environmentNames()).optional().describe('Environment for `live`. Defaults to $BEMAP_ENV, then `own` when BEMAP_BASE_URL is set, then prod.'),
     }),
     annotations: { readOnlyHint: true, openWorldHint: true },
   },
-  async ({ service, live = false, env }) =>
+  async ({ service, live = false, env }, extra) =>
     guard(async () => {
       const { manifest } = loadSnapshot();
       const recorded = manifest.environmentProfile;
@@ -415,8 +429,8 @@ server.registerTool(
         if (!client.hasCredentials()) {
           throw new BemapAuthError('A live limits check needs BEMAP_USER and BEMAP_KEY. Without `live`, the recorded values are used.', 'missing');
         }
-        profile = await client.geoServerInfo();
-        from = `live from ${client.baseUrl}`;
+        profile = await client.geoServerInfo({ signal: extra?.signal });
+        from = `live from ${client.baseUrl}, ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`;
       }
       if (!profile) {
         return failure('This snapshot recorded no limits. Pass `live: true` to read them from an environment.');
@@ -437,6 +451,13 @@ server.registerTool(
         '|---|---|---|---|---|',
         ...limits.map((limit) => `| ${limit.service} | \`${limit.key}\` | **${limit.value}** | ${limit.unit ?? '—'} | ${limit.bound ?? '—'} |`),
       ];
+      /* A 0 is what BeMap reports for a limit it does not apply: dev reports
+         0 for all of them, and prod extracts roads past a 0 m² maximum. */
+      if (limits.some((limit) => limit.value === '0')) {
+        out.push('', '_A `0` may mean the environment does not enforce that limit: try a request before ruling one out._');
+      }
+      /* Read live, they are not the snapshot: its footer said they were. */
+      if (live) return text(`${truncate(out.join('\n'), MAX_RESPONSE_CHARS, 'Filter with `service`.')}\n\n---\n_Read live just now — not the snapshot._`);
       return sourced(truncate(out.join('\n'), MAX_RESPONSE_CHARS, 'Filter with `service`.'));
     })
 );
@@ -452,12 +473,12 @@ server.registerTool(
       'concept ("isochrone", "toll cost"), a field name ("departureTime"), an enum value ("AVOID_TOLLS") or an ' +
       'error message. Pass `kind: "field"` to find which schemas declare a field and how it is spelled.',
     inputSchema: strict({
-      query: z.string().min(2).describe('Search terms. Wrap a phrase in double quotes to require it verbatim.'),
+      query: z.string().min(2).max(2000).describe('Search terms. Wrap a phrase in double quotes to require it verbatim.'),
       kind: z
         .enum(['operation', 'schema', 'field', 'value', 'guide'])
         .optional()
         .describe('Only one kind of result. `field` finds a field by name across all schemas; `value` an enum value.'),
-      family: z.string().optional().describe('Only guides of one family, e.g. "jsapi_2_0_0", "rest_1_0_0", "general".'),
+      family: z.string().max(100).optional().describe('Only guides of one family, e.g. "jsapi_2_0_0", "rest_1_0_0", "general".'),
       limit: z.number().int().min(1).max(40).optional().describe('Maximum results. Default 10.'),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false, idempotentHint: true },
@@ -468,24 +489,33 @@ server.registerTool(
          and that a field absent from the specification does not exist. */
       const families = [...new Set(loadSnapshot().guides.map((entry) => entry.family))].sort();
       if (family && !families.includes(family)) return failure(`No guides in family "${echo(family)}". Families: ${families.join(', ')}.`);
+      /* A family narrows guides only: with another kind it used to find
+         nothing, and then say a real field does not exist. */
+      if (family && kind && kind !== 'guide') {
+        return failure(`\`family\` narrows guides only, and \`kind\` is "${kind}": pass one of them.`);
+      }
       const hits = search(query, { kind, family, limit });
       if (hits.length === 0) {
         return failure(
-          `No match for "${echo(query)}"${kind ? ` among ${kind}s` : ''}. Try one distinctive term, a field name or an enum value. ` +
-            'A field absent from the specification does not exist in this release — BeMap would ignore it.'
+          family
+            ? `No guide of ${family} matches "${echo(query)}". Try without \`family\`.`
+            : `No match for "${echo(query)}"${kind ? ` among ${kind}s` : ''}. Try one distinctive term, a field name or an enum value. ` +
+                'A field absent from the specification does not exist in this release — BeMap would ignore it.'
         );
       }
       const next = {
         operation: (hit) => `\`bemap_get_operation\` "${hit.id}"`,
         schema: (hit) => `\`bemap_get_schema\` "${hit.id}"`,
-        field: (hit) => `\`bemap_get_schema\` "${hit.schema}" property "${hit.id.split('.').pop()}"`,
-        value: (hit) => `\`bemap_get_schema\` "${hit.schema}" property "${hit.field}"`,
+        /* A query parameter belongs to an operation, not to a schema. */
+        field: (hit) =>
+          hit.operation ? `\`bemap_get_operation\` "${hit.operation}" — a query parameter` : `\`bemap_get_schema\` "${hit.schema}" property "${hit.id.split('.').pop()}"`,
+        value: (hit) => (hit.operation ? `\`bemap_get_operation\` "${hit.operation}" — a value of the query parameter \`${hit.field}\`` : `\`bemap_get_schema\` "${hit.schema}" property "${hit.field}"`),
         guide: (hit) => `\`bemap_read_guide\` "${hit.id}"`,
       };
       const via = hits[0]?.via;
       const out = [
         via
-          ? `# Search: "${echo(query)}" — nothing is named that; ${hits.length} result(s) for its words, "${echo(via)}"`
+          ? `# Search: "${echo(query)}" — ${family ? `no guide of ${family} is` : 'nothing is'} named that; ${hits.length} result(s) for its words, "${echo(via)}"`
           : `# Search: "${echo(query)}" — ${hits.length} result(s)`,
         '',
       ];
@@ -516,7 +546,7 @@ server.registerTool(
       'response. Accepts "POST /routing/1.0", a full endpoint ("/bgis/service/routing/1.0") or words ' +
       '("reverse geocoding"). Use it before writing any request.',
     inputSchema: strict({
-      operation: z.string().min(2).describe('"METHOD /path", an endpoint, or words. E.g. "POST /routing/1.0", "traceroute".'),
+      operation: z.string().min(2).max(500).describe('"METHOD /path", an endpoint, or words. E.g. "POST /routing/1.0", "traceroute".'),
       detail: z
         .enum(['summary', 'full'])
         .optional()
@@ -526,10 +556,17 @@ server.registerTool(
   },
   async ({ operation, detail = 'summary' }) =>
     guard(() => {
-      const { match, candidates } = findOperation(operation);
+      const { match, candidates, explicit } = findOperation(operation);
       if (!match) {
         if (candidates.length === 0) {
           return failure(`No operation matches "${echo(operation)}". \`bemap_list_services\` shows them all.`);
+        }
+        /* An endpoint written out and not found is a misspelling, not a
+           question: its near spellings are not meanings. */
+        if (explicit) {
+          return failure(
+            `\`${echo(operation)}\` is not in the specification. Closest: ${candidates.slice(0, 5).map((op) => `\`${op.key}\``).join(', ')}.`
+          );
         }
         return text(
           [`"${echo(operation)}" could mean${candidates.length > 1 ? ' several operations' : ''}:`, '', ...candidates.map((op) => `- \`${op.key}\` — ${clip(op.summary || op.description, 90)}`), '', 'Pass one of them exactly.'].join('\n')
@@ -554,8 +591,8 @@ server.registerTool(
       'that use it, and the meaning of each enum value. Use it to drill into a nested type an operation ' +
       'names, or pass `property` for one field in full — the `options` of a routing request has dozens of values, each explained.',
     inputSchema: strict({
-      name: z.string().min(2).describe('Schema name, e.g. "RoutingRequest", "RoutingDest". Case does not matter.'),
-      property: z.string().optional().describe('Show only this field, in full, with every enum value explained.'),
+      name: z.string().min(2).max(300).describe('Schema name, e.g. "RoutingRequest", "RoutingDest". Case does not matter.'),
+      property: z.string().max(200).optional().describe('Show only this field, in full, with every enum value explained.'),
       detail: z.enum(['summary', 'full']).optional().describe('`summary` (default) or `full` — every enum value explained.'),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false, idempotentHint: true },
@@ -571,7 +608,11 @@ server.registerTool(
         );
       }
       return sourced(
-        truncate(renderSchema(found.name, found.schema, { detail, property }), MAX_RESPONSE_CHARS, 'Pass `property` to show one field.')
+        truncate(
+          renderSchema(found.name, found.schema, { detail, property: property ?? found.property }),
+          MAX_RESPONSE_CHARS,
+          'Pass `property` to show one field.'
+        )
       );
     })
 );
@@ -590,8 +631,8 @@ server.registerTool(
       'BeNomad Tiles — served verbatim. Accepts a guide id, a title or words; with no guide, lists what exists. ' +
       'Use it for how and why; use `bemap_get_operation` for the exact contract, which wins where they differ.',
     inputSchema: strict({
-      guide: z.string().optional().describe('Guide id ("rest_1_0_0/routing-service.md"), title or words. Omit to list guides.'),
-      family: z.string().optional().describe('When listing, only one family — e.g. "jsapi_2_0_0", "flutterapi_1_0_0".'),
+      guide: z.string().max(500).optional().describe('Guide id ("rest_1_0_0/routing-service.md"), title or words. Omit to list guides.'),
+      family: z.string().max(100).optional().describe('When listing, only one family — e.g. "jsapi_2_0_0", "flutterapi_1_0_0".'),
       part: z.number().int().min(1).optional().describe(`Which part of a long guide, ${GUIDE_PART.toLocaleString('en-US')} characters each. Default 1.`),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false, idempotentHint: true },
@@ -617,13 +658,13 @@ server.registerTool(
         return text(truncate(out.join('\n'), MAX_RESPONSE_CHARS, 'Pass `family` to list one family.'));
       }
 
-      const { match, candidates } = findGuide(guide);
+      const { match, candidates } = findGuide(guide.replace(/^guide:/, ''));
       if (!match) {
         if (candidates.length === 0) return failure(`No guide matches "${echo(guide)}". Call without \`guide\` to list them, or use \`bemap_search\`.`);
         return text([`"${echo(guide)}" could be:`, '', ...candidates.map((entry) => `- \`${entry.id}\` — ${entry.title}`)].join('\n'));
       }
       const raw = readGuide(match.id);
-      const body = resolveIncludes(raw, snapshot);
+      const body = guideLinks(resolveIncludes(raw, snapshot), snapshot);
       const pieces = splitParts(body, GUIDE_PART);
       const parts = pieces.length;
       if (part > parts) return failure(`\`${match.id}\` has ${parts} part(s).`);
@@ -641,6 +682,8 @@ server.registerTool(
         '---',
         parts > part ? `Continue with \`part: ${part + 1}\`.` : null,
         named.length ? `Schemas this guide refers to: ${named.map((name) => `\`${name}\``).join(', ')} — \`bemap_get_schema\` for the contract.` : null,
+        /\]\(guide:|href="guide:/.test(slice) ? 'A link written `guide:<id>` is another guide: read it with `bemap_read_guide`.' : null,
+        /!\[[^\]]*\]\((?!https?:)/.test(slice) ? 'The images this part shows are not in the snapshot: only their captions are.' : null,
         "_A hand-written guide, served as BeMap wrote it. For field names, types and requiredness the specification is the contract (`bemap_get_operation`, `bemap_get_schema`); where they disagree, trust the specification and confirm with `bemap_try_request`._",
       ].filter((line) => line !== null);
       return sourced(truncate(out.join('\n'), MAX_RESPONSE_CHARS));
@@ -686,15 +729,25 @@ const hasAccount = () => Boolean(setting('BEMAP_USER') && setting('BEMAP_KEY'));
 const bare = (host) => host.replace(/^https?:\/\//, '');
 
 /**
- * A web address a person typed, without its trailing slash, or `null` when it
- * is not one.
+ * A web address a person typed, as the client would send to it — scheme and
+ * host as a URL parser reads them, a trailing `/bgis` or `/bgis/service`
+ * dropped — or `null` when it is not one. BeMap's own pages write an
+ * installation's address with `/bgis/`, and the address was then called "not
+ * configured in this server" beside the same one in BEMAP_BASE_URL.
  *
  * @param {string|undefined} value
  * @returns {string|null}
  */
 function typedHost(value) {
-  const trimmed = String(value ?? '').trim().replace(/\/+$/, '');
-  return /^https?:\/\/[^\s/?#]+/i.test(trimmed) ? trimmed : null;
+  const trimmed = String(value ?? '').trim();
+  if (!/^https?:\/\/[^\s/?#]+/i.test(trimmed)) return null;
+  try {
+    const parsed = new URL(trimmed);
+    const prefix = parsed.pathname.replace(/\/+$/, '').replace(/\/bgis(?:\/service)?$/i, '').replace(/\/+$/, '');
+    return `${parsed.protocol}//${parsed.host}${prefix}`;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -707,7 +760,25 @@ function typedHost(value) {
  * @returns {boolean}
  */
 function trusted(host) {
-  return Boolean(host) && environmentHosts().some((entry) => entry.bemap === host || entry.tiles === host);
+  const same = (a, b) => Boolean(a && b) && a.toLowerCase() === b.toLowerCase();
+  return Boolean(host) && environmentHosts().some((entry) => same(entry.bemap, host) || same(entry.tiles, host));
+}
+
+/**
+ * Whether a live call to this environment would be sent, the way the client
+ * decides it: the environment resolves to that host, and the host is not
+ * plain HTTP the settings refuse. The answer used to promise sends that
+ * bemap_try_request then refused. It is asked only about a host `trusted()`
+ * accepts, so the environment resolves: one that did not has no host to trust.
+ *
+ * @param {string} env
+ * @param {string|null} bemap - Origin.
+ * @returns {string|null} Why not, or `null` when it would be sent.
+ */
+function unsendable(env, bemap) {
+  const resolved = resolveBaseUrl(env);
+  if (!bemap || resolved.toLowerCase() !== bemap.toLowerCase()) return 'this installation is not the one configured in this server';
+  return insecureTransport(resolved);
 }
 
 /**
@@ -912,13 +983,14 @@ function withTiles() {
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} or ${names[names.length - 1]}` : names.join('');
 }
 
-async function renderMapSetup({ env, bemap, tiles, sources, live, answered, fromSettings = false, noAccount = false }, snapshot) {
+async function renderMapSetup({ env, bemap, tiles, sources, live, answered, fromSettings = false, noAccount = false, signal }, snapshot) {
   const where = env === OWN ? 'our own installation' : env;
   const one = sources.length === 1 ? sources[0] : null;
   const another = one?.host === null;
   const needsTiles = sources.some((source) => source.host === 'tiles');
   const account = hasAccount();
-  const sending = live && account && trusted(bemap);
+  const blocked = live && account && trusted(bemap) ? unsendable(env, bemap) : null;
+  const sending = live && account && trusted(bemap) && !blocked;
   const out = [
     one ? (another ? `# The map — ${where}, another provider's` : `# A BeNomad map — ${where}, ${one.name}`) : `# The map — ${where}`,
     '',
@@ -969,13 +1041,15 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
       ? "not possible yet — this installation is not configured in this server, so no account can be sent to it. Add `BEMAP_BASE_URL` and an account of that installation to the server's configuration and restart it; until then check each call with `validateOnly: true`"
       : !account
         ? "asked for, but no BeMap account is set in this server: add `BEMAP_USER` and `BEMAP_KEY` to its configuration — the extension's settings in Claude Desktop, the server's `env` elsewhere — and restart it; never in the conversation. Until then check each call with `validateOnly: true`"
-        : `with the account set in this server — \`bemap_try_request\` with \`env: "${env}"\` sends each call`;
+        : blocked
+          ? `not possible: ${blocked.replace(/\.$/, '')}. Until then check each call with \`validateOnly: true\``
+          : `with the account set in this server — \`bemap_try_request\` with \`env: "${env}"\` sends each call`;
   out.push(`| Live testing | ${liveRow} |`, '');
 
   if (needsTiles && tiles) {
     if (live && account && trusted(tiles)) {
       try {
-        const found = await discoverTiles(tiles);
+        const found = await discoverTiles(tiles, { signal });
         out.push(
           `## What ${where} serves — read live now`,
           '',
@@ -989,11 +1063,16 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
           ''
         );
       } catch (error) {
+        /* The Worker says why it refused: its message is the explanation, not
+           a list of causes of which one — the crossed hosts — cannot happen
+           here, the tiles host being the environment's own. */
         out.push(
           `## What ${where} serves`,
           '',
-          `Not read: ${error.message}. On the tiles login a \`403\` means the account lacks \`ROLE_MAPPING\` or an ` +
-            '`osm`/`here` geoserver, or the hosts are crossed.',
+          `Not read: ${error.message}.` +
+            (error.status === 403
+              ? ' The Worker names the cause: `Bemap returned 401` is BeMap refusing this account or key on this environment — check the key, and that the account exists there; a missing `ROLE_MAPPING`, or a missing `osm`/`here` geoserver, is named as such and needs BeNomad to grant it.'
+              : ''),
           ''
         );
       }
@@ -1006,14 +1085,21 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
         ''
       );
     }
+    /* Step 3 said the style "references the tiles and the fonts itself": its
+       URLs are relative to the Worker, which MapLibre resolves against the
+       application's own origin, with no token — the map drew nothing, and no
+       error said why. BeMap's SDK takes bare host names and adds its own
+       scheme, `http` unless `secure` is set. */
     out.push(
       '## How the application signs in to the map — on any platform',
       '',
       `1. \`POST ${tiles}/api/login\` with HTTP Basic — the same BeMap account and API key as the REST calls — returns \`{ token }\`, valid one hour.`,
-      '2. Send it with every style, tile and font request: the `X-Session-Token` header (MapLibre: `transformRequest`), or `?token=`.',
-      '3. Load the default style; it references the tiles and the fonts itself. Sign in again before the hour is up.',
+      `2. \`GET ${tiles}/api/maps\` with the token names the default style, a path on this host; fetch it from there.`,
+      `3. Every URL inside the style — each source's \`tiles\` or \`url\`, \`glyphs\`, \`sprite\` — may be relative to \`${tiles}\`: make each absolute on it and send the token with each request — the \`X-Session-Token\` header (MapLibre: \`transformRequest\`) or \`?token=\` — before handing the style to the map, which resolves none of them. Sign in again, and set the style again, before the hour is up.`,
       '',
-      `In JavaScript, BeMap's SDK does all three: \`new bemap.Context({ host, tilesHost, login, password })\`.`,
+      `In JavaScript, BeMap's SDK does all three: \`new bemap.Context({ host: '${bare(bemap ?? '')}', tilesHost: '${bare(tiles)}', secure: true, login, password })\` — host names without a scheme; without \`secure: true\` it calls them over plain HTTP.`,
+      '',
+      "_Where a guide's style handling differs from these steps, the steps are how BeNomad Tiles answers today: it has no specification to settle it, so check the style the application builds against a live login._",
       ''
     );
   }
@@ -1055,11 +1141,14 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
     '## Done means',
     '',
     sending
-      ? `- every BeMap call the application makes checked with \`bemap_try_request\`, then sent with \`env: "${env}"\`;`
-      : '- every BeMap call the application makes checked with `bemap_try_request` and `validateOnly: true`;',
+      ? `- every BeMap REST call the application makes checked with \`bemap_try_request\`, then sent with \`env: "${env}"\`;`
+      : '- every BeMap REST call the application makes checked with `bemap_try_request` and `validateOnly: true` — checked, not tested: say which calls were never sent;',
+    needsTiles && tiles && !another
+      ? '- its BeNomad Tiles sign-in and style follow the steps above — `bemap_try_request` does not call BeNomad Tiles;'
+      : null,
     another ? "- and its map is the provider's the user chose, with BeMap's results drawn on it." : "- and its map is BeNomad's."
   );
-  return out.join('\n');
+  return out.filter((line) => line !== null).join('\n');
 }
 
 server.registerTool(
@@ -1076,8 +1165,8 @@ server.registerTool(
         .enum(environmentNames())
         .optional()
         .describe("Which BeMap; `own` is an installation of the customer's own. Asked when omitted and not set in this server's settings."),
-      bemapHost: z.string().optional().describe('With `own`: its BeMap address, e.g. "https://bemap.example.com".'),
-      map: (MAP_SOURCES.length ? z.enum(MAP_SOURCES.map((source) => source.id)) : z.string())
+      bemapHost: z.string().max(500).optional().describe('With `own`: its BeMap address, e.g. "https://bemap.example.com".'),
+      map: (MAP_SOURCES.length ? z.enum(MAP_SOURCES.map((source) => source.id)) : z.string().max(100))
         .optional()
         .describe(`Which map: ${MAP_SOURCES.map((source) => `\`${source.id}\` ${source.name}`).join(', ')}. Asked when omitted.`),
       live: z
@@ -1091,6 +1180,10 @@ server.registerTool(
     guard(async () => {
       const snapshot = loadSnapshot();
       if (MAP_SOURCES.length === 0) return failure('This snapshot names no map, so it is incomplete: reinstall the server.');
+      /* The user's "no" binds before anything can return: an address the tool
+         refused below used to drop it, and the next request went out with the
+         account. */
+      if (typeof live === 'boolean') liveConsent = live;
       if (bemapHost !== undefined && !typedHost(bemapHost)) {
         return failure(`\`bemapHost\` "${echo(bemapHost)}" is not a web address: pass one such as "https://bemap.example.com".`);
       }
@@ -1173,7 +1266,7 @@ server.registerTool(
 
       const chosen = MAP_SOURCES.filter((source) => source.id === choice.map);
       const body = await renderMapSetup(
-        { env: name, ...hosts, sources: chosen.length ? chosen : MAP_SOURCES, live: choice.live === true, answered, fromSettings, noAccount },
+        { env: name, ...hosts, sources: chosen.length ? chosen : MAP_SOURCES, live: choice.live === true, answered, fromSettings, noAccount, signal: extra?.signal },
         snapshot
       );
       return sourced(truncate(note + body, MAX_RESPONSE_CHARS));
@@ -1250,21 +1343,44 @@ server.registerTool(
       'field names in silence, so the check is what reveals a typo. Needs BEMAP_USER / BEMAP_KEY; every call ' +
       'counts against the account quota, and an operation that records something records it.',
     inputSchema: strict({
-      operation: z.string().optional().describe('The operation, as for `bemap_get_operation`: "POST /routing/1.0", "traceroute"…'),
-      path: z.string().optional().describe('An explicit endpoint instead, e.g. "/bgis/service/currency/1.0/rate?code=USD".'),
-      query: z.string().optional().describe('Query string without the "?", e.g. "code=USD". Appended to the endpoint.'),
-      body: z.string().optional().describe('JSON request body, as a string. Omit for GET.'),
-      method: z.enum(['GET', 'POST']).optional().describe('Override the method the specification declares — the only two it declares.'),
+      operation: z.string().max(500).optional().describe('The operation, as for `bemap_get_operation`: "POST /routing/1.0", "traceroute"…'),
+      path: z.string().max(8000).optional().describe('An explicit endpoint instead, e.g. "/bgis/service/currency/1.0/rate?code=USD".'),
+      query: z.string().max(16000).optional().describe('Query string without the "?", e.g. "code=USD". Appended to the endpoint.'),
+      /* A model sometimes writes the body as the object itself: it is read as
+         its JSON text, and the schema every client sees stays a plain string. */
+      body: z
+        .preprocess((value) => (value !== null && typeof value === 'object' ? JSON.stringify(value) : value), z.string().max(MAX_BODY_CHARS))
+        .optional()
+        .describe('JSON request body, as a string. Omit for GET.'),
+      method: z.enum(['GET', 'POST']).optional().describe('GET or POST, where a path declares both. Only a method the specification declares for the path is sent.'),
       env: z.enum(environmentNames()).optional().describe('Target environment. Defaults to $BEMAP_ENV, then `own` when BEMAP_BASE_URL is set, then prod.'),
       validateOnly: z.boolean().optional().describe('Check the body and the query against the specification and stop — nothing is sent. Needs no credentials.'),
       maxChars: z.number().int().min(200).max(MAX_RESPONSE_CHARS).optional().describe('Truncate the response body to this many characters. Default 8000.'),
     }),
     annotations: { readOnlyHint: false, openWorldHint: true, idempotentHint: false },
   },
-  async ({ operation, path, query, body, method, env, validateOnly = false, maxChars = 8000 }) =>
+  async ({ operation, path, query, body, method, env, validateOnly = false, maxChars = 8000 }, extra) =>
     guard(async () => {
       const snapshot = loadSnapshot();
       const hasBody = body !== undefined && body !== '';
+      /* A path written with its method — the way bemap_get_operation titles an
+         operation — was sent as the path "POST%20/bgis/…". */
+      const written = String(path ?? '').trim().match(/^(GET|POST|PUT|DELETE|PATCH)\s+(\S.*)$/i);
+      if (written) {
+        const word = written[1].toUpperCase();
+        if (method && method !== word) return failure(`\`path\` starts with ${word}, and \`method\` is ${method}: pass one.`);
+        method = word;
+        path = written[2];
+      }
+      /* BeNomad Tiles is another service, with its own sign-in: a Tiles URL
+         used to be moved onto BeMap's service root and sent with the account. */
+      const pastedHost = String(path ?? '').match(/^https?:\/\/([^/?#]+)/i)?.[1] ?? null;
+      if (pastedHost && isTilesHost(pastedHost)) {
+        return failure(
+          `\`${echo(path)}\` is on BeNomad Tiles, a separate service this tool does not call. \`bemap_map_setup\`, with live ` +
+            "testing, signs in to the environment's Tiles host and reads what it serves; this tool calls BeMap's REST services and WMS."
+        );
+      }
       /* GET and POST on one path are two operations. With no method named, the
          shape of the call picks: a body means the one that takes one, no body
          the GET. It used to be the POST either way, so a correct query-only
@@ -1284,6 +1400,15 @@ server.registerTool(
       if (operation) {
         const found = findOperation(operation);
         if (!found.match) {
+          /* An endpoint written out that the specification does not declare —
+             the entitlements behind `/acl/1.0/user/details` — was answered with
+             six unrelated POSTs to pick from. */
+          if (found.explicit) {
+            return failure(
+              `\`${echo(operation)}\` is not in the specification${found.candidates.length ? `. Closest: ${found.candidates.slice(0, 5).map((candidate) => `\`${candidate.key}\``).join(', ')}` : ''}. ` +
+                'A GET to a path it does not declare is sent by passing the path as `path`.'
+            );
+          }
           return failure(
             found.candidates.length
               ? `"${echo(operation)}" could mean: ${found.candidates.slice(0, 6).map((candidate) => `\`${candidate.key}\``).join(', ')}. Pass one exactly.`
@@ -1291,24 +1416,49 @@ server.registerTool(
           );
         }
         op = byShape(found);
+        /* The check and the guard describe the operation; the request goes to
+           `path`. Two different paths let a POST declared for one reach the
+           other — a path declared for GET, or none at all. */
+        if (path && pathOf(path, snapshot.basePath) !== op.path) {
+          return failure(
+            `\`operation\` names \`${op.key}\`, and \`path\` is \`${echo(pathOf(path, snapshot.basePath))}\`, another path: pass one of them.`
+          );
+        }
       } else if (path) {
         const bare = path.split('?')[0];
         lookup = findOperation(method ? `${method} ${bare}` : bare);
         op = byShape(lookup);
+        /* Found with another spelling — the lookup is lenient, Spring is not:
+           the path as typed would be sent, and answer 404. */
+        if (op && pathOf(path, snapshot.basePath) !== op.path) {
+          return failure(
+            `\`${echo(pathOf(path, snapshot.basePath))}\` is not how the specification spells this path: \`${op.path}\` — BeMap matches paths exactly. Pass that one.`
+          );
+        }
       } else {
         return failure('Provide `operation` or `path`.');
       }
-      const pastedHost = String(path ?? '').match(/^https?:\/\/([^/?#]+)/i)?.[1] ?? null;
       let endpoint = endpointOf(path ?? op.endpoint, snapshot.basePath);
       if (query) endpoint += `${endpoint.includes('?') ? '&' : '?'}${query.replace(/^\?/, '')}`;
       const verb = method ?? op?.method ?? (hasBody ? 'POST' : 'GET');
-      /* A path the specification declares under no method at all is sent only
-         as a GET: the account can read an undeclared endpoint — the
-         entitlements behind `/acl/1.0/user/details` — but nothing the
-         specification does not show is written with it. A declared path keeps
-         the other declared method, to probe whether it is accepted. */
-      const undeclaredWrite =
-        verb !== 'GET' && !op && !snapshot.operations.some((candidate) => candidate.path.toLowerCase() === pathOf(path ?? '', snapshot.basePath).toLowerCase());
+      /* Only a method the specification declares for the path is sent — or,
+         for a path it declares under no method at all, such as the
+         entitlements behind `/acl/1.0/user/details`, a GET, which writes
+         nothing. A POST to a path declared for GET used to be sent, "to probe
+         whether it is accepted": the account wrote where the specification
+         shows nothing to write. The path is the one sent, compared exactly, as
+         Spring maps it. */
+      const target = pathOf(endpoint, snapshot.basePath);
+      const declared = [...new Set(snapshot.operations.filter((candidate) => candidate.path === target).map((candidate) => candidate.method))];
+      if (declared.length ? !declared.includes(verb) : verb !== 'GET') {
+        return failure(
+          `\`${verb} ${echo(endpoint)}\` is not sent: ${
+            declared.length ? `the specification declares ${declared.join(' and ')} for this path` : 'only a GET is sent to a path the specification does not declare'
+          }. Check the endpoint with \`bemap_get_operation\`.`
+        );
+      }
+      /* The method named is the path's other operation: check against that one. */
+      if (op && op.method !== verb) op = snapshot.operations.find((candidate) => candidate.path === op.path && candidate.method === verb) ?? op;
 
       let parsed;
       if (hasBody) {
@@ -1318,8 +1468,8 @@ server.registerTool(
           return failure(`\`body\` is not valid JSON: ${error.message}`);
         }
       }
-      if (hasBody && (verb === 'GET' || verb === 'DELETE')) {
-        return failure(`\`${verb} ${echo(endpoint)}\` cannot carry a body. Send parameters in \`query\`, or pass \`method: "POST"\` to probe whether the endpoint accepts one.`);
+      if (hasBody && verb === 'GET') {
+        return failure(`\`${verb} ${echo(endpoint)}\` cannot carry a body. Send its parameters in \`query\`.`);
       }
 
       /* The check. Findings are reported, never enforced: the specification is
@@ -1339,8 +1489,6 @@ server.registerTool(
         checkLines.push(`## Checked against \`${op.request.name}\``, '');
         if (bodyIssues.every((issue) => issue.kind === 'alias')) checkLines.push('Every field name and enum value is declared, every value is one BeMap reads as its type, and every required field is present.');
         checkLines.push(...issueLines(bodyIssues), '');
-      } else if (parsed !== undefined && !op) {
-        checkLines.push('_This endpoint is not in the specification, so the body could not be checked._', '');
       }
       /* The query string, which most GETs carry instead of a body — and where a
          misspelt parameter is dropped as silently as a misspelt field. */
@@ -1349,14 +1497,10 @@ server.registerTool(
       const queryIssues = op && (queryString || takesQuery) ? checkQuery(queryString, op.parameters ?? [], snapshot) : [];
       if (op && (queryString || takesQuery)) {
         checkLines.push(`## Checked against the query parameters of \`${op.key}\``, '');
-        if (queryIssues.length === 0) checkLines.push('Every query parameter is declared, with a declared value; every required one is present.');
+        if (queryIssues.length === 0) checkLines.push('Every query parameter is declared, with a value BeMap reads as its type; every required one is present.');
         checkLines.push(...issueLines(queryIssues), '');
       } else if (queryString && !op) {
         checkLines.push('_This endpoint is not in the specification, so the query could not be checked._', '');
-      }
-      /* Said by the check too, whether or not the call would go out. */
-      if (undeclaredWrite) {
-        checkLines.push(`✗ \`${verb}\` is not sent: only a GET is sent to a path it does not declare. Check the endpoint with \`bemap_get_operation\`.`, '');
       }
       const issues = [...bodyIssues, ...queryIssues];
 
@@ -1367,13 +1511,6 @@ server.registerTool(
            error. */
         if (!checkLines.length && !op) {
           const near = (lookup?.candidates ?? []).slice(0, 5).map((candidate) => `\`${candidate.key}\``);
-          /* The path exists under another method: said as such, never as a
-             path the specification does not have. */
-          const bare = pathOf(path ?? '', snapshot.basePath);
-          const methods = snapshot.operations.filter((candidate) => candidate.path.toLowerCase() === bare.toLowerCase()).map((candidate) => candidate.method);
-          if (methods.length) {
-            return failure(`\`${verb} ${echo(endpoint)}\` is not in the specification: this path is declared for ${methods.join(' and ')}.${refused ? `\n${refused}` : ''}`);
-          }
           return failure(`\`${echo(endpoint)}\` is not in the specification${near.length ? `. Closest: ${near.join(', ')}` : ''}.${refused ? `\n${refused}` : ''}`);
         }
         if (!checkLines.length) {
@@ -1398,15 +1535,12 @@ server.registerTool(
         );
       }
 
-      if (undeclaredWrite) {
-        return failure(`\`${verb} ${echo(endpoint)}\` is not in the specification, and only a GET is sent to a path it does not declare. Check the endpoint with \`bemap_get_operation\`.`);
-      }
       const client = new BemapClient({ env });
       if (!client.hasCredentials()) {
         throw new BemapAuthError(
-          "Sending a request needs BEMAP_USER and BEMAP_KEY in this MCP server's environment. Checking it does not — " +
-            'pass `validateOnly: true`. For live calls, ask the user to add both to this server\'s `env` in their MCP ' +
-            'client configuration and restart it — never to paste them into the conversation.',
+          "Sending a request needs BEMAP_USER and BEMAP_KEY in this MCP server's settings — the extension's settings in " +
+            "Claude Desktop, the server's `env` elsewhere. Checking it does not: pass `validateOnly: true`. For live calls, ask " +
+            'the user to add both there and restart the server — never to paste them into the conversation.',
           'missing'
         );
       }
@@ -1415,6 +1549,7 @@ server.registerTool(
       const response = await client.request(endpoint, {
         method: verb,
         body: hasBody ? body : undefined,
+        signal: extra?.signal,
         headers: { authorization: `Basic ${auth}`, ...(hasBody ? { 'content-type': 'application/json' } : {}) },
       });
       const elapsed = Date.now() - started;
@@ -1442,8 +1577,9 @@ server.registerTool(
            itself, and was being cut to its <title>. */
         const code = response.text.match(/<code>([^<]*)<\/code>/i)?.[1];
         const message = response.text.match(/<message>([\s\S]*?)<\/message>/i)?.[1];
-        const title = response.text.match(/<title>([^<]+)<\/title>/i)?.[1];
-        rendered = [code, message].filter(Boolean).join('\n\n') || title || response.text.slice(0, 400);
+        /* An HTML error page: its message, not only its title — a 403 page's
+           title says Forbidden, its message says why. */
+        rendered = [code, message].filter(Boolean).join('\n\n') || errorText(response.text) || response.text.slice(0, 400);
       } else {
         try {
           rendered = JSON.stringify(JSON.parse(response.text), null, 2);
@@ -1455,44 +1591,66 @@ server.registerTool(
       /* The response first, the check after it: the answer a model needs is
          what the service did, and a long check list must not push it out of
          reach. */
-      const out = [
-        `# ${verb} ${endpoint} → HTTP ${response.status}${ok ? ' ✓' : ' ✗'}`,
+      const known = pastedHost ? environmentHosts().find((entry) => new URL(entry.bemap).host.toLowerCase() === pastedHost.toLowerCase()) : null;
+      const head = [
+        `# ${verb} ${clip(endpoint, 500)} → HTTP ${response.status}${ok ? ' ✓' : ' ✗'}`,
         '',
         `- Environment: ${client.baseUrl}`,
-        pastedHost && pastedHost !== new URL(client.baseUrl).host
-          ? `- The host in \`path\`, ${pastedHost}, is not this environment's: the request went to ${client.baseUrl}. Pass \`env\` to choose it.`
+        pastedHost && pastedHost.toLowerCase() !== new URL(client.baseUrl).host.toLowerCase()
+          ? `- The host in \`path\`, ${pastedHost}, is not this environment's: the request went to ${client.baseUrl}. ` +
+            (known ? `Pass \`env: "${known.env}"\` to send it there.` : 'The account goes only to the environments this server knows.')
           : null,
         `- Elapsed: ${elapsed} ms`,
         response.contentType ? `- Content-Type: ${response.contentType}` : null,
         response.truncated ? '- The body was cut at the read limit: what follows is its beginning.' : null,
-        op && op.method !== verb ? `- The specification declares **${op.method}** for this path, not ${verb}; a \`405\` means exactly that.` : null,
         '',
         ok ? '## Response' : '## Error',
         '',
-        ...fenced(truncate(rendered, maxChars, '')),
       ].filter((line) => line !== null);
+      const tail = [];
       if (ok && issues.some((issue) => issue.kind === 'unknown')) {
-        out.push(
+        tail.push(
           '',
           '> ⚠️ **A `200` here does not mean every field was read.** BeMap answers `200` whether or not it recognised ' +
             'the fields flagged below — compare against a response without them before relying on one.'
         );
       }
       if (response.status === 302) {
-        out.push('', '> `302` means BeMap saw no Basic credentials — none, or a scheme it does not read, such as `Bearer` — and redirected to its login page.');
+        tail.push('', '> `302` means BeMap saw no Basic credentials — none, or a scheme it does not read, such as `Bearer` — and redirected to its login page.');
       }
       if (response.status === 401) {
-        out.push('', '> `401` means BeMap read the Basic credentials and refused them: check BEMAP_USER / BEMAP_KEY, and that the account exists on this environment.');
+        tail.push('', '> `401` means BeMap read the Basic credentials and refused them: check BEMAP_USER / BEMAP_KEY, and that the account exists on this environment.');
+      }
+      if (response.status === 403) {
+        tail.push(
+          '',
+          /Wrong site/i.test(response.text)
+            ? "> `403 \"Wrong site\"`: this key's usage is locked to a web site — an HTTP referer — and this tool sends none. Test with a key whose usage has no such lock."
+            : '> `403` is a refusal before the service answered — read its message above. A missing entitlement is a `400 "Access Denied"`, not a `403`.'
+        );
       }
       if (response.status === 400) {
-        out.push(
+        tail.push(
           '',
           /Access Denied/i.test(response.text)
             ? '> `400 "Access Denied"` is a missing entitlement, not a payload error. `GET /bgis/service/acl/1.0/user/details` lists the roles this account holds.'
-            : '> `400` is BeMap refusing the payload. The message above is its own verdict — it overrides the specification.'
+            : '> `400` is BeMap refusing the payload: the fix is in the request. Where its message names a field or a value, it outranks the ' +
+                "specification; where it names none, it may not name the real cause — compare with the example in BeMap's guide for this " +
+                'operation (`bemap_read_guide`) before concluding the service cannot do it.'
         );
       }
-      if (checkLines.length) out.push('', ...checkLines);
+      if (checkLines.length) {
+        const version = snapshot.manifest.specification?.version ?? 'unknown';
+        tail.push(
+          '',
+          ...checkLines,
+          `_Checked against the specification of BeMap ${version}; \`bemap_status\` with \`checkLive\` names the release this environment runs._`
+        );
+      }
+      /* The body gets what the rest leaves: cut after the check, the answer
+         lost its verdict — a 200 and nothing saying two fields were ignored. */
+      const room = MAX_RESPONSE_CHARS - head.join('\n').length - tail.join('\n').length - 500;
+      const out = [...head, ...fenced(truncate(rendered, Math.max(200, Math.min(maxChars, room)), '')), ...tail];
       const answer = truncate(out.join('\n'), MAX_RESPONSE_CHARS, 'Lower `maxChars`, or check a smaller body.');
       return { content: [{ type: 'text', text: answer }, ...(image ? [image] : [])] };
     })
@@ -1503,6 +1661,14 @@ server.registerTool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
+  /* MCP makes `arguments` optional in tools/call, and the SDK hands a missing
+     one to the input schema, which refused it — bemap_status included, the
+     one tool meant to answer when everything else fails. */
+  const deliver = transport.onmessage;
+  transport.onmessage = (message, extra) => {
+    if (message?.method === 'tools/call' && message.params && message.params.arguments === undefined) message.params.arguments = {};
+    deliver?.(message, extra);
+  };
   // stdout carries the protocol; diagnostics go to stderr — where MCP clients
   // write their server logs, so the release a session is using is on record.
   console.error(`bemap-docs ${SERVER_VERSION} ready (stdio) — ${DESCRIPTION}`);
