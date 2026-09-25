@@ -11,9 +11,10 @@
  * so the only place it can be caught is before the call, against the schema.
  *
  * Everything reported here is read from the specification; nothing is a rule
- * about a particular field. What the specification gets wrong (see the
- * requiredness findings in docs/BEMAP-BUGS.md) this gets wrong too — which is
- * why it reports and never refuses: the service has the last word.
+ * about a particular field. What the specification gets wrong — a field it
+ * marks required, or not, against what the service does — this gets wrong
+ * too, which is why it reports and never refuses: the service has the last
+ * word.
  * ====================================================================== */
 
 import { fieldsOf, loadSnapshot, refName } from './spec.js';
@@ -100,6 +101,76 @@ export function groupIssues(issues) {
   return [...groups.values()];
 }
 
+/**
+ * The JSON types a property's schema declares, or `null` when it declares none
+ * this check can read: a reference or a composition is an object, visited on
+ * its own. A Java `byte` the specification calls a base64 string is a number.
+ */
+function declaredTypes(node) {
+  if (!node || node.$ref || node.allOf || node.oneOf || node.anyOf) return null;
+  if (node.format === 'byte' && /^(?:byte|Byte)$/.test(node['x-javaType'] ?? '')) return ['integer'];
+  const types = Array.isArray(node.type) ? node.type : node.type ? [node.type] : [];
+  return types.length ? types : null;
+}
+
+/**
+ * What is wrong with a value for the type its property declares, as BeMap
+ * reads it — `null` when nothing is.
+ *
+ * BeMap reads a body with Jackson, which converts between scalars by itself.
+ * Measured on prod, routing Paris to Lyon (25 September 2026): an epoch number
+ * where a string is declared, `"48.8566"` for a number, `"true"` or `1` for a
+ * boolean all give the route the declared type gives. Only what it cannot
+ * read is refused — `400 INVALID_ARGUMENT` for a string where an array is
+ * declared, an array where an object is, `"north"` for a number, `"yes"` for
+ * a boolean, base64 for a Java `byte` — and a fraction where an integer is
+ * declared is read, and changes the result. Only those are reported: flagging
+ * a conversion Jackson makes would send a model to change a request that
+ * works.
+ *
+ * @param {unknown} value
+ * @param {object} node - The property's schema.
+ * @returns {'unreadable'|'fraction'|null}
+ */
+function typeProblem(value, node) {
+  const types = value === null || value === undefined ? null : declaredTypes(node);
+  if (!types) return null;
+  const is = (type) => types.includes(type);
+  const numeric = (text) => text.trim() !== '' && Number.isFinite(Number(text));
+  if (Array.isArray(value)) return is('array') ? null : 'unreadable';
+  if (is('array')) return 'unreadable';
+  if (typeof value === 'object') return is('object') ? null : 'unreadable';
+  if (is('integer') || is('number')) {
+    if (typeof value === 'string' && !numeric(value)) return 'unreadable';
+    const number = Number(value);
+    if (is('integer') && !is('number') && typeof value !== 'boolean' && !Number.isInteger(number)) return 'fraction';
+    return null;
+  }
+  if (is('boolean') && typeof value === 'string' && !/^(?:true|false)$/i.test(value)) return 'unreadable';
+  return null;
+}
+
+/** A declared type as a reader names it. */
+function typeLabel(node) {
+  const types = declaredTypes(node) ?? [];
+  if (node?.['x-javaType']) return 'a number (a Java byte)';
+  const article = (type) => (/^[aeiou]/.test(type) ? `an ${type}` : `a ${type}`);
+  return types.filter((type) => type !== 'null').map(article).join(' or ');
+}
+
+/** The issue a type problem makes, at its place. */
+function typeIssue(problem, value, node, at) {
+  const shown = typeof value === 'string' ? `"${value.length > 40 ? `${value.slice(0, 40)}…` : value}"` : shapeOf(value);
+  return {
+    path: at,
+    kind: 'type',
+    message:
+      problem === 'fraction'
+        ? `\`${at}\` is declared ${typeLabel(node)}, and is ${value}: BeMap reads it without its fraction, which changes the result.`
+        : `\`${at}\` is declared ${typeLabel(node)}, and is ${shown}: BeMap cannot read it, and refuses the request (\`400 INVALID_ARGUMENT\`).`,
+  };
+}
+
 /** The single schema name a property points at, when it points at exactly one. */
 function objectSchemaOf(node) {
   if (node?.$ref) return refName(node.$ref);
@@ -113,9 +184,9 @@ function objectSchemaOf(node) {
  * @param {unknown} body - The parsed JSON body.
  * @param {string} schemaName - The request schema.
  * @param {object} [snapshot]
- * @returns {Array<{path: string, kind: 'unknown'|'alias'|'missing'|'value', message: string}>}
- *   empty when every name and enum value is declared and every required field
- *   present.
+ * @returns {Array<{path: string, kind: 'unknown'|'alias'|'missing'|'value'|'type', message: string}>}
+ *   empty when every name and enum value is declared, every value is one
+ *   BeMap reads as its declared type, and every required field is present.
  */
 export function checkBody(body, schemaName, snapshot = loadSnapshot()) {
   const schemas = snapshot.spec.components?.schemas ?? {};
@@ -174,6 +245,18 @@ export function checkBody(body, schemaName, snapshot = loadSnapshot()) {
         continue;
       }
       present.add(field.name);
+      const problem = typeProblem(child, field.node);
+      if (problem) {
+        issues.push(typeIssue(problem, child, field.node, at));
+        continue;
+      }
+      /* The items of an array of scalars, each at its place. */
+      if (Array.isArray(child) && declaredTypes(field.node?.items)) {
+        child.forEach((item, i) => {
+          const itemProblem = typeProblem(item, field.node.items);
+          if (itemProblem) issues.push(typeIssue(itemProblem, item, field.node.items, `${at}[${i}]`));
+        });
+      }
       if (field.enum && child !== null) {
         const values = Array.isArray(child) ? child : [child];
         for (const item of values) {

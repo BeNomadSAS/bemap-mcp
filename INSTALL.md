@@ -5,7 +5,8 @@ requests; reading the documentation works without one.
 
 ## Claude Desktop — the extension
 
-Double-click `benomad-bemap-<version>.mcpb`, or open Settings → Extensions →
+Double-click `benomad-bemap-<version>.mcpb` — the file you were sent, also
+attached to each release of the repository — or open Settings → Extensions →
 Install Extension… and pick it. Fill in your BeMap account in the extension's
 settings, or leave them empty to read the documentation only. The key is kept
 in your system keychain.

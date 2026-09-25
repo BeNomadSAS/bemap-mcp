@@ -432,8 +432,8 @@ export class BemapClient {
   async login() {
     if (!this.hasCredentials()) {
       throw new BemapAuthError(
-        'No BeMap credentials configured. Set BEMAP_USER and BEMAP_KEY in the environment ' +
-          '(see .env.example). Reading the documentation snapshot does not require them; ' +
+        "No BeMap credentials configured. Set BEMAP_USER and BEMAP_KEY in this server's environment. " +
+          'Reading the documentation snapshot does not require them; ' +
           'executing live requests does.',
         'missing'
       );

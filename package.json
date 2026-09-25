@@ -4,6 +4,7 @@
   "description": "MCP server for the BeNomad BeMap API, built from BeMap's own OpenAPI specification and Java source.",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
   "engines": {
     "node": ">=18"
   },
@@ -28,7 +29,7 @@
     "skill:check": "node scripts/install-skill.js --check"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^3.25.76"
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "3.25.76"
   }
 }

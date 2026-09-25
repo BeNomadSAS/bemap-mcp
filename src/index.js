@@ -40,7 +40,7 @@ import {
   settingsProblem,
   unencrypted,
 } from './client.js';
-import { MAX_RESPONSE_CHARS, splitParts, truncate } from './format.js';
+import { fenced, MAX_RESPONSE_CHARS, splitParts, truncate } from './format.js';
 import { clip, renderOperation, renderSchema, renderServices } from './render.js';
 import { search } from './search.js';
 import { shippedSkills, serverVersion } from './skill-version.js';
@@ -1189,7 +1189,7 @@ const MAX_ISSUE_LINES = 40;
 const MAX_IMAGE_BYTES = 1024 * 1024;
 
 /** How each kind of issue is marked. */
-const MARK = { unknown: '⚠️', alias: 'ℹ️', missing: '❓', value: '✗' };
+const MARK = { unknown: '⚠️', alias: 'ℹ️', missing: '❓', value: '✗', type: '✗' };
 
 /**
  * The lines of one check section: repeats grouped, the list capped.
@@ -1207,19 +1207,6 @@ function issueLines(issues) {
 }
 
 /**
- * The endpoint a `path` names, as it is sent: any scheme and host dropped —
- * the request goes to the environment's host, whatever was pasted — a leading
- * slash, and the service root when it is missing.
- *
- * A pasted full URL used to be sent as `/bgis/service/https://…`, and a path
- * without its slash as `/bgis/service/bgis/service/…`, while the check had
- * matched the right operation.
- *
- * @param {string} text - `path`, or the operation's endpoint.
- * @param {string} basePath - The service root, e.g. `/bgis/service`.
- * @returns {string}
- */
-/**
  * The path of an endpoint, relative to the service root, as the
  * specification keys it: `/vehicle/1.1/getbrands`.
  *
@@ -1233,6 +1220,19 @@ function pathOf(text, basePath) {
   return basePath && path.startsWith(basePath) ? path.slice(basePath.length) || '/' : path;
 }
 
+/**
+ * The endpoint a `path` names, as it is sent: any scheme and host dropped —
+ * the request goes to the environment's host, whatever was pasted — a leading
+ * slash, and the service root when it is missing.
+ *
+ * A pasted full URL used to be sent as `/bgis/service/https://…`, and a path
+ * without its slash as `/bgis/service/bgis/service/…`, while the check had
+ * matched the right operation.
+ *
+ * @param {string} text - `path`, or the operation's endpoint.
+ * @param {string} basePath - The service root, e.g. `/bgis/service`.
+ * @returns {string}
+ */
 function endpointOf(text, basePath) {
   let endpoint = String(text).trim().replace(/^https?:\/\/[^/?#]+/i, '');
   if (!endpoint.startsWith('/')) endpoint = `/${endpoint}`;
@@ -1245,7 +1245,7 @@ server.registerTool(
   {
     title: 'Send a real BeMap request',
     description:
-      'Check a request body and its query against the specification — every field and parameter name, enum value and required one — ' +
+      'Check a request body and its query against the specification — every field and parameter name, enum value, type and required one — ' +
       'then send it to a live environment and return the real status and response. BeMap accepts unknown ' +
       'field names in silence, so the check is what reveals a typo. Needs BEMAP_USER / BEMAP_KEY; every call ' +
       'counts against the account quota, and an operation that records something records it.',
@@ -1254,7 +1254,7 @@ server.registerTool(
       path: z.string().optional().describe('An explicit endpoint instead, e.g. "/bgis/service/currency/1.0/rate?code=USD".'),
       query: z.string().optional().describe('Query string without the "?", e.g. "code=USD". Appended to the endpoint.'),
       body: z.string().optional().describe('JSON request body, as a string. Omit for GET.'),
-      method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).optional().describe("Override the method the specification declares."),
+      method: z.enum(['GET', 'POST']).optional().describe('Override the method the specification declares — the only two it declares.'),
       env: z.enum(environmentNames()).optional().describe('Target environment. Defaults to $BEMAP_ENV, then `own` when BEMAP_BASE_URL is set, then prod.'),
       validateOnly: z.boolean().optional().describe('Check the body and the query against the specification and stop — nothing is sent. Needs no credentials.'),
       maxChars: z.number().int().min(200).max(MAX_RESPONSE_CHARS).optional().describe('Truncate the response body to this many characters. Default 8000.'),
@@ -1302,6 +1302,13 @@ server.registerTool(
       let endpoint = endpointOf(path ?? op.endpoint, snapshot.basePath);
       if (query) endpoint += `${endpoint.includes('?') ? '&' : '?'}${query.replace(/^\?/, '')}`;
       const verb = method ?? op?.method ?? (hasBody ? 'POST' : 'GET');
+      /* A path the specification declares under no method at all is sent only
+         as a GET: the account can read an undeclared endpoint — the
+         entitlements behind `/acl/1.0/user/details` — but nothing the
+         specification does not show is written with it. A declared path keeps
+         the other declared method, to probe whether it is accepted. */
+      const undeclaredWrite =
+        verb !== 'GET' && !op && !snapshot.operations.some((candidate) => candidate.path.toLowerCase() === pathOf(path ?? '', snapshot.basePath).toLowerCase());
 
       let parsed;
       if (hasBody) {
@@ -1330,7 +1337,7 @@ server.registerTool(
       const checkLines = [];
       if ((parsed !== undefined || bodyIssues.length) && op?.request?.name) {
         checkLines.push(`## Checked against \`${op.request.name}\``, '');
-        if (bodyIssues.every((issue) => issue.kind === 'alias')) checkLines.push('Every field name and enum value is declared; every required field is present.');
+        if (bodyIssues.every((issue) => issue.kind === 'alias')) checkLines.push('Every field name and enum value is declared, every value is one BeMap reads as its type, and every required field is present.');
         checkLines.push(...issueLines(bodyIssues), '');
       } else if (parsed !== undefined && !op) {
         checkLines.push('_This endpoint is not in the specification, so the body could not be checked._', '');
@@ -1346,6 +1353,10 @@ server.registerTool(
         checkLines.push(...issueLines(queryIssues), '');
       } else if (queryString && !op) {
         checkLines.push('_This endpoint is not in the specification, so the query could not be checked._', '');
+      }
+      /* Said by the check too, whether or not the call would go out. */
+      if (undeclaredWrite) {
+        checkLines.push(`✗ \`${verb}\` is not sent: only a GET is sent to a path it does not declare. Check the endpoint with \`bemap_get_operation\`.`, '');
       }
       const issues = [...bodyIssues, ...queryIssues];
 
@@ -1387,6 +1398,9 @@ server.registerTool(
         );
       }
 
+      if (undeclaredWrite) {
+        return failure(`\`${verb} ${echo(endpoint)}\` is not in the specification, and only a GET is sent to a path it does not declare. Check the endpoint with \`bemap_get_operation\`.`);
+      }
       const client = new BemapClient({ env });
       if (!client.hasCredentials()) {
         throw new BemapAuthError(
@@ -1455,9 +1469,7 @@ server.registerTool(
         '',
         ok ? '## Response' : '## Error',
         '',
-        '```',
-        truncate(rendered, maxChars, ''),
-        '```',
+        ...fenced(truncate(rendered, maxChars, '')),
       ].filter((line) => line !== null);
       if (ok && issues.some((issue) => issue.kind === 'unknown')) {
         out.push(

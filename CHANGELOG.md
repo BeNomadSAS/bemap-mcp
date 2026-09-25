@@ -13,8 +13,8 @@ restarts below 0.1.0; `bemap_status` shows the build you run.
 - API reference from BeMap's specification: every operation, field, type,
   required flag and allowed value.
 - `bemap_get_operation`: one endpoint in full.
-- `bemap_try_request` checks a request before sending it; `validateOnly: true`
-  checks it without an account.
+- `bemap_try_request` checks a request before sending it — names, values, types,
+  required fields; `validateOnly: true` checks it without an account.
 - `bemap_map_setup`: the map for your application — BeNomad Tiles, BeMap WMS or
   another provider's.
 - Claude Desktop extension, with the key kept in the system keychain.
@@ -27,6 +27,8 @@ restarts below 0.1.0; `bemap_status` shows the build you run.
   Run `npx bemap-install-skill` again.
 - `BEMAP_BASE_URL` no longer overrides the environment you name.
 - Skill: prod, preprod and beta offer the same geocoders, `photon` included.
+- `bemap_try_request` sends GET and POST only, and a GET only to a path the
+  specification does not declare.
 
 ### Fixed
 

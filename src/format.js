@@ -15,6 +15,23 @@
 export const MAX_RESPONSE_CHARS = 60000;
 
 /**
+ * Text inside a code fence longer than any run of backticks it holds.
+ *
+ * A live body is written by the service — and by whoever wrote the data it
+ * returns: a place name, an error echoing the request. A fixed three-backtick
+ * fence closed at the first three backticks inside it, and what followed read
+ * as the answer's own text.
+ *
+ * @param {string} text
+ * @returns {string[]} the opening fence, the text, the closing fence.
+ */
+export function fenced(text) {
+  const longest = Math.max(0, ...[...String(text).matchAll(/`+/g)].map((run) => run[0].length));
+  const fence = '`'.repeat(Math.max(3, longest + 1));
+  return [fence, text, fence];
+}
+
+/**
  * Truncate text at a character budget, cutting on a line boundary and saying
  * plainly what was dropped.
  *
