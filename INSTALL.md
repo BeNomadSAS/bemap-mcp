@@ -137,6 +137,26 @@ env = { BEMAP_USER = "your-account", BEMAP_KEY = "your-api-key", BEMAP_ENV = "pr
 </details>
 
 <details>
+<summary><strong>Gemini CLI</strong> — <code>~/.gemini/settings.json</code></summary>
+
+```json
+{
+  "mcpServers": {
+    "bemap": {
+      "command": "node",
+      "args": ["/absolute/path/to/node_modules/@benomad/bemap-mcp/src/index.js"],
+      "env": { "BEMAP_USER": "your-account", "BEMAP_KEY": "your-api-key", "BEMAP_ENV": "prod" }
+    }
+  }
+}
+```
+
+Add `mcpServers` beside the file's other settings; `gemini mcp list` shows the
+server.
+
+</details>
+
+<details>
 <summary><strong>Zed</strong> — <code>settings.json</code>, key <code>context_servers</code></summary>
 
 ```json

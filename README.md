@@ -1,6 +1,6 @@
 # BeMap MCP
 
-Gives your AI coding assistant — Claude, Codex, Cursor, Copilot and others — the
+Gives your AI coding assistant — Claude, Codex, Gemini CLI, Cursor, Copilot and others — the
 BeNomad BeMap API: every operation and field, and what most values mean. The
 assistant looks things up instead of guessing, and checks each request before it
 is sent.
@@ -28,7 +28,7 @@ without an account; only sending a real request needs one.
 |---|---|
 | Claude Desktop | double-click `benomad-bemap-<version>.mcpb`, attached to each release |
 | Claude Code — in a terminal or in VS Code | one command |
-| Cursor, VS Code Copilot, Codex, Zed, Devin | a few lines of configuration |
+| Cursor, VS Code Copilot, Codex, Gemini CLI, Zed, Devin | a few lines of configuration |
 
 Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
 
