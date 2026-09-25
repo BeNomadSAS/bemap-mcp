@@ -8,8 +8,8 @@
  * copied across. The two copies drift silently and the symptom is the worst
  * kind: an assistant that confidently states a fact this repository corrected
  * months ago — the installed copy was five weeks and 514 lines behind when this
- * script was written, and the first line it disagreed on was the false
- * `401/403` claim.
+ * script was written, and the first line it disagreed on was the `401`/`403`
+ * passage.
  *
  * Claude reads two scopes, and five other assistants read a third. This script
  * must be able to write any of them: `--agents` targets `~/.agents/skills`, the
@@ -235,13 +235,40 @@ export function compareInstalled(source, installed) {
 }
 
 /**
- * Collect the values of the credential environment variables, so a skill
+ * The arguments, with the flags npm kept for itself put back.
+ *
+ * Typed in PowerShell, the `--` that separates a script's flags from npm's is
+ * dropped before npm sees it, and npm then keeps `--check` or `--project` as
+ * settings of its own, handing them to this script only as
+ * `npm_config_check=true`. They are honoured only when npm ran this very
+ * script: a child of it inherits the variables too.
+ *
+ * @param {string[]} args - The arguments after the script, `process.argv.slice(2)`.
+ * @param {NodeJS.ProcessEnv} [env] - Where npm left its settings.
+ * @param {string} [self] - This script's path, `process.argv[1]`.
+ * @returns {string[]}
+ */
+export function withNpmFlags(args, env = process.env, self = process.argv[1] ?? '') {
+  const leaf = (path) => String(path).replace(/^["']|["']$/g, '').split(/[\\/]/).pop();
+  const ranByNpm = leaf(self) !== '' && String(env.npm_lifecycle_script ?? '').split(/\s+/).some((word) => leaf(word) === leaf(self));
+  if (!ranByNpm) return args;
+  const kept = ['check', 'project', 'agents'].filter((name) => env[`npm_config_${name}`] === 'true' && !args.includes(`--${name}`));
+  return [...args, ...kept.map((name) => `--${name}`)];
+}
+
+/**
+ * Collect the values of the secret environment variables, so a skill
  * carrying one verbatim can be refused before it is copied anywhere.
+ *
+ * The key only, not the account name. An account is often a common word —
+ * `benomad`, `test`, `demo` — and the skill says each of those many times, so
+ * matching it refused every install and reported a leaked credential that
+ * was not one.
  *
  * @returns {string[]} the non-empty values currently set
  */
 export function secretValues() {
-  return ['BEMAP_USER', 'BEMAP_KEY', 'BEMAP_PASSWORD']
+  return ['BEMAP_KEY', 'BEMAP_PASSWORD']
     .map((k) => process.env[k])
     .filter((v) => typeof v === 'string' && v.length >= 4);
 }
@@ -258,7 +285,7 @@ function main() {
     process.exit(1);
   }
 
-  const { targets, other, scope, check } = parseTarget(process.argv.slice(2));
+  const { targets, other, scope, check } = parseTarget(withNpmFlags(process.argv.slice(2)));
   const secrets = secretValues();
   const dirs = readdirSync(SOURCE).filter((d) => statSync(join(SOURCE, d)).isDirectory());
   let installed = 0;
@@ -341,7 +368,8 @@ function main() {
          was being told before this run, which is what makes a regression
          attributable. */
       if (current !== null) {
-        const stamp = new Date().toISOString().slice(0, 10);
+        /* To the second: two replacements on one day kept one backup. */
+        const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
         const backup = join(destDir, `SKILL.md.replaced-${stamp}`);
         copyFileSync(dest, backup);
         console.log(

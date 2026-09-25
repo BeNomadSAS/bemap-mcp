@@ -1,0 +1,8 @@
+# Written by the release. npm writes these; they are never part of the package.
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# Local settings and packed copies.
+.env
+*.tgz

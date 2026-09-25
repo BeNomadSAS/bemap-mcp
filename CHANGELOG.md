@@ -3,6 +3,68 @@
 Notable changes to `@benomad/bemap-mcp`, following
 [Keep a Changelog](https://keepachangelog.com/) and semantic versioning.
 
+## [0.0.1] — not yet released
+
+A new generation of the package. It is built from BeMap's own OpenAPI
+specification, where 0.3.0 and earlier were built from the documentation pages.
+Version numbers restart below 0.1.0 until the first production release;
+`bemap_status` names the build you run.
+
+### Added
+
+- **The reference is BeMap's own declaration**: every operation, field, type,
+  required flag and allowed value, most values with what they mean.
+- **`bemap_get_operation`** — one endpoint in full: method, URL, parameters,
+  request body, response.
+- **Requests are checked before they are sent.** `bemap_try_request` names an
+  unknown field or parameter with the correct one, a value that does not exist,
+  a required field that is missing — BeMap itself would answer `200` and ignore
+  the mistake. `validateOnly: true` checks without sending, with no account.
+- **`bemap_map_setup`** — the map of your application, on any platform. It asks
+  which BeMap, which map (BeNomad Tiles, BeMap WMS, or another provider's if you
+  choose one) and whether to test with your account, then gives everything
+  needed to show the map. Your account and key are never asked for.
+- **A Claude Desktop extension**, with a settings form; the key stays in your
+  system keychain.
+- **A BeMap installation of your own**: set `BEMAP_BASE_URL`, use `env: "own"`.
+- `validateOnly` also answers a request with nothing to check: whether the
+  endpoint exists — and, when it does not, the closest ones.
+
+### Changed
+
+- `bemap_get_parameters` is now `bemap_get_schema`, `bemap_get_service_doc` is
+  `bemap_read_guide`, and `bemap_find_field` is `bemap_search` with
+  `kind: "field"`. Run `npx bemap-install-skill` so the skill names the new
+  tools.
+- `BEMAP_BASE_URL` no longer overrides an environment you name.
+- The skill: prod, preprod and beta now offer the same geocoders, `photon`
+  included.
+
+### Fixed
+
+- `csfsVersion`, `filtersVersion` and `alternative`, which BeMap's
+  specification describes as base64 strings, are shown as the numbers BeMap
+  reads: it refuses a base64 value for them.
+
+- A wrong credential answers `401`; a request with no credentials is redirected
+  (`302`) to the login page.
+- A call with parameters only goes out as a GET; an endpoint that does not exist
+  is never replaced by another; a full URL pasted as `path` is sent to your
+  environment.
+- An argument a tool does not know is refused, not ignored.
+- Images come back as images, a WMS `GetCapabilities` whole, and long answers
+  stay readable.
+- "Without an account" holds for the whole session.
+- Request limits stay available when they could not be refreshed, with the date
+  they were recorded.
+- The skill installer no longer refuses because your account name appears in the
+  skill, and keeps every copy it replaces.
+
+### Removed
+
+- `BEMAP_TARGET_ENV` and the per-field release notes: a package describes one
+  release, and `bemap_status` names it.
+
 ## [0.3.0]
 
 Covers BeMap **4.1.0**, as 0.2.0 did. This release is about what the tools tell

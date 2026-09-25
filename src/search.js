@@ -1,262 +1,230 @@
 /* ======================================================================
- * FULL-TEXT SEARCH
+ * SEARCH
  *
- * A developer's question is usually a field name or a concept ("how do I get
- * toll costs?", "departureTime format", "EVT_TRAFFIC"), not a page name. This
- * module searches the whole corpus — pages and parameter schemas alike — and
- * returns matching excerpts rather than whole documents, so an answer costs a
- * few hundred tokens instead of tens of thousands.
+ * One ranked index over everything the snapshot holds: operations, schemas,
+ * fields, enum values and guides. Built on first use and kept for the life
+ * of the process.
  *
- * The index is built lazily on first search and kept in memory (~3 MB of
- * text). No external search dependency: the corpus is small enough that a
- * scan with term scoring is both fast and predictable.
+ * The ranking favours identifiers over prose, because the question behind
+ * most searches is "what is this called and where does it go": a field or an
+ * enum value whose name *is* the query outranks a guide that mentions it
+ * forty times. Guides are long, so their term counts are damped by length —
+ * otherwise the longest page wins every query it touches.
  * ====================================================================== */
 
-import { parseSchemaRow } from './format.js';
-import { loadManifest, readPage, readSchema } from './snapshot.js';
+import { fieldsOf, loadSnapshot, readGuide } from './spec.js';
 
-/** @type {Array<{type:'page'|'schema', id:string, title:string, meta:object, text:string, lower:string}>|null} */
+/** @typedef {'operation'|'schema'|'field'|'value'|'guide'} Kind */
+
+/** How much each kind weighs when scores tie on the text alone. */
+const KIND_WEIGHT = { operation: 1.4, schema: 1.2, field: 1.1, value: 1.0, guide: 0.8 };
+
+/** @type {Array<object>|null} */
 let index = null;
 
 /**
- * Build the in-memory index over every page and schema in the snapshot.
- *
- * @returns {Promise<Array<object>>} The index; memoized after the first call.
+ * At most this many terms and phrases are ranked. A pasted 20 000-word log
+ * took 17 seconds, during which the server answered nothing else; the first
+ * words of an error message are the ones that find it.
  */
-async function buildIndex() {
-  if (index) return index;
-  const manifest = await loadManifest();
-  const documents = [];
-
-  for (const page of manifest.pages) {
-    try {
-      const text = await readPage(page.id);
-      documents.push({
-        type: 'page',
-        id: page.id,
-        title: page.title,
-        meta: {
-          family: page.family,
-          isRest: Boolean(page.isRest),
-          kind: page.kind,
-          service: page.service,
-          endpoint: page.endpoint,
-          role: page.role,
-          isLatest: page.isLatest,
-        },
-        text,
-        lower: text.toLowerCase(),
-      });
-    } catch {
-      // A manifest entry without a file on disk is skipped rather than fatal —
-      // an incomplete snapshot should still be searchable.
-    }
-  }
-
-  for (const schema of manifest.schemas) {
-    try {
-      const text = await readSchema(schema.className);
-      documents.push({
-        type: 'schema',
-        id: schema.className,
-        title: schema.simpleName,
-        meta: { referencedBy: schema.referencedBy },
-        text,
-        lower: text.toLowerCase(),
-      });
-    } catch {
-      // Same rationale as above.
-    }
-  }
-
-  index = documents;
-  return index;
-}
+const MAX_TERMS = 32;
+const MAX_PHRASES = 8;
 
 /**
- * Split a query into searchable terms, honouring "quoted phrases".
+ * Split a query into terms and verbatim phrases.
  *
- * @param {string} query
- * @returns {string[]} Lower-cased terms.
+ * @param {string} query - E.g. `"departure time" routing`.
+ * @returns {{terms: string[], phrases: string[]}} lower-cased, at most
+ *   {@link MAX_TERMS} terms and {@link MAX_PHRASES} phrases.
  */
-function tokenize(query) {
-  const terms = [];
-  const pattern = /"([^"]+)"|(\S+)/g;
-  let match;
-  while ((match = pattern.exec(query)) !== null) {
-    const term = (match[1] ?? match[2]).toLowerCase().trim();
-    if (term.length > 1) terms.push(term);
-  }
-  return terms;
+export function parseQuery(query) {
+  const phrases = [];
+  const rest = String(query ?? '').replace(/"([^"]+)"/g, (_, phrase) => {
+    phrases.push(phrase.toLowerCase());
+    return ' ';
+  });
+  const terms = rest
+    .toLowerCase()
+    .split(/[^a-z0-9_]+/)
+    .filter((term) => term.length >= 2);
+  return { terms: [...new Set(terms)].slice(0, MAX_TERMS), phrases: phrases.slice(0, MAX_PHRASES) };
 }
 
-/**
- * Extract a readable excerpt centred on a hit, collapsing whitespace.
- *
- * `taken` exists because a multi-term query usually hits the same paragraph
- * once per term — a page whose title contains every word then answered with
- * three near-identical excerpts, paying three times for one sentence. An
- * occurrence inside an already-quoted window is skipped in favour of the next
- * one, and only then given up on.
- *
- * @param {string} text - Full document.
- * @param {string} term - Term to centre on.
- * @param {number} [radius] - Characters of context on each side.
- * @param {Array<{start:number, end:number}>} [taken] - Windows already quoted.
- * @returns {{text:string, start:number, end:number}|null}
- */
-function excerpt(text, term, radius = 180, taken = []) {
-  const lower = text.toLowerCase();
-  let at = lower.indexOf(term);
-  while (at !== -1) {
-    const start = Math.max(0, at - radius);
-    const end = Math.min(text.length, at + term.length + radius);
-    if (!taken.some((window) => start < window.end && end > window.start)) {
-      const body = text.slice(start, end).replace(/\s+/g, ' ').trim();
-      return {
-        text: `${start > 0 ? '…' : ''}${body}${end < text.length ? '…' : ''}`,
-        start,
-        end,
-      };
-    }
-    at = lower.indexOf(term, at + term.length);
-  }
-  return null;
-}
+/** Build the index from the snapshot. */
+function build(snapshot) {
+  const docs = [];
+  const schemas = snapshot.spec.components?.schemas ?? {};
 
-/**
- * Search the corpus.
- *
- * Scoring favours documents matching more distinct terms, then title hits,
- * then raw frequency — and nudges current REST reference pages above older
- * versions and tutorials, since that is what a developer usually wants.
- *
- * @param {string} query - Free text; supports "quoted phrases".
- * @param {object} [options]
- * @param {number} [options.limit] - Maximum results. Default 10.
- * @param {'page'|'schema'} [options.type] - Restrict to one document type.
- * @param {boolean} [options.restOnly] - Restrict pages to the REST corpus (`isRest`),
- *   which includes the root-level pages, not only the versioned `rest_*` families.
- * @returns {Promise<Array<{type:string, id:string, title:string, score:number, meta:object, excerpts:string[]}>>}
- */
-export async function search(query, options = {}) {
-  const { limit = 10, type, restOnly = false } = options;
-  const terms = tokenize(query);
-  if (terms.length === 0) return [];
-
-  const documents = await buildIndex();
-  const results = [];
-
-  for (const doc of documents) {
-    if (type && doc.type !== type) continue;
-    /* `isRest`, not a `rest_` family prefix. The REST corpus is not all under a
-       versioned family: authentication, the six WMS pages and three glossaries
-       are served from the documentation root and filed under the synthetic
-       family `general`. Filtering on the prefix drops 13 REST pages — including
-       the authentication reference — from a search that asked for REST only,
-       and reports the remainder as the whole answer. This is also the test
-       `listServices` applies, so the flag means one thing across both tools. */
-    if (restOnly && doc.type === 'page' && !doc.meta.isRest) continue;
-
-    let score = 0;
-    let matchedTerms = 0;
-    const excerpts = [];
-    /** @type {Array<{start:number, end:number}>} */
-    const quoted = [];
-
-    for (const term of terms) {
-      const occurrences = doc.lower.split(term).length - 1;
-      if (occurrences === 0) continue;
-      matchedTerms += 1;
-      score += Math.min(occurrences, 12);
-      if (doc.title.toLowerCase().includes(term)) score += 25;
-      if (doc.id.toLowerCase().includes(term)) score += 10;
-      if (excerpts.length < 3) {
-        const snippet = excerpt(doc.text, term, 180, quoted);
-        if (snippet) {
-          excerpts.push(snippet.text);
-          quoted.push({ start: snippet.start, end: snippet.end });
-        }
-      }
-    }
-
-    if (matchedTerms === 0) continue;
-    // Reward covering the whole query far more than repeating one term.
-    score += matchedTerms * 40;
-    if (matchedTerms === terms.length) score += 60;
-    if (doc.type === 'page') {
-      if (doc.meta.kind === 'reference') score += 20;
-      if (doc.meta.isLatest) score += 15;
-    }
-
-    results.push({
-      type: doc.type,
-      id: doc.id,
-      title: doc.title,
-      score,
-      meta: doc.meta,
-      excerpts,
+  for (const op of snapshot.operations) {
+    docs.push({
+      kind: 'operation',
+      id: op.key,
+      name: `${op.method} ${op.endpoint}`,
+      title: op.summary || op.key,
+      keys: [op.path, op.operationId ?? '', ...op.tags],
+      text: `${op.summary} ${op.description} ${op.tags.join(' ')} ${op.path.replace(/[/.]/g, ' ')}`,
+      deprecated: op.deprecated,
     });
   }
 
-  return results.sort((a, b) => b.score - a.score).slice(0, limit);
-}
-
-/**
- * Search only within parameter tables, returning the matching table rows.
- *
- * This is the precise tool for "does field X exist, and what is its type?" —
- * it answers with the row itself instead of a paragraph of prose.
- *
- * Each hit carries the section that declares it, because requiredness is a
- * property of the declaring class and not of the document: a row inside
- * `#### __VehicleFeatureFront__` belongs to a class no probe ever removed a
- * field from, even when the document's root class was probed. Returning the
- * parsed row rather than the raw line is what lets this tool and
- * `bemap_get_parameters` reach the same verdict for the same field — printing
- * the line verbatim here was how the two came to disagree.
- *
- * @param {string} fieldName - Field name or fragment.
- * @param {object} [options]
- * @param {number} [options.limit] - Maximum rows. Default 25.
- * @returns {Promise<Array<{className:string, simpleName:string, section:string,
- *   isRoot:boolean, field:string, optional:boolean, description:string,
- *   deprecated:boolean}>>}
- */
-export async function searchFields(fieldName, options = {}) {
-  const { limit = 25 } = options;
-  const needle = fieldName.trim().toLowerCase();
-  if (needle.length < 2) return [];
-
-  const documents = await buildIndex();
-  const rows = [];
-
-  for (const doc of documents) {
-    if (doc.type !== 'schema') continue;
-    let section = '(root)';
-    for (const line of doc.text.split('\n')) {
-      const heading = line.match(/^####\s+__(.+?)__\s*$/);
-      if (heading) {
-        section = heading[1];
-        continue;
-      }
-      if (!line.startsWith('|')) continue;
-      // Field name is the first cell, wrapped in __bold__ by the generator.
-      const cell = line.split('|')[1] ?? '';
-      const name = cell.replace(/[_*<>\s]|<\/?s>/g, '').toLowerCase();
-      if (!name.includes(needle)) continue;
-      const parsed = parseSchemaRow(line.replace(/\s+/g, ' ').trim());
-      if (!parsed) continue;
-      rows.push({
-        className: doc.id,
-        simpleName: doc.title,
-        section,
-        isRoot: section === '(root)',
-        ...parsed,
+  for (const [name, schema] of Object.entries(schemas)) {
+    docs.push({ kind: 'schema', id: name, name, title: name, keys: [name], text: schema.description ?? '' });
+    for (const field of fieldsOf(schema, snapshot)) {
+      docs.push({
+        kind: 'field',
+        id: `${name}.${field.name}`,
+        name: field.name,
+        title: `${name}.${field.name}`,
+        keys: [field.name],
+        text: field.description,
+        schema: name,
+        type: field.type,
+        required: field.required,
+        deprecated: field.deprecated,
       });
-      if (rows.length >= limit) return rows;
+      for (const value of field.enum?.values ?? []) {
+        docs.push({
+          kind: 'value',
+          id: `${name}.${field.name}=${value}`,
+          name: value,
+          title: `${name}.${field.name} = ${value}`,
+          keys: [value],
+          text: field.enum.descriptions[value] ?? '',
+          schema: name,
+          field: field.name,
+        });
+      }
     }
   }
 
-  return rows;
+  for (const guide of snapshot.guides) {
+    let text;
+    try {
+      text = readGuide(guide.id);
+    } catch {
+      continue;
+    }
+    docs.push({ kind: 'guide', id: guide.id, name: guide.id, title: guide.title, keys: [], text, family: guide.family });
+  }
+
+  for (const doc of docs) {
+    doc.lowerText = doc.text.toLowerCase();
+    doc.lowerTitle = doc.title.toLowerCase();
+    doc.lowerKeys = doc.keys.map((key) => key.toLowerCase());
+  }
+  return docs;
+}
+
+/** Occurrences of `needle` in `hay`, capped — a term's tenth mention adds nothing. */
+function count(hay, needle, cap = 12) {
+  let n = 0;
+  for (let at = hay.indexOf(needle); at !== -1 && n < cap; at = hay.indexOf(needle, at + needle.length)) n++;
+  return n;
+}
+
+/** A short excerpt around the first hit. */
+function excerpt(text, needles, width = 140) {
+  const lower = text.toLowerCase();
+  const hits = needles.map((needle) => lower.indexOf(needle)).filter((at) => at !== -1);
+  if (hits.length === 0) return text.replace(/\s+/g, ' ').trim().slice(0, width * 2);
+  const at = Math.min(...hits);
+  const start = Math.max(0, at - width);
+  const end = Math.min(text.length, at + width);
+  return `${start > 0 ? '…' : ''}${text.slice(start, end).replace(/\s+/g, ' ').trim()}${end < text.length ? '…' : ''}`;
+}
+
+/**
+ * The words an identifier is made of: `ChargeEvent` → `Charge Event`,
+ * `stepPointPluggingTime` → `step Point Plugging Time`, `EV_TRIP` → `EV TRIP`.
+ *
+ * @param {string} query
+ * @returns {string} The query with its identifiers split into words.
+ */
+export function identifierWords(query) {
+  return String(query ?? '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/_/g, ' ');
+}
+
+/**
+ * Search the snapshot.
+ *
+ * A query that finds nothing is tried again as the words its identifiers are
+ * made of, and every hit then says so in `via`. A model guessing a name —
+ * `ChargeEvent` — searched for one word no document contains and got nothing,
+ * where the same words apart, `charge event`, found fifteen.
+ *
+ * @param {string} query - Terms, optionally with `"quoted phrases"`.
+ * @param {{limit?: number, kind?: Kind, family?: string, snapshot?: object}} [options]
+ * @returns {Array<object>} ranked hits, each with `kind`, `id`, `title`,
+ *   `score`, `excerpt` and kind-specific fields — and `via`, the words
+ *   searched instead, when the query itself matched nothing.
+ */
+export function search(query, options = {}) {
+  const hits = rank(query, options);
+  const words = identifierWords(query);
+  if (hits.length > 0 || words === String(query ?? '')) return hits;
+  return rank(words, options).map((hit) => ({ ...hit, via: words }));
+}
+
+/** One ranking pass; see {@link search}. */
+function rank(query, { limit = 10, kind, family, snapshot = loadSnapshot() } = {}) {
+  index ??= build(snapshot);
+  const { terms, phrases } = parseQuery(query);
+  if (terms.length === 0 && phrases.length === 0) return [];
+  const whole = String(query ?? '').replace(/"/g, '').trim().toLowerCase();
+
+  const hits = [];
+  for (const doc of index) {
+    if (kind && doc.kind !== kind) continue;
+    if (family && doc.kind === 'guide' && doc.family !== family) continue;
+    if (family && doc.kind !== 'guide') continue;
+
+    let score = 0;
+    let matched = 0;
+    for (const term of terms) {
+      const inKey = doc.lowerKeys.some((key) => key === term);
+      const inKeyPart = !inKey && doc.lowerKeys.some((key) => key.includes(term));
+      const inTitle = doc.lowerTitle.includes(term);
+      const inText = count(doc.lowerText, term);
+      if (inKey || inKeyPart || inTitle || inText) matched++;
+      score += (inKey ? 12 : 0) + (inKeyPart ? 5 : 0) + (inTitle ? 4 : 0);
+      /* Damped by length, so a 60 KB guide does not outrank a precise field. */
+      score += doc.kind === 'guide' ? (inText * 2) / Math.log2(8 + doc.text.length / 2000) : Math.min(inText, 4);
+    }
+    for (const phrase of phrases) {
+      if (doc.lowerText.includes(phrase) || doc.lowerTitle.includes(phrase)) {
+        score += 15;
+        matched++;
+      } else {
+        score = 0;
+        break;
+      }
+    }
+    if (score <= 0) continue;
+    /* A document holding every term beats one that holds a single term many
+       times; one holding none of a multi-term query's words but the first is
+       barely relevant. */
+    const wanted = terms.length + phrases.length;
+    score *= matched === wanted ? 1.6 : matched / wanted;
+    if (doc.lowerKeys.includes(whole) || doc.name.toLowerCase() === whole) score += 40;
+    if (doc.deprecated) score *= 0.7;
+    score *= KIND_WEIGHT[doc.kind];
+    hits.push({ doc, score });
+  }
+
+  hits.sort((a, b) => b.score - a.score);
+  return hits.slice(0, limit).map(({ doc, score }) => ({
+    kind: doc.kind,
+    id: doc.id,
+    title: doc.title,
+    score: Math.round(score * 10) / 10,
+    excerpt: excerpt(doc.text, [...phrases, ...terms]),
+    ...(doc.schema ? { schema: doc.schema } : {}),
+    ...(doc.field ? { field: doc.field } : {}),
+    ...(doc.type ? { type: doc.type } : {}),
+    ...(doc.kind === 'field' ? { required: doc.required } : {}),
+    ...(doc.family ? { family: doc.family } : {}),
+  }));
 }

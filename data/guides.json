@@ -1,0 +1,1508 @@
+[
+ {
+  "id": "authentication.md",
+  "family": "general",
+  "title": "REST API, BeMap Authentication process",
+  "bytes": 3323
+ },
+ {
+  "id": "chargingstation-filter-v1.md",
+  "family": "general",
+  "title": "Charging station filter v1",
+  "bytes": 4516
+ },
+ {
+  "id": "chargingstation-filter-v2.md",
+  "family": "general",
+  "title": "Charging station filter v2",
+  "bytes": 4516
+ },
+ {
+  "id": "contact.md",
+  "family": "general",
+  "title": "BeNomad",
+  "bytes": 314
+ },
+ {
+  "id": "credits.md",
+  "family": "general",
+  "title": "Credits.",
+  "bytes": 2800
+ },
+ {
+  "id": "examples-mapping-display-bemap-api.md",
+  "family": "general",
+  "title": "Map display using BeMap JS API",
+  "bytes": 5744
+ },
+ {
+  "id": "examples-mapping-display-leaflet-raw.md",
+  "family": "general",
+  "title": "Map display with Leaflet (without BeMap JS API)",
+  "bytes": 1906
+ },
+ {
+  "id": "examples-mapping-display-maplibre.md",
+  "family": "general",
+  "title": "3D map with MapLibre + BeNomad vector tiles",
+  "bytes": 11344
+ },
+ {
+  "id": "examples-mapping-display-ol4-styles.md",
+  "family": "general",
+  "title": "Different graphic styles with OpenLayers 4",
+  "bytes": 11359
+ },
+ {
+  "id": "examples-mapping-display-ol4-traffic.md",
+  "family": "general",
+  "title": "Traffic graphic styles with OpenLayers 4",
+  "bytes": 2052
+ },
+ {
+  "id": "examples-mapping-display-ol4.md",
+  "family": "general",
+  "title": "Map display with OpenLayers (without BeMap JS API)",
+  "bytes": 2220
+ },
+ {
+  "id": "flutterapi_1_0_0/authentification.md",
+  "family": "flutterapi_1_0_0",
+  "title": "BeMapConexion Class Documentation",
+  "bytes": 2683
+ },
+ {
+  "id": "flutterapi_1_0_0/autocomplete.md",
+  "family": "flutterapi_1_0_0",
+  "title": "AutocompleteServer Class Documentation",
+  "bytes": 1850
+ },
+ {
+  "id": "flutterapi_1_0_0/charging_stations.md",
+  "family": "flutterapi_1_0_0",
+  "title": "ChargingStationsServer Class Documentation",
+  "bytes": 3259
+ },
+ {
+  "id": "flutterapi_1_0_0/ev_smart_routing.md",
+  "family": "flutterapi_1_0_0",
+  "title": "EvSmartRoutingServer Class Documentation",
+  "bytes": 1693
+ },
+ {
+  "id": "flutterapi_1_0_0/index.md",
+  "family": "flutterapi_1_0_0",
+  "title": "Flutter API v1.0.0",
+  "bytes": 2301
+ },
+ {
+  "id": "flutterapi_1_0_0/mapping.md",
+  "family": "flutterapi_1_0_0",
+  "title": "Mapping",
+  "bytes": 3318
+ },
+ {
+  "id": "flutterapi_1_0_0/near_poi.md",
+  "family": "flutterapi_1_0_0",
+  "title": "NearPoiServer Class Documentation",
+  "bytes": 1512
+ },
+ {
+  "id": "flutterapi_1_0_0/reverse_geocoding.md",
+  "family": "flutterapi_1_0_0",
+  "title": "ReverseGeocodingServer Class Documentation",
+  "bytes": 1608
+ },
+ {
+  "id": "flutterapi_1_0_0/routing.md",
+  "family": "flutterapi_1_0_0",
+  "title": "RoutingServer Class Documentation",
+  "bytes": 5203
+ },
+ {
+  "id": "flutterapi_1_0_0/vehicle.md",
+  "family": "flutterapi_1_0_0",
+  "title": "VehicleServer Class Documentation",
+  "bytes": 10908
+ },
+ {
+  "id": "glossary-chargingstation-connectors.md",
+  "family": "general",
+  "title": "List of electrical connector used by EV services",
+  "bytes": 307
+ },
+ {
+  "id": "glossary-coordinate_system.md",
+  "family": "general",
+  "title": "Glossary",
+  "bytes": 2116
+ },
+ {
+  "id": "glossary-google_encoded_polyline_algorithm_format.md",
+  "family": "general",
+  "title": "Glossary",
+  "bytes": 3296
+ },
+ {
+  "id": "index-electric-mobility-charging-cost.md",
+  "family": "general",
+  "title": "Electric Mobility - Charging time",
+  "bytes": 331
+ },
+ {
+  "id": "index-electric-mobility-charging-stations-search.md",
+  "family": "general",
+  "title": "Charging Station Search",
+  "bytes": 503
+ },
+ {
+  "id": "index-electric-mobility-charging-stations.md",
+  "family": "general",
+  "title": "Electric Mobility - Charging stations",
+  "bytes": 2713
+ },
+ {
+  "id": "index-electric-mobility-charging-time.md",
+  "family": "general",
+  "title": "Electric Mobility - Charging time",
+  "bytes": 334
+ },
+ {
+  "id": "index-electric-mobility-evsmartrouting.md",
+  "family": "general",
+  "title": "EV Smart Routing",
+  "bytes": 2806
+ },
+ {
+  "id": "index-electric-mobility-vehicles.md",
+  "family": "general",
+  "title": "Electric Mobility - Vehicles",
+  "bytes": 1765
+ },
+ {
+  "id": "index-electric-mobility.md",
+  "family": "general",
+  "title": "Electric Mobility",
+  "bytes": 2754
+ },
+ {
+  "id": "index-mapping.md",
+  "family": "general",
+  "title": "Mapping",
+  "bytes": 1752
+ },
+ {
+  "id": "index-routing.md",
+  "family": "general",
+  "title": "Routing",
+  "bytes": 2747
+ },
+ {
+  "id": "index-search-geocoding.md",
+  "family": "general",
+  "title": "Geocoding",
+  "bytes": 348
+ },
+ {
+  "id": "index-search-near-poi.md",
+  "family": "general",
+  "title": "Near POI",
+  "bytes": 661
+ },
+ {
+  "id": "index-search-reverse-geocoding.md",
+  "family": "general",
+  "title": "Reverse geocoding",
+  "bytes": 632
+ },
+ {
+  "id": "index-search.md",
+  "family": "general",
+  "title": "Search",
+  "bytes": 2231
+ },
+ {
+  "id": "index.md",
+  "family": "general",
+  "title": "Documentation",
+  "bytes": 4287
+ },
+ {
+  "id": "jsapi_1_0_0/index.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API v1",
+  "bytes": 2010
+ },
+ {
+  "id": "jsapi_1_0_0/js-authentication.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 2560
+ },
+ {
+  "id": "jsapi_1_0_0/js-autocomplete.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 9049
+ },
+ {
+  "id": "jsapi_1_0_0/js-geoautocomplete.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 8202
+ },
+ {
+  "id": "jsapi_1_0_0/js-geocoding.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 16693
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-layers.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 6931
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-leaflet-styles.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 3605
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-leaflet.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 10613
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-markers.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 2366
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-polyline.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 3569
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-popup.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 2013
+ },
+ {
+  "id": "jsapi_1_0_0/js-mapping-display-traffic.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 3228
+ },
+ {
+  "id": "jsapi_1_0_0/js-reversegeocoding.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 10847
+ },
+ {
+  "id": "jsapi_1_0_0/js-routing-response.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 10462
+ },
+ {
+  "id": "jsapi_1_0_0/js-routing.md",
+  "family": "jsapi_1_0_0",
+  "title": "BeMap JS API",
+  "bytes": 38732
+ },
+ {
+  "id": "jsapi_2_0_0/authentication.md",
+  "family": "jsapi_2_0_0",
+  "title": "Authentication",
+  "bytes": 3114
+ },
+ {
+  "id": "jsapi_2_0_0/cancellation.md",
+  "family": "jsapi_2_0_0",
+  "title": "Cancellation",
+  "bytes": 1977
+ },
+ {
+  "id": "jsapi_2_0_0/changelog.md",
+  "family": "jsapi_2_0_0",
+  "title": "What's new",
+  "bytes": 6314
+ },
+ {
+  "id": "jsapi_2_0_0/contact.md",
+  "family": "jsapi_2_0_0",
+  "title": "Contact",
+  "bytes": 724
+ },
+ {
+  "id": "jsapi_2_0_0/credits.md",
+  "family": "jsapi_2_0_0",
+  "title": "Credits & open-source notices",
+  "bytes": 16242
+ },
+ {
+  "id": "jsapi_2_0_0/error-handling.md",
+  "family": "jsapi_2_0_0",
+  "title": "Error handling — bemap.Error",
+  "bytes": 5031
+ },
+ {
+  "id": "jsapi_2_0_0/glossary-chargingstation-connectors.md",
+  "family": "jsapi_2_0_0",
+  "title": "Charging-station connectors",
+  "bytes": 1483
+ },
+ {
+  "id": "jsapi_2_0_0/glossary-coordinate_system.md",
+  "family": "jsapi_2_0_0",
+  "title": "Coordinate system",
+  "bytes": 2094
+ },
+ {
+  "id": "jsapi_2_0_0/glossary-enums.md",
+  "family": "jsapi_2_0_0",
+  "title": "Enums reference",
+  "bytes": 11064
+ },
+ {
+  "id": "jsapi_2_0_0/glossary-error-codes.md",
+  "family": "jsapi_2_0_0",
+  "title": "Error codes",
+  "bytes": 3777
+ },
+ {
+  "id": "jsapi_2_0_0/glossary-google_encoded_polyline_algorithm_format.md",
+  "family": "jsapi_2_0_0",
+  "title": "Google encoded polyline format",
+  "bytes": 3066
+ },
+ {
+  "id": "jsapi_2_0_0/index.md",
+  "family": "jsapi_2_0_0",
+  "title": "BeMap JS API v2.0",
+  "bytes": 9488
+ },
+ {
+  "id": "jsapi_2_0_0/install.md",
+  "family": "jsapi_2_0_0",
+  "title": "Install & setup",
+  "bytes": 11422
+ },
+ {
+  "id": "jsapi_2_0_0/js-acl-service.md",
+  "family": "jsapi_2_0_0",
+  "title": "ACL Service — bemap.AclService",
+  "bytes": 3138
+ },
+ {
+  "id": "jsapi_2_0_0/js-autocomplete.md",
+  "family": "jsapi_2_0_0",
+  "title": "Autocomplete — bemap.Autocomplete",
+  "bytes": 5773
+ },
+ {
+  "id": "jsapi_2_0_0/js-charging-stations.md",
+  "family": "jsapi_2_0_0",
+  "title": "Charging Stations — bemap.ChargingStations",
+  "bytes": 7101
+ },
+ {
+  "id": "jsapi_2_0_0/js-charging-time.md",
+  "family": "jsapi_2_0_0",
+  "title": "Charging Time — bemap.ChargingTime",
+  "bytes": 5009
+ },
+ {
+  "id": "jsapi_2_0_0/js-ev-reachable-area.md",
+  "family": "jsapi_2_0_0",
+  "title": "EV Reachable Area — bemap.EvReachableArea",
+  "bytes": 7780
+ },
+ {
+  "id": "jsapi_2_0_0/js-ev-smart-routing.md",
+  "family": "jsapi_2_0_0",
+  "title": "EV Smart Routing — bemap.EvSmartRouting",
+  "bytes": 9695
+ },
+ {
+  "id": "jsapi_2_0_0/js-ev-vehicles.md",
+  "family": "jsapi_2_0_0",
+  "title": "EV Vehicles — bemap.EvVehicles",
+  "bytes": 6471
+ },
+ {
+  "id": "jsapi_2_0_0/js-geoautocomplete.md",
+  "family": "jsapi_2_0_0",
+  "title": "GeoAutocomplete — bemap.GeoAutocomplete",
+  "bytes": 8159
+ },
+ {
+  "id": "jsapi_2_0_0/js-geocoding.md",
+  "family": "jsapi_2_0_0",
+  "title": "Geocoder — bemap.Geocoder",
+  "bytes": 5157
+ },
+ {
+  "id": "jsapi_2_0_0/js-geoserver-info.md",
+  "family": "jsapi_2_0_0",
+  "title": "Geoserver Info — bemap.GeoServerInfoService",
+  "bytes": 2905
+ },
+ {
+  "id": "jsapi_2_0_0/js-helpers.md",
+  "family": "jsapi_2_0_0",
+  "title": "Helpers & value types",
+  "bytes": 10023
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-3d.md",
+  "family": "jsapi_2_0_0",
+  "title": "3D & terrain",
+  "bytes": 11657
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-animation.md",
+  "family": "jsapi_2_0_0",
+  "title": "Animation",
+  "bytes": 10529
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-attribution.md",
+  "family": "jsapi_2_0_0",
+  "title": "Attribution widget — bemap.AttributionWidget",
+  "bytes": 5830
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-backgrounds.md",
+  "family": "jsapi_2_0_0",
+  "title": "Backgrounds & basemaps",
+  "bytes": 9437
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-camera.md",
+  "family": "jsapi_2_0_0",
+  "title": "Camera & viewport",
+  "bytes": 9564
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-clustering.md",
+  "family": "jsapi_2_0_0",
+  "title": "Clustering",
+  "bytes": 9777
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-draw.md",
+  "family": "jsapi_2_0_0",
+  "title": "Drawing & editing",
+  "bytes": 9755
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-engines.md",
+  "family": "jsapi_2_0_0",
+  "title": "Choosing an engine",
+  "bytes": 12512
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-events.md",
+  "family": "jsapi_2_0_0",
+  "title": "Events — map.on, bemap.MapEvent",
+  "bytes": 10976
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-geojson.md",
+  "family": "jsapi_2_0_0",
+  "title": "GeoJSON sources",
+  "bytes": 10413
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-globe.md",
+  "family": "jsapi_2_0_0",
+  "title": "Globe projection",
+  "bytes": 7970
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-heatmap.md",
+  "family": "jsapi_2_0_0",
+  "title": "Heatmap",
+  "bytes": 9878
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-interaction.md",
+  "family": "jsapi_2_0_0",
+  "title": "Interaction — picking & dragging",
+  "bytes": 10238
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-layers.md",
+  "family": "jsapi_2_0_0",
+  "title": "Layers — bemap.VectorLayer, bemap.ClusterLayer",
+  "bytes": 6380
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-leaflet.md",
+  "family": "jsapi_2_0_0",
+  "title": "Map display with Leaflet — bemap.LeafletMap",
+  "bytes": 4364
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-maplibre.md",
+  "family": "jsapi_2_0_0",
+  "title": "Map display with MapLibre — bemap.MapLibreMap",
+  "bytes": 10662
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-markers.md",
+  "family": "jsapi_2_0_0",
+  "title": "Markers — bemap.Marker",
+  "bytes": 3968
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-openlayers.md",
+  "family": "jsapi_2_0_0",
+  "title": "Map display with OpenLayers — bemap.OlMap",
+  "bytes": 3611
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-popup.md",
+  "family": "jsapi_2_0_0",
+  "title": "Popup — bemap.Popup",
+  "bytes": 3385
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-shapes.md",
+  "family": "jsapi_2_0_0",
+  "title": "Polyline — bemap.Polyline",
+  "bytes": 3538
+ },
+ {
+  "id": "jsapi_2_0_0/js-map-styling.md",
+  "family": "jsapi_2_0_0",
+  "title": "Styling — lines, polygons, circles, text",
+  "bytes": 9758
+ },
+ {
+  "id": "jsapi_2_0_0/js-mapping-display-traffic.md",
+  "family": "jsapi_2_0_0",
+  "title": "Traffic overlay — bemap.BemapLayer",
+  "bytes": 3300
+ },
+ {
+  "id": "jsapi_2_0_0/js-near-poi.md",
+  "family": "jsapi_2_0_0",
+  "title": "Near POI Search — bemap.NearPoiSearch",
+  "bytes": 4849
+ },
+ {
+  "id": "jsapi_2_0_0/js-reversegeocoding.md",
+  "family": "jsapi_2_0_0",
+  "title": "Reverse Geocoder — bemap.ReverseGeocoder",
+  "bytes": 5049
+ },
+ {
+  "id": "jsapi_2_0_0/js-routing-isochrone.md",
+  "family": "jsapi_2_0_0",
+  "title": "Routing — Isochrone mode",
+  "bytes": 4905
+ },
+ {
+  "id": "jsapi_2_0_0/js-routing-matrix.md",
+  "family": "jsapi_2_0_0",
+  "title": "Routing — Matrix mode",
+  "bytes": 4971
+ },
+ {
+  "id": "jsapi_2_0_0/js-routing-response.md",
+  "family": "jsapi_2_0_0",
+  "title": "The routing response",
+  "bytes": 11501
+ },
+ {
+  "id": "jsapi_2_0_0/js-routing-v2.md",
+  "family": "jsapi_2_0_0",
+  "title": "Routing v2 — bemap.RoutingV2",
+  "bytes": 9849
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-auth.md",
+  "family": "jsapi_2_0_0",
+  "title": "Sessions & tokens",
+  "bytes": 14620
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-cache.md",
+  "family": "jsapi_2_0_0",
+  "title": "Cache, slices & resilience",
+  "bytes": 14798
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-mobile-zxy.md",
+  "family": "jsapi_2_0_0",
+  "title": "Mobile & fleet — z/x/y tiles",
+  "bytes": 9559
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-overview.md",
+  "family": "jsapi_2_0_0",
+  "title": "Overview & access",
+  "bytes": 9764
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-styles.md",
+  "family": "jsapi_2_0_0",
+  "title": "Styles & BeMaputnik",
+  "bytes": 14873
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-troubleshooting.md",
+  "family": "jsapi_2_0_0",
+  "title": "Troubleshooting",
+  "bytes": 15592
+ },
+ {
+  "id": "jsapi_2_0_0/js-tiles-web-pmtiles.md",
+  "family": "jsapi_2_0_0",
+  "title": "Web — PMTiles",
+  "bytes": 12273
+ },
+ {
+  "id": "jsapi_2_0_0/js-traceroute.md",
+  "family": "jsapi_2_0_0",
+  "title": "TraceRoute — bemap.TraceRoute",
+  "bytes": 6646
+ },
+ {
+  "id": "jsapi_2_0_0/migration-evrouting.md",
+  "family": "jsapi_2_0_0",
+  "title": "EV Routing — bemap.EvseRouting → bemap.EvSmartRouting",
+  "bytes": 3354
+ },
+ {
+  "id": "jsapi_2_0_0/migration-from-v1.md",
+  "family": "jsapi_2_0_0",
+  "title": "Migrating from JS API v1 to v2 — cheat sheet",
+  "bytes": 4754
+ },
+ {
+  "id": "jsapi_2_0_0/migration-geocoding.md",
+  "family": "jsapi_2_0_0",
+  "title": "Geocoding — callback → Promise",
+  "bytes": 3464
+ },
+ {
+  "id": "jsapi_2_0_0/migration-ol4-to-ol10.md",
+  "family": "jsapi_2_0_0",
+  "title": "OpenLayers 4 → 10",
+  "bytes": 6984
+ },
+ {
+  "id": "jsapi_2_0_0/migration-routing.md",
+  "family": "jsapi_2_0_0",
+  "title": "Routing — bemap.Routing → bemap.RoutingV2",
+  "bytes": 3119
+ },
+ {
+  "id": "jsapi_2_0_0/migration-wms-to-tiles.md",
+  "family": "jsapi_2_0_0",
+  "title": "WMS → BeNomad Tiles",
+  "bytes": 8983
+ },
+ {
+  "id": "jsapi_2_0_0/quick-start.md",
+  "family": "jsapi_2_0_0",
+  "title": "Quick start",
+  "bytes": 4515
+ },
+ {
+  "id": "jsapi_2_0_0/security-proxy.md",
+  "family": "jsapi_2_0_0",
+  "title": "Credential-less setup — the proxy option",
+  "bytes": 11243
+ },
+ {
+  "id": "jsapi_2_0_0/snippet-helpers.md",
+  "family": "jsapi_2_0_0",
+  "title": "Snippet helpers — bemap.snippet.",
+  "bytes": 3329
+ },
+ {
+  "id": "jsapi_2_0_0/the-context.md",
+  "family": "jsapi_2_0_0",
+  "title": "The Context — bemap.Context",
+  "bytes": 5504
+ },
+ {
+  "id": "mapping-bnd.md",
+  "family": "general",
+  "title": "REST API, BND version 0.9 (Deprecate see WMS API)",
+  "bytes": 7532
+ },
+ {
+  "id": "mapping-display-map.md",
+  "family": "general",
+  "title": "Add a map browser in your web page",
+  "bytes": 757
+ },
+ {
+  "id": "mapping-wms-1-1-1-getcapabilities.md",
+  "family": "general",
+  "title": "WMS version 1.1.1",
+  "bytes": 5108
+ },
+ {
+  "id": "mapping-wms-1-1-1-getfeatureInfo.md",
+  "family": "general",
+  "title": "WMS version 1.1.1",
+  "bytes": 16118
+ },
+ {
+  "id": "mapping-wms-1-1-1-getmap.md",
+  "family": "general",
+  "title": "WMS version 1.1.1",
+  "bytes": 13189
+ },
+ {
+  "id": "mapping-wms-1-3-0-getcapabilities.md",
+  "family": "general",
+  "title": "WMS version 1.3.0",
+  "bytes": 5745
+ },
+ {
+  "id": "mapping-wms-1-3-0-getfeatureInfo.md",
+  "family": "general",
+  "title": "WMS version 1.3.0",
+  "bytes": 16090
+ },
+ {
+  "id": "mapping-wms-1-3-0-getmap.md",
+  "family": "general",
+  "title": "WMS version 1.3.0",
+  "bytes": 13260
+ },
+ {
+  "id": "release_notes.md",
+  "family": "general",
+  "title": "BeNomad BeMap Release Notes",
+  "bytes": 124880
+ },
+ {
+  "id": "rest_0_9_0/chargingstation-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 22459
+ },
+ {
+  "id": "rest_0_9_0/chargingtime-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 5254
+ },
+ {
+  "id": "rest_0_9_0/examples-charging-time-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Charging Time service",
+  "bytes": 8273
+ },
+ {
+  "id": "rest_0_9_0/examples-feature-land-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Feature of land",
+  "bytes": 5168
+ },
+ {
+  "id": "rest_0_9_0/examples-geocoding-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Geocoding",
+  "bytes": 3414
+ },
+ {
+  "id": "rest_0_9_0/examples-geofencing-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Geo-fencing",
+  "bytes": 1815
+ },
+ {
+  "id": "rest_0_9_0/examples-reversegeocoding-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Reverse geocoding",
+  "bytes": 2941
+ },
+ {
+  "id": "rest_0_9_0/examples-routing-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Routing",
+  "bytes": 7359
+ },
+ {
+  "id": "rest_0_9_0/examples-trace-route-bnd-v0_9_0.md",
+  "family": "rest_0_9_0",
+  "title": "Trace Route service",
+  "bytes": 2264
+ },
+ {
+  "id": "rest_0_9_0/feature-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 16911
+ },
+ {
+  "id": "rest_0_9_0/geocoding-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 9255
+ },
+ {
+  "id": "rest_0_9_0/geocodingbatch-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 10581
+ },
+ {
+  "id": "rest_0_9_0/geofencing-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 6773
+ },
+ {
+  "id": "rest_0_9_0/geoserverinfo-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 20490
+ },
+ {
+  "id": "rest_0_9_0/natgeocoding-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 7512
+ },
+ {
+  "id": "rest_0_9_0/reversegeocoding-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 15175
+ },
+ {
+  "id": "rest_0_9_0/reversegeocodingbatch-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 7241
+ },
+ {
+  "id": "rest_0_9_0/routing-bnd-matrix-response.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 2551
+ },
+ {
+  "id": "rest_0_9_0/routing-bnd-response.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 41005
+ },
+ {
+  "id": "rest_0_9_0/routing-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 42264
+ },
+ {
+  "id": "rest_0_9_0/traceroute-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9 (Deprecate see API v1.x)",
+  "bytes": 33321
+ },
+ {
+  "id": "rest_0_9_0/traffic-bnd-response-binac10.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 5011
+ },
+ {
+  "id": "rest_0_9_0/traffic-bnd-response-binlid10.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 4656
+ },
+ {
+  "id": "rest_0_9_0/traffic-bnd-response-bndjson10.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 4071
+ },
+ {
+  "id": "rest_0_9_0/traffic-bnd-response-bndjson11.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 5074
+ },
+ {
+  "id": "rest_0_9_0/traffic-bnd.md",
+  "family": "rest_0_9_0",
+  "title": "REST API, BND version 0.9",
+  "bytes": 20008
+ },
+ {
+  "id": "rest_1_0_0/autocompletegeocoding-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3034
+ },
+ {
+  "id": "rest_1_0_0/chargingcost-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3036
+ },
+ {
+  "id": "rest_1_0_0/chargingstation-chargepass-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2265
+ },
+ {
+  "id": "rest_1_0_0/chargingstation-connector-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 9427
+ },
+ {
+  "id": "rest_1_0_0/chargingstation-download-evpoi-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 5131
+ },
+ {
+  "id": "rest_1_0_0/chargingstation-search-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 10070
+ },
+ {
+  "id": "rest_1_0_0/chargingstation-tariffs-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4111
+ },
+ {
+  "id": "rest_1_0_0/chargingtime-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1695
+ },
+ {
+  "id": "rest_1_0_0/currency-codes-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 17120
+ },
+ {
+  "id": "rest_1_0_0/currency-convert-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1294
+ },
+ {
+  "id": "rest_1_0_0/currency-rate-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1118
+ },
+ {
+  "id": "rest_1_0_0/currency-rates-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1364
+ },
+ {
+  "id": "rest_1_0_0/download-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4433
+ },
+ {
+  "id": "rest_1_0_0/evreachablearea-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4082
+ },
+ {
+  "id": "rest_1_0_0/evsmartrouting-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 9869
+ },
+ {
+  "id": "rest_1_0_0/evsmartrouting-vehiclebrands-list-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 5220
+ },
+ {
+  "id": "rest_1_0_0/evsmartrouting-vehiclemodels-list-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2301
+ },
+ {
+  "id": "rest_1_0_0/examples-charging-chargepass-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Charge Pass service",
+  "bytes": 1403
+ },
+ {
+  "id": "rest_1_0_0/examples-charging-cost-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Charging Cost service",
+  "bytes": 873
+ },
+ {
+  "id": "rest_1_0_0/examples-charging-station-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Charging Station service",
+  "bytes": 6738
+ },
+ {
+  "id": "rest_1_0_0/examples-charging-tariffs-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Charging Station Tariffs service",
+  "bytes": 2655
+ },
+ {
+  "id": "rest_1_0_0/examples-charging-time-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Charging Time service",
+  "bytes": 8960
+ },
+ {
+  "id": "rest_1_0_0/examples-currency-convert-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Currency convert",
+  "bytes": 2035
+ },
+ {
+  "id": "rest_1_0_0/examples-evreachablearea-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "EV Reachable Area",
+  "bytes": 4659
+ },
+ {
+  "id": "rest_1_0_0/examples-evsmartrouting-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "EV Smart Routing",
+  "bytes": 18440
+ },
+ {
+  "id": "rest_1_0_0/examples-feature-land-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Feature of land",
+  "bytes": 5569
+ },
+ {
+  "id": "rest_1_0_0/examples-geocoding-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Geocoding",
+  "bytes": 3422
+ },
+ {
+  "id": "rest_1_0_0/examples-geofencing-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Geo-fencing",
+  "bytes": 1901
+ },
+ {
+  "id": "rest_1_0_0/examples-near-poi-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Near POI",
+  "bytes": 5106
+ },
+ {
+  "id": "rest_1_0_0/examples-reversegeocoding-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Reverse geocoding",
+  "bytes": 3023
+ },
+ {
+  "id": "rest_1_0_0/examples-roadsextractor-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Roads extractor",
+  "bytes": 4230
+ },
+ {
+  "id": "rest_1_0_0/examples-routing-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Routing",
+  "bytes": 9455
+ },
+ {
+  "id": "rest_1_0_0/examples-trace-route-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Trace Route service",
+  "bytes": 2901
+ },
+ {
+  "id": "rest_1_0_0/examples-weather-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "Weather",
+  "bytes": 6528
+ },
+ {
+  "id": "rest_1_0_0/feature-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3369
+ },
+ {
+  "id": "rest_1_0_0/geocoding-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3134
+ },
+ {
+  "id": "rest_1_0_0/geocodingbatch-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4324
+ },
+ {
+  "id": "rest_1_0_0/geofencing-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3402
+ },
+ {
+  "id": "rest_1_0_0/geoserverinfo-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 14688
+ },
+ {
+  "id": "rest_1_0_0/natgeocoding-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2988
+ },
+ {
+  "id": "rest_1_0_0/nearpoi-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2401
+ },
+ {
+  "id": "rest_1_0_0/openlrparser-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 6451
+ },
+ {
+  "id": "rest_1_0_0/quotas-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1979
+ },
+ {
+  "id": "rest_1_0_0/reversegeocoding-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 8777
+ },
+ {
+  "id": "rest_1_0_0/reversegeocodingbatch-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 9484
+ },
+ {
+  "id": "rest_1_0_0/roadsextractor-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2842
+ },
+ {
+  "id": "rest_1_0_0/routehorizon-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2040
+ },
+ {
+  "id": "rest_1_0_0/routing-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4755
+ },
+ {
+  "id": "rest_1_0_0/serverversion-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1165
+ },
+ {
+  "id": "rest_1_0_0/traceroute-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 9979
+ },
+ {
+  "id": "rest_1_0_0/traffic-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 1729
+ },
+ {
+  "id": "rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "💶 Step-by-Step – Compute a Charging Cost from Charging Station and Tariffs data",
+  "bytes": 21506
+ },
+ {
+  "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
+  "family": "rest_1_0_0",
+  "title": "🚧 Step-by-Step – Build Your First Charging Station Request",
+  "bytes": 11046
+ },
+ {
+  "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
+  "family": "rest_1_0_0",
+  "title": "⚙️ Charging Station Options – Usage Guide",
+  "bytes": 26225
+ },
+ {
+  "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
+  "family": "rest_1_0_0",
+  "title": "⚡ Charging Station Parameters – Detailed Usage Guide",
+  "bytes": 84978
+ },
+ {
+  "id": "rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
+  "family": "rest_1_0_0",
+  "title": "Tutorial for the first trip in electrical vehicle",
+  "bytes": 21700
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
+  "family": "rest_1_0_0",
+  "title": "📍 Routing Criterias Tutorial",
+  "bytes": 23959
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
+  "family": "rest_1_0_0",
+  "title": "🛰️ Routing Event Tutorial",
+  "bytes": 78965
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+  "family": "rest_1_0_0",
+  "title": "📬 How to Send a Routing Request",
+  "bytes": 2322
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
+  "family": "rest_1_0_0",
+  "title": "🚧 Building a Routing Request",
+  "bytes": 2202
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
+  "family": "rest_1_0_0",
+  "title": "🧪 Routing Mode Tutorial",
+  "bytes": 17193
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
+  "family": "rest_1_0_0",
+  "title": "🧠 Routing Optimization Tutorial",
+  "bytes": 16894
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
+  "family": "rest_1_0_0",
+  "title": "🚗 Routing Vehicle Profile Tutorial",
+  "bytes": 15196
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+  "family": "rest_1_0_0",
+  "title": "📄 TraceRoute – Beginner Tutorial with a CSV Route",
+  "bytes": 3364
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
+  "family": "rest_1_0_0",
+  "title": "🚗 TraceRoute – Step-by-Step Beginner Tutorial",
+  "bytes": 2421
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+  "family": "rest_1_0_0",
+  "title": "🎯 TraceRoute - destinations List of GPS Coordinates",
+  "bytes": 5667
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
+  "family": "rest_1_0_0",
+  "title": "🛠️ TraceRoute – options Parameter",
+  "bytes": 150154
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
+  "family": "rest_1_0_0",
+  "title": "📘 TraceRoute Parameters – Detailed Usage Guide",
+  "bytes": 82384
+ },
+ {
+  "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+  "family": "rest_1_0_0",
+  "title": "📦 TraceRoute - routingVehicleProfile Detailed Usage",
+  "bytes": 65715
+ },
+ {
+  "id": "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 3414
+ },
+ {
+  "id": "rest_1_0_0/vehicle-getbrands-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 4745
+ },
+ {
+  "id": "rest_1_0_0/vehicle-getlevelvehicleinfo-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 2711
+ },
+ {
+  "id": "rest_1_0_0/vehicle-getmotortypes-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 492
+ },
+ {
+  "id": "rest_1_0_0/vehiclepicture-getall-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 604
+ },
+ {
+  "id": "rest_1_0_0/vehiclepicture-getone-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 724
+ },
+ {
+  "id": "rest_1_0_0/vehiclepicture-getviews-service-v1_0_0.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 584
+ },
+ {
+  "id": "rest_1_0_0/weather-service.md",
+  "family": "rest_1_0_0",
+  "title": "REST API, Service version 1.0.0",
+  "bytes": 49206
+ },
+ {
+  "id": "rest_1_1_0/vehicle-findvehicles-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 3414
+ },
+ {
+  "id": "rest_1_1_0/vehicle-getbrands-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 4745
+ },
+ {
+  "id": "rest_1_1_0/vehicle-getlevelvehicleinfo-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 3629
+ },
+ {
+  "id": "rest_1_1_0/vehicle-getmotortypes-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 492
+ },
+ {
+  "id": "rest_1_1_0/vehiclepicture-getbrandlogo-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 612
+ },
+ {
+  "id": "rest_1_1_0/vehiclepicture-getbrandlogolite-service-v1_1_0.md",
+  "family": "rest_1_1_0",
+  "title": "REST API, Service version 1.1.0",
+  "bytes": 405
+ },
+ {
+  "id": "rest_2_0_0/evsmartrouting-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "REST API, Service version 2.0.0",
+  "bytes": 10297
+ },
+ {
+  "id": "rest_2_0_0/examples-evsmartrouting-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "EV Smart Routing",
+  "bytes": 33885
+ },
+ {
+  "id": "rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "📦 Condition – Detailed Usage Tutorial",
+  "bytes": 139406
+ },
+ {
+  "id": "rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "⚡ Tutorial for the first trip in electrical vehicle",
+  "bytes": 21382
+ },
+ {
+  "id": "rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "🚚 Tutorial: Truck Routing with EV Smart Routing v2.0.0",
+  "bytes": 4069
+ },
+ {
+  "id": "samples.md",
+  "family": "general",
+  "title": "URL samples",
+  "bytes": 40935
+ },
+ {
+  "id": "sdk-jsiv-classids.md",
+  "family": "general",
+  "title": "Class ID list",
+  "bytes": 19124
+ },
+ {
+  "id": "soap_2_0_0/jsonrpc.md",
+  "family": "soap_2_0_0",
+  "title": "JSON-RPC",
+  "bytes": 7139
+ },
+ {
+  "id": "soap_2_0_0/soaprpc.md",
+  "family": "soap_2_0_0",
+  "title": "SOAP-RPC",
+  "bytes": 322
+ },
+ {
+  "id": "tutorials-mapping-wms-1_3_0-satellite.md",
+  "family": "general",
+  "title": "🛰️ Get a satellite image with WMS 1.3.0",
+  "bytes": 12351
+ }
+]

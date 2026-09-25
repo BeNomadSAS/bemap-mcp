@@ -43,16 +43,48 @@ const SKILL_DIRS = [join(ROOT, 'skill'), join(ROOT, 'skills')];
  * tracking `0.5.5`, and Svelte's server answers `0.0.1` while its documented
  * `--version` flag prints `0.0.0`. One number, one place.
  *
+ * The number changes only when something is published. Between releases the
+ * package declares the next one as a pre-release — `0.0.1-dev` — and every
+ * build is told apart by the build number recorded in its snapshot when it
+ * was built: `0.0.1-dev.312`. Nobody bumps anything to make a build
+ * distinguishable, and a published release reports its plain number.
+ *
  * @returns {string} the semantic version, or `'unknown'` when the package
  *   manifest cannot be read — a server that cannot find its own manifest is
  *   still a usable server, and must not refuse to start over its own label.
  */
 export function serverVersion() {
+  /* No snapshot, or one that cannot be read: the release number alone. */
+  return withBuild(readJson(join(ROOT, 'package.json'))?.version ?? 'unknown', readJson(join(ROOT, 'data', 'manifest.json'))?.build ?? null);
+}
+
+/**
+ * A JSON file's content, or `null` when it is missing or unreadable.
+ *
+ * @param {string} file
+ * @returns {object|null}
+ */
+function readJson(file) {
   try {
-    return JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version ?? 'unknown';
+    return JSON.parse(readFileSync(file, 'utf8'));
   } catch {
-    return 'unknown';
+    return null;
   }
+}
+
+/** A semantic version, pre-release included: `0.0.1`, `0.0.1-dev`, `0.0.1-dev.312`. */
+export const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+
+/**
+ * A version with its build number, when it is a build of the next release.
+ *
+ * @param {string} version - As the package declares it: `0.0.1-dev` or `0.0.1`.
+ * @param {{number?: number}|null} build - The snapshot's build record.
+ * @returns {string} `0.0.1-dev.312` for a pre-release with a build number; the
+ *   version unchanged otherwise — a release is never renumbered by a build.
+ */
+export function withBuild(version, build) {
+  return version.includes('-') && Number.isInteger(build?.number) ? `${version}.${build.number}` : version;
 }
 
 /**
