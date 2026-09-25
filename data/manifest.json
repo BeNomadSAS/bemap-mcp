@@ -1,10 +1,10 @@
 {
   "format": 2,
-  "generatedAt": "2026-09-25T08:27:14.584Z",
-  "generator": "bemap-mcp 0.0.1-dev.79",
+  "generatedAt": "2026-09-25T08:52:04.212Z",
+  "generator": "bemap-mcp 0.0.1-dev.82",
   "build": {
-    "number": 79,
-    "commit": "aee9c68e",
+    "number": 82,
+    "commit": "af21825b",
     "uncommitted": false
   },
   "specification": {
@@ -222,7 +222,7 @@
   },
   "environmentProfile": {
     "environment": "prod",
-    "capturedAt": "2026-09-25T08:27:14.333Z",
+    "capturedAt": "2026-09-25T08:52:03.962Z",
     "cartoRelease": "Here Maps 2026.2",
     "geoservers": [
       "addok",

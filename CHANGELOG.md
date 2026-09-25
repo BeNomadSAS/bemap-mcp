@@ -23,7 +23,8 @@ First version, built from BeMap's own OpenAPI specification.
   Claude Code, Codex, Cursor, GitHub Copilot, VS Code and Gemini CLI.
 - Install notes for Claude Code, Claude Desktop, Cursor, VS Code Copilot, Codex,
   Gemini CLI, Zed and Devin Desktop.
-- Claude Desktop extension, with the key kept in the system keychain.
+- Claude Desktop extension, with the key kept in the system keychain; it and
+  the plugin carry the notices of the open-source packages they include.
 - Your own BeMap installation: `BEMAP_BASE_URL` and `env: "own"`.
 - `csfsVersion`, `filtersVersion` and `alternative` are shown as the numbers
   BeMap reads, where its specification says base64.
