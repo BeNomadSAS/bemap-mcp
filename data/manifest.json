@@ -1,16 +1,15 @@
 {
   "format": 2,
-  "generatedAt": "2026-09-25T14:14:09.780Z",
-  "generator": "bemap-mcp 0.0.1-dev.97",
+  "generatedAt": "2026-09-28T13:58:50.470Z",
+  "generator": "bemap-mcp 0.0.1-dev.108",
   "build": {
-    "number": 97,
-    "commit": "b4d08e4a",
+    "number": 108,
+    "commit": "12c6aa7a",
     "uncommitted": false
   },
   "specification": {
-    "origin": "https://bemap-dev.benomad.org/bgis/service/api-docs",
+    "origin": "file:api-docs-new.json",
     "servedFrom": "bemap-dev.benomad.org",
-    "tlsInsecure": true,
     "sha256": "05faa2509d8abc8580c46d0566643007cb0c7ffac83161edf14b5812d8fdaaeb",
     "openapi": "3.1.0",
     "title": "BeNomad BeMap Service REST API",
@@ -22,7 +21,7 @@
   "source": {
     "repo": "bemap",
     "fetched": true,
-    "ref": "origin/dev",
+    "ref": "25e867451846ac11af3126955eef5606d434c358",
     "commit": "25e867451846ac11af3126955eef5606d434c358",
     "committedAt": "2026-09-12T08:40:09+02:00"
   },
@@ -41,7 +40,7 @@
         "family": null,
         "repo": "bemap",
         "fetched": true,
-        "ref": "origin/dev",
+        "ref": "25e867451846ac11af3126955eef5606d434c358",
         "commit": "25e867451846ac11af3126955eef5606d434c358",
         "committedAt": "2026-09-12T08:40:09+02:00",
         "pages": 251
@@ -376,7 +375,7 @@
   },
   "environmentProfile": {
     "environment": "prod",
-    "capturedAt": "2026-09-25T14:14:09.606Z",
+    "capturedAt": "2026-09-28T13:58:50.176Z",
     "cartoRelease": "Here Maps 2026.2",
     "geoservers": [
       "addok",

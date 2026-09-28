@@ -31,6 +31,7 @@ First version, built from BeMap's own OpenAPI specification.
   notices of the open-source packages it includes; a setting for a company
   certificate authority (`NODE_EXTRA_CA_CERTS` elsewhere).
 - Your own BeMap installation: `BEMAP_BASE_URL` and `env: "own"`.
+- BeNomad's proprietary licence: free to use, unmodified, with BeMap.
 - `csfsVersion`, `filtersVersion`, `alternative` and two query parameters are
   shown as the numbers BeMap reads, where its specification says base64.
 - A wrong key is reported as one (`401`), and a failed live call names its
