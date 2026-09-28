@@ -1,14 +1,18 @@
 # Installation
 
+**Download** from https://github.com/BeNomadSAS/bemap-mcp/releases — the newest
+release, under **Assets**: `benomad-bemap-<version>.mcpb` for Claude Desktop,
+`benomad-bemap-mcp-<version>.tgz` for every other assistant. Or clone the
+repository instead of taking the `.tgz` (step 1).
+
 A BeMap account is needed only to send live requests; reading the
 documentation works without one.
 
 ## Claude Desktop — the extension
 
-Double-click `benomad-bemap-<version>.mcpb` — the file you were sent, also
-attached to each release at https://github.com/BeNomadSAS/bemap-mcp/releases —
-or open Settings → Extensions → Advanced settings → Install Extension… and pick
-it. Claude Desktop runs it with its own Node.js. Fill in your BeMap account in
+Download `benomad-bemap-<version>.mcpb` from the release's **Assets** and
+double-click it — or open Settings → Extensions → Advanced settings → Install
+Extension… and pick it. Claude Desktop runs it with its own Node.js. Fill in your BeMap account in
 the extension's settings, or leave them empty to read the documentation only.
 The key is kept in your system keychain.
 
@@ -21,8 +25,7 @@ You need Node.js 18 or later.
 
 ### 1. Install the package
 
-From the `.tgz` you were sent, also attached to each release at
-https://github.com/BeNomadSAS/bemap-mcp/releases:
+Download `benomad-bemap-mcp-<version>.tgz` from the release's **Assets**, then:
 
 ```bash
 mkdir -p ~/bemap-mcp && cd ~/bemap-mcp
@@ -38,6 +41,20 @@ Set-Location "$HOME\bemap-mcp"
 npm init -y | Out-Null
 npm install C:\path\to\benomad-bemap-mcp-<version>.tgz
 ```
+
+**Or from the repository** — the easiest to keep up to date. The same in a
+terminal and in PowerShell:
+
+```bash
+cd ~
+git clone https://github.com/BeNomadSAS/bemap-mcp.git
+cd bemap-mcp
+npm install
+```
+
+Take one way, not both. From a clone, the server in step 2 is
+`src/index.js` in that folder, instead of
+`node_modules/@benomad/bemap-mcp/src/index.js`.
 
 ### 2. Register it
 
@@ -194,6 +211,8 @@ From the folder you installed the package in (`~/bemap-mcp`):
 npx --no-install bemap-install-skill
 ```
 
+From a clone, in the clone: `node scripts/install-skill.js`.
+
 It writes the skill where the assistants read it — `~/.claude/skills/` and
 `~/.agents/skills/`. Run it again after every upgrade; with `--check` it says
 whether your copy is current. Then restart your assistant. Run from another
@@ -236,8 +255,12 @@ The answer names `destinations`.
 
 ## Upgrading
 
-Install the new file the same way, then, from that folder, run
-`npx --no-install bemap-install-skill` again.
+- **Claude Desktop:** install the new `.mcpb`.
+- **The package:** install the new `.tgz` the same way, then, from that folder,
+  `npx --no-install bemap-install-skill` again.
+- **A clone:** `git pull`, `npm install`, then `node scripts/install-skill.js`.
+
+Then restart your assistant.
 
 ## Support
 

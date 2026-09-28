@@ -79,7 +79,7 @@ new bemap.BemapLayer(options)
 | Option | Type | Notes |
 | --- | --- | --- |
 | `name` | String | Layer name — useful for `removeLayer(name)`. |
-| `geoserver` | String | Usually `bemapMainCtx.geoserver`. |
+| `geoserver` | String | Usually `ctx.geoserver`. |
 | `styles` | String | `'traffic'` for live traffic. |
 | `format` | String | Tile format. `'image/png24'` by default. |
 | `transparent` | Boolean | |

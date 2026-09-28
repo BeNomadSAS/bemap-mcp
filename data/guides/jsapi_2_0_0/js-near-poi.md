@@ -5,7 +5,7 @@
 <p class="bemap-tagline">Find points of interest near a coordinate, ranked by distance or driving duration. Each result carries name, type, coordinate, telephone, and an optional snap polyline back to the search centre.</p>
 
 <div class="bemap-callout">
-<strong>Geoserver.</strong> Calls <code>POST service/nearpoi/1.0</code> — needs a geoserver with POI data plumbed in. On the public beta server <code>here</code> works. Change <code>bemapMainCtx.geoserver</code> in <a href="../context.js">context.js</a> to switch.<br>
+<strong>Geoserver.</strong> Calls <code>POST service/nearpoi/1.0</code> — needs a geoserver with POI data plumbed in. On the public beta server <code>here</code> works. Set <code>geoserver</code> on your <code>bemap.Context</code> to switch.<br>
 <strong>Your allowed geoservers:</strong> <span id="allowed_geo_nearpoi">…</span>
 </div>
 

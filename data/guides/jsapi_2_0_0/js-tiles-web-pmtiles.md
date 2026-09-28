@@ -14,6 +14,7 @@
 {"bemap":{"language":"javascript","mapid":"mapV2_tiles_pmtiles","run":true,"hide":true}}
 var miniweb = bemap['miniweb'];
 var map = new bemap.MapLibreMap(bemapTilesCtx, 'mapV2_tiles_pmtiles');
+map.switchBackgroundLayer(miniweb.getGeoserver());
 map.move(2.35, 48.85, 12);
 
 miniweb.onChangeGeoserver(function(geoserver) {

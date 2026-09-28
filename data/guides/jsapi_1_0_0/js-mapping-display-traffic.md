@@ -63,7 +63,7 @@ $('#move').click(function(){
 ```
 {"bemap":{"language":"javascript","run":false}}
 bemap.layers.trafficWms = new bemap.BemapLayer( {
-  geoserver: 'default',
+  geoserver: ctx.geoserver,
   styles : 'traffic',
   format : 'image/png24'
 });
@@ -99,13 +99,13 @@ Example with live traffic refreshed by on button click
 
 ```
 {"bemap":{"language":"javascript"}}
-var map = new bemap.LeafletMap(bemapMainCtx, 'map1').defaultLayers().move(2.0, 47.0, 5);
+var map = new bemap.LeafletMap(ctx, 'map1').defaultLayers().move(2.0, 47.0, 5);
 //is recommended to keep map and layers in object
 bemap.map = map;
 bemap.layers = {}
 
 bemap.layers.trafficWms = new bemap.BemapLayer( {
-  geoserver: 'default',
+  geoserver: ctx.geoserver,
   styles : 'traffic',
   format : 'image/png24'
 });

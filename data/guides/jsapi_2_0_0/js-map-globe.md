@@ -13,8 +13,10 @@
 ```
 {"bemap":{"language":"javascript","mapid":"mapV2_globe","run":true,"hide":true}}
 // Always MapLibre on this page — globe is a MapLibre-only projection.
+var miniweb = bemap['miniweb'];
 var map = new bemap.MapLibreMap(bemapTilesCtx, 'mapV2_globe');
-bemap['miniweb'].onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
+map.switchBackgroundLayer(miniweb.getGeoserver());
+miniweb.onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
 
 bemap.docs.whenReady(map, function() {
     try {

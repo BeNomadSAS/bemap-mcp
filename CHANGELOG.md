@@ -26,7 +26,8 @@ First version, built from BeMap's own OpenAPI specification.
 - The `benomad-bemap-api` skill, installed by `npx bemap-install-skill` for
   Claude Code, Codex, Cursor, GitHub Copilot, VS Code and Gemini CLI.
 - Install notes for Claude Code, Claude Desktop, Cursor, VS Code Copilot, Codex,
-  Gemini CLI, Zed and Devin Desktop.
+  Gemini CLI, Zed and Devin Desktop — from the Desktop extension, the package, or
+  a clone of the repository; the files on each release's page.
 - Claude Desktop extension, with the key kept in the system keychain and the
   notices of the open-source packages it includes; a setting for a company
   certificate authority (`NODE_EXTRA_CA_CERTS` elsewhere).

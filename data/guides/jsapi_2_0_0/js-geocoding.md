@@ -5,7 +5,7 @@
 <p class="bemap-tagline">Forward geocoding — free-form address or place name to ranked matches with coordinates and structured addresses. Promise-based wrapper around <code>POST service/geocoding/autocomplete/1.0</code>.</p>
 
 <div class="bemap-callout">
-<strong>Geoserver.</strong> <code>Geocoder.geocode()</code> routes through the autocomplete endpoint with <code>addressDetails: true</code> — so it needs a geoserver with a working autocomplete connector. On the public beta server use <code>nominatim</code>; change <code>bemapMainCtx.geoserver</code> in <a href="../context.js">context.js</a> to switch.<br>
+<strong>Geoserver.</strong> <code>Geocoder.geocode()</code> routes through the autocomplete endpoint with <code>addressDetails: true</code> — so it needs a geoserver with a working autocomplete connector. On the public beta server use <code>nominatim</code>; set <code>geoserver</code> on your <code>bemap.Context</code> to switch.<br>
 <strong>Your allowed geoservers:</strong> <span id="allowed_geo_geocoder">…</span>
 </div>
 

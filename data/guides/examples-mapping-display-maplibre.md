@@ -22,7 +22,7 @@ Try the BeMap-tile-only knobs below — they all run against the same vector bas
 ## JavaScript
 
 ```
-{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":false}}
+{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":true}}
 $(document).ready(function() {
     // bemapTilesCtx is declared in context.js; the portal fills in its
     // tilesHost and authentication at startup from the BeMap session.
@@ -37,14 +37,16 @@ $(document).ready(function() {
     //       tokenStorage: 'sessionStorage'   // or 'localStorage' / 'memory'
     //   });
 
+    var miniweb = bemap['miniweb'];
     var map = new bemap.MapLibreMap(bemapTilesCtx, 'map1', {
         zoom:    6,
         pitch:   45,
         bearing: -15
     });
+    map.switchBackgroundLayer(miniweb.getGeoserver());
 
     // Portal only: follow the sidebar Geo-server selector.
-    bemap['miniweb'].onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
+    miniweb.onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
 
     // MapLibre defers source/layer ops until the style is loaded.
     // bemap.docs.whenReady wraps that with a 250 ms safety net for cached
@@ -147,6 +149,27 @@ $(document).ready(function() {
         });
     });
 });
+```
+
+```
+{"bemap":{"language":"javascript","run":false,"hide":false}}
+var ctx = new bemap.Context({
+    secure: true,
+    host: 'bemap.example.com',
+    login: '<login>',
+    password: '<password>',
+    geoserver: 'here',
+    tilesHost: 'mptiles-api.benomad.net'
+});
+
+var map = new bemap.MapLibreMap(ctx, 'map1', {
+    zoom: 6,
+    pitch: 45,
+    bearing: -15
+});
+
+map.move(2.5, 46.5, 6);
+map.addMarker(new bemap.Marker(new bemap.Coordinate(2.35, 48.85)));
 ```
 
 ## HTML

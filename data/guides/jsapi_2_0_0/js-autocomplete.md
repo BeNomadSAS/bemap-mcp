@@ -5,7 +5,7 @@
 <p class="bemap-tagline">Lightweight typeahead suggestions for a search input — no postal address details, no resolved coordinates. For full PostalAddress + Coordinate per item, use <code>bemap.GeoAutocomplete</code>.</p>
 
 <div class="bemap-callout">
-<strong>Geoserver.</strong> Calls <code>POST service/geocoding/autocomplete/1.0</code> — needs a geoserver wired to a working autocomplete connector. If you see <code>ServiceException: no protocol: /selectSignatures</code>, the current geoserver doesn't have it. On the public beta server use <code>nominatim</code>. Change <code>bemapMainCtx.geoserver</code> (in <a href="../context.js">context.js</a>) to switch.<br>
+<strong>Geoserver.</strong> Calls <code>POST service/geocoding/autocomplete/1.0</code> — needs a geoserver wired to a working autocomplete connector. If you see <code>ServiceException: no protocol: /selectSignatures</code>, the current geoserver doesn't have it. On the public beta server use <code>nominatim</code>. Set <code>geoserver</code> on your <code>bemap.Context</code> to switch.<br>
 <strong>Your allowed geoservers:</strong> <span id="allowed_geo_autocomplete">…</span>
 </div>
 

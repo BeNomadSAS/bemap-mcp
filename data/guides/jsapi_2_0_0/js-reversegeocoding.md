@@ -5,7 +5,7 @@
 <p class="bemap-tagline">Resolve a coordinate to the nearest address or road feature. Commonly used to translate a map click into a real-world location.</p>
 
 <div class="bemap-callout">
-<strong>Geoserver.</strong> Calls <code>POST service/geocoding/1.0/reverse</code> — needs a geoserver exposing <code>ReverseGeocoding</code>. Most geoservers do; change <code>bemapMainCtx.geoserver</code> in <a href="../context.js">context.js</a> if yours doesn't.<br>
+<strong>Geoserver.</strong> Calls <code>POST service/geocoding/1.0/reverse</code> — needs a geoserver exposing <code>ReverseGeocoding</code>. Most geoservers do; set <code>geoserver</code> on your <code>bemap.Context</code> if yours doesn't.<br>
 <strong>Your allowed geoservers:</strong> <span id="allowed_geo_revgeo">…</span>
 </div>
 

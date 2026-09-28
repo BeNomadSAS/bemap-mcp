@@ -33,19 +33,19 @@
   "id": "examples-mapping-display-bemap-api.md",
   "family": "general",
   "title": "Map display using BeMap JS API",
-  "bytes": 5744
+  "bytes": 6309
  },
  {
   "id": "examples-mapping-display-leaflet-raw.md",
   "family": "general",
   "title": "Map display with Leaflet (without BeMap JS API)",
-  "bytes": 1906
+  "bytes": 2223
  },
  {
   "id": "examples-mapping-display-maplibre.md",
   "family": "general",
   "title": "3D map with MapLibre + BeNomad vector tiles",
-  "bytes": 11344
+  "bytes": 11882
  },
  {
   "id": "examples-mapping-display-ol4-styles.md",
@@ -63,7 +63,7 @@
   "id": "examples-mapping-display-ol4.md",
   "family": "general",
   "title": "Map display with OpenLayers (without BeMap JS API)",
-  "bytes": 2220
+  "bytes": 2790
  },
  {
   "id": "flutterapi_1_0_0/authentification.md",
@@ -297,7 +297,7 @@
   "id": "jsapi_1_0_0/js-mapping-display-traffic.md",
   "family": "jsapi_1_0_0",
   "title": "BeMap JS API",
-  "bytes": 3228
+  "bytes": 3227
  },
  {
   "id": "jsapi_1_0_0/js-reversegeocoding.md",
@@ -405,7 +405,7 @@
   "id": "jsapi_2_0_0/js-autocomplete.md",
   "family": "jsapi_2_0_0",
   "title": "Autocomplete — bemap.Autocomplete",
-  "bytes": 5773
+  "bytes": 5748
  },
  {
   "id": "jsapi_2_0_0/js-charging-stations.md",
@@ -441,13 +441,13 @@
   "id": "jsapi_2_0_0/js-geoautocomplete.md",
   "family": "jsapi_2_0_0",
   "title": "GeoAutocomplete — bemap.GeoAutocomplete",
-  "bytes": 8159
+  "bytes": 8145
  },
  {
   "id": "jsapi_2_0_0/js-geocoding.md",
   "family": "jsapi_2_0_0",
   "title": "Geocoder — bemap.Geocoder",
-  "bytes": 5157
+  "bytes": 5134
  },
  {
   "id": "jsapi_2_0_0/js-geoserver-info.md",
@@ -465,7 +465,7 @@
   "id": "jsapi_2_0_0/js-map-3d.md",
   "family": "jsapi_2_0_0",
   "title": "3D & terrain",
-  "bytes": 11657
+  "bytes": 11731
  },
  {
   "id": "jsapi_2_0_0/js-map-animation.md",
@@ -525,13 +525,13 @@
   "id": "jsapi_2_0_0/js-map-globe.md",
   "family": "jsapi_2_0_0",
   "title": "Globe projection",
-  "bytes": 7970
+  "bytes": 8044
  },
  {
   "id": "jsapi_2_0_0/js-map-heatmap.md",
   "family": "jsapi_2_0_0",
   "title": "Heatmap",
-  "bytes": 9878
+  "bytes": 9952
  },
  {
   "id": "jsapi_2_0_0/js-map-interaction.md",
@@ -555,7 +555,7 @@
   "id": "jsapi_2_0_0/js-map-maplibre.md",
   "family": "jsapi_2_0_0",
   "title": "Map display with MapLibre — bemap.MapLibreMap",
-  "bytes": 10662
+  "bytes": 10736
  },
  {
   "id": "jsapi_2_0_0/js-map-markers.md",
@@ -591,19 +591,19 @@
   "id": "jsapi_2_0_0/js-mapping-display-traffic.md",
   "family": "jsapi_2_0_0",
   "title": "Traffic overlay — bemap.BemapLayer",
-  "bytes": 3300
+  "bytes": 3291
  },
  {
   "id": "jsapi_2_0_0/js-near-poi.md",
   "family": "jsapi_2_0_0",
   "title": "Near POI Search — bemap.NearPoiSearch",
-  "bytes": 4849
+  "bytes": 4826
  },
  {
   "id": "jsapi_2_0_0/js-reversegeocoding.md",
   "family": "jsapi_2_0_0",
   "title": "Reverse Geocoder — bemap.ReverseGeocoder",
-  "bytes": 5049
+  "bytes": 5026
  },
  {
   "id": "jsapi_2_0_0/js-routing-isochrone.md",
@@ -669,7 +669,7 @@
   "id": "jsapi_2_0_0/js-tiles-web-pmtiles.md",
   "family": "jsapi_2_0_0",
   "title": "Web — PMTiles",
-  "bytes": 12273
+  "bytes": 12324
  },
  {
   "id": "jsapi_2_0_0/js-traceroute.md",
@@ -747,7 +747,7 @@
   "id": "mapping-display-map.md",
   "family": "general",
   "title": "Add a map browser in your web page",
-  "bytes": 757
+  "bytes": 1078
  },
  {
   "id": "mapping-wms-1-1-1-getcapabilities.md",

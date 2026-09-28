@@ -7,7 +7,7 @@ Use this template when you already have an OpenLayers build and only need BeNoma
 ## JavaScript
 
 ```
-{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":false}}
+{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":true}}
 var map = new ol.Map({
     target: 'map1',
     view: new ol.View({
@@ -35,6 +35,31 @@ var layer = new ol.layer.Tile({
 });
 
 map.addLayer(layer);
+```
+
+```
+{"bemap":{"language":"javascript","run":false,"hide":false}}
+var map = new ol.Map({
+    target: 'map1',
+    view: new ol.View({
+        projection: 'EPSG:3857',
+        center: ol.proj.fromLonLat([2.5, 46.5]),
+        zoom: 6
+    })
+});
+
+map.addLayer(new ol.layer.Tile({
+    source: new ol.source.TileWMS({
+        url: 'https://<host>/bgis/wms?appid=<login>&appcode=<password>',
+        params: {
+            geoserver: 'here',
+            LAYERS: 'default',
+            STYLES: '',
+            TILED: true,
+            TRANSPARENT: false
+        }
+    })
+}));
 ```
 
 ## HTML

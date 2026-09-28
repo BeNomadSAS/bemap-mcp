@@ -7,7 +7,7 @@ Use this template when you already have a Leaflet build and only need BeNomad ti
 ## JavaScript
 
 ```
-{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":false}}
+{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":true}}
 var map = L.map('map1').setView([46.5, 2.5], 6);
 
 // From outside BGIS, pass Basic-auth params in the URL:
@@ -17,8 +17,22 @@ L.tileLayer.wms('/bgis/wms', {
     styles:      '',
     format:      'image/png',
     transparent: false,
-    geoserver:   bemapMainCtx.geoserver,   // e.g. 'default', 'here'
+    geoserver:   bemap.miniweb.getGeoserver(),
     tiled:       true
+}).addTo(map);
+```
+
+```
+{"bemap":{"language":"javascript","run":false,"hide":false}}
+var map = L.map('map1').setView([46.5, 2.5], 6);
+
+L.tileLayer.wms('https://<host>/bgis/wms?appid=<login>&appcode=<password>', {
+    layers: 'default',
+    styles: '',
+    format: 'image/png',
+    transparent: false,
+    geoserver: 'here',
+    tiled: true
 }).addTo(map);
 ```
 

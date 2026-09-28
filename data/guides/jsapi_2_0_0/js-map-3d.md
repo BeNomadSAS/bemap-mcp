@@ -14,8 +14,10 @@
 {"bemap":{"language":"javascript","mapid":"mapV2_3d","run":true,"hide":true}}
 // Always MapLibre on this page — the sidebar engine selector does not apply,
 // because every method demonstrated here is MapLibre-only.
+var miniweb = bemap['miniweb'];
 var map = new bemap.MapLibreMap(bemapTilesCtx, 'mapV2_3d');
-bemap['miniweb'].onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
+map.switchBackgroundLayer(miniweb.getGeoserver());
+miniweb.onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
 
 bemap.docs.whenReady(map, function() {
     try {

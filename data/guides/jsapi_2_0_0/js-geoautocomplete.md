@@ -5,7 +5,7 @@
 <p class="bemap-tagline">Typeahead suggestions with full <code>PostalAddress</code> and a resolved <code>Coordinate</code> on every result — no second round-trip to the geocoder. Use this when the selection drives a real action.</p>
 
 <div class="bemap-callout">
-<strong>Geoserver.</strong> Same endpoint as <a href="index.html#subpage-jsapi_2_0_0-js-autocomplete.md"><code>bemap.Autocomplete</code></a> — needs a geoserver with a working autocomplete connector. On the public beta server use <code>nominatim</code>; change <code>bemapMainCtx.geoserver</code> in <a href="../context.js">context.js</a> if your default doesn't expose autocomplete.<br>
+<strong>Geoserver.</strong> Same endpoint as <a href="index.html#subpage-jsapi_2_0_0-js-autocomplete.md"><code>bemap.Autocomplete</code></a> — needs a geoserver with a working autocomplete connector. On the public beta server use <code>nominatim</code>; set <code>geoserver</code> on your <code>bemap.Context</code> if your current provider doesn't expose autocomplete.<br>
 <strong>Your allowed geoservers:</strong> <span id="allowed_geo_geoac">…</span>
 </div>
 

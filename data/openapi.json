@@ -9890,10 +9890,6 @@
    "ColorElement": {
     "type": "object",
     "properties": {
-     "rgb": {
-      "type": "integer",
-      "format": "int32"
-     },
      "color": {
       "type": "object",
       "properties": {
@@ -9938,6 +9934,10 @@
         "format": "int32"
        }
       }
+     },
+     "rgb": {
+      "type": "integer",
+      "format": "int32"
      },
      "rgbhex": {
       "type": "string"

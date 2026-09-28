@@ -8,8 +8,10 @@
 
 ```
 {"bemap":{"language":"javascript","mapid":"mapV2_maplibre_demo","run":true,"hide":true}}
+var miniweb = bemap['miniweb'];
 var map = new bemap.MapLibreMap(bemapTilesCtx, 'mapV2_maplibre_demo');
-bemap['miniweb'].onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
+map.switchBackgroundLayer(miniweb.getGeoserver());
+miniweb.onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
 
 // move / setPitch / setBearing race the style-loaded state on a fresh
 // MapLibre instance. Also patch the BeNomad default style's background

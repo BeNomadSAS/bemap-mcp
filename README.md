@@ -5,6 +5,18 @@ BeNomad BeMap API: every operation and field, and what most values mean. The
 assistant looks things up instead of guessing, and checks each request before it
 is sent.
 
+## Download
+
+**https://github.com/BeNomadSAS/bemap-mcp/releases** — the newest release, under
+**Assets**:
+
+| File | For |
+|---|---|
+| `benomad-bemap-<version>.mcpb` | Claude Desktop: double-click it |
+| `benomad-bemap-mcp-<version>.tgz` | every other assistant |
+
+Or clone this repository. How to install each: **[INSTALL.md](INSTALL.md)**.
+
 ## What is inside
 
 Documentation, and the small program that serves it:
@@ -27,9 +39,10 @@ without an account; only sending a real request needs one.
 
 | Your assistant | How |
 |---|---|
-| Claude Desktop | double-click `benomad-bemap-<version>.mcpb`, attached to each release at https://github.com/BeNomadSAS/bemap-mcp/releases |
-| Claude Code — in a terminal or in VS Code | a few commands |
-| Cursor, VS Code Copilot, Codex, Gemini CLI, Zed, Devin | a few lines of configuration |
+| Claude Desktop | double-click the `.mcpb` |
+| Claude Code — in a terminal or in VS Code | the `.tgz`, then a few commands |
+| Cursor, VS Code Copilot, Codex, Gemini CLI, Zed, Devin | the `.tgz`, then a few lines of configuration |
+| Any of them, from a clone of this repository | `git clone`, `npm install`, then the same configuration |
 
 Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
 

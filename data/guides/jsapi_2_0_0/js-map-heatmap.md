@@ -16,8 +16,10 @@
 // `leaflet.heat` plugin, which this portal does not ship — the sidebar engine
 // selector would give you an empty map. See "Point formats differ" below for
 // the Leaflet / OpenLayers path.
+var miniweb = bemap['miniweb'];
 var map = new bemap.MapLibreMap(bemapTilesCtx, 'mapV2_heatmap');
-bemap['miniweb'].onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
+map.switchBackgroundLayer(miniweb.getGeoserver());
+miniweb.onChangeGeoserver(function(gs) { map.switchBackgroundLayer(gs); });
 
 bemap.docs.whenReady(map, function() {
     try {

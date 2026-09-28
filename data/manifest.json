@@ -1,16 +1,17 @@
 {
   "format": 2,
-  "generatedAt": "2026-09-28T13:58:50.470Z",
-  "generator": "bemap-mcp 0.0.1-dev.108",
+  "generatedAt": "2026-09-28T14:29:14.434Z",
+  "generator": "bemap-mcp 0.0.1-dev.111",
   "build": {
-    "number": 108,
-    "commit": "12c6aa7a",
+    "number": 111,
+    "commit": "d0f66579",
     "uncommitted": false
   },
   "specification": {
-    "origin": "file:api-docs-new.json",
+    "origin": "https://bemap-dev.benomad.org/bgis/service/api-docs",
     "servedFrom": "bemap-dev.benomad.org",
-    "sha256": "05faa2509d8abc8580c46d0566643007cb0c7ffac83161edf14b5812d8fdaaeb",
+    "tlsInsecure": true,
+    "sha256": "514f640de5a31de0509baed6b5160e9e2d45e667fc219e4ae61ae656a70c9007",
     "openapi": "3.1.0",
     "title": "BeNomad BeMap Service REST API",
     "version": "4.2.0-SNAPSHOT",
@@ -21,9 +22,9 @@
   "source": {
     "repo": "bemap",
     "fetched": true,
-    "ref": "25e867451846ac11af3126955eef5606d434c358",
-    "commit": "25e867451846ac11af3126955eef5606d434c358",
-    "committedAt": "2026-09-12T08:40:09+02:00"
+    "ref": "origin/dev",
+    "commit": "c724c4a41000122db5e4d4aaa2b130c514683e83",
+    "committedAt": "2026-09-28T16:27:51+02:00"
   },
   "enrichment": {
     "enumSites": 153,
@@ -40,9 +41,9 @@
         "family": null,
         "repo": "bemap",
         "fetched": true,
-        "ref": "25e867451846ac11af3126955eef5606d434c358",
-        "commit": "25e867451846ac11af3126955eef5606d434c358",
-        "committedAt": "2026-09-12T08:40:09+02:00",
+        "ref": "origin/dev",
+        "commit": "c724c4a41000122db5e4d4aaa2b130c514683e83",
+        "committedAt": "2026-09-28T16:27:51+02:00",
         "pages": 251
       }
     ],
@@ -94,6 +95,10 @@
             "blocks": 3
           },
           {
+            "id": "examples-mapping-display-maplibre.md",
+            "blocks": 2
+          },
+          {
             "id": "jsapi_2_0_0/install.md",
             "blocks": 2
           },
@@ -107,10 +112,6 @@
           },
           {
             "id": "examples-mapping-display-bemap-api.md",
-            "blocks": 1
-          },
-          {
-            "id": "examples-mapping-display-maplibre.md",
             "blocks": 1
           },
           {
@@ -175,6 +176,18 @@
             "blocks": 3
           },
           {
+            "id": "examples-mapping-display-bemap-api.md",
+            "blocks": 2
+          },
+          {
+            "id": "examples-mapping-display-leaflet-raw.md",
+            "blocks": 2
+          },
+          {
+            "id": "examples-mapping-display-ol4.md",
+            "blocks": 2
+          },
+          {
             "id": "jsapi_1_0_0/js-mapping-display-traffic.md",
             "blocks": 2
           },
@@ -195,19 +208,7 @@
             "blocks": 2
           },
           {
-            "id": "examples-mapping-display-bemap-api.md",
-            "blocks": 1
-          },
-          {
-            "id": "examples-mapping-display-leaflet-raw.md",
-            "blocks": 1
-          },
-          {
             "id": "examples-mapping-display-ol4-traffic.md",
-            "blocks": 1
-          },
-          {
-            "id": "examples-mapping-display-ol4.md",
             "blocks": 1
           },
           {
@@ -375,7 +376,7 @@
   },
   "environmentProfile": {
     "environment": "prod",
-    "capturedAt": "2026-09-28T13:58:50.176Z",
+    "capturedAt": "2026-09-28T14:29:14.118Z",
     "cartoRelease": "Here Maps 2026.2",
     "geoservers": [
       "addok",

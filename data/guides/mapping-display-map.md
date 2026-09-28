@@ -2,8 +2,20 @@
 
 JavaScript source code:
 ```
-{"bemap":{"language":"javascript","mapid":"map1","run":true}}
-var map = new bemap.OlMap(bemapMainCtx, 'map1').defaultLayers().move(2.3412, 48.85693, 3);
+{"bemap":{"language":"javascript","mapid":"map1","run":true,"hide":true}}
+var miniweb = bemap['miniweb'];
+var map = new bemap.OlMap(bemapMainCtx, 'map1')
+    .backgroundLayers(miniweb.getGeoservers())
+    .defaultOverlayLayers()
+    .move(2.3412, 48.85693, 3);
+map.switchBackgroundLayer(miniweb.getGeoserver());
+```
+
+```
+{"bemap":{"language":"javascript","run":false,"hide":false}}
+var map = new bemap.OlMap(ctx, 'map1')
+    .defaultLayers()
+    .move(2.3412, 48.85693, 3);
 ```
 
 
