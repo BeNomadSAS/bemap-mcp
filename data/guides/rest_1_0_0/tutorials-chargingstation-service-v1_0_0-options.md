@@ -26,7 +26,10 @@ You want to **retrieve all connector types supported by the server** to dynamica
 
 💡 **What it does**
 
-When you include `AVAILABLE_CONNECTOR_TYPES` in the `options` array, the API response will include a **dedicated list of all connector types** known and supported by the server or selected provider(s).
+When you include `AVAILABLE_CONNECTOR_TYPES` in the `options` array, the API response is meant to include a **dedicated list of all connector types** known and supported by the server or selected provider(s).
+
+⚠️ Measured on production (29 September 2026): this search does **not** return that list. The response holds `pools` only — the one field its specification (`ChargingStationSearchResponse`) declares — as the example below shows. To get the connector types, call `GET /bgis/service/chargingstation/connector/list/1.0` (add `?deprecatedConnector=true` to include the deprecated ones).
+
 These connectors can then be reused for:
 
 - Custom filters (`connectorIdFilters`)
@@ -82,7 +85,6 @@ These connectors can then be reused for:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -123,7 +125,6 @@ These connectors can then be reused for:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -164,7 +165,6 @@ These connectors can then be reused for:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -212,9 +212,9 @@ These connectors can then be reused for:
 ```
 📝 **Notes**
 
-- The connector list is returned **in addition** to the regular `stations` list.
+- The search answers the regular `pools` list only, with or without this option; the connector list comes from `GET /bgis/service/chargingstation/connector/list/1.0`.
 
-- Use it to **build a compatible UI**, or to **validate connector IDs** dynamically.
+- Use that list to **build a compatible UI**, or to **validate connector IDs** dynamically.
 
 - This is especially useful when the provider list (`providers`) or geoserver (`geoserver`) may change.
 ---
@@ -278,7 +278,6 @@ When you include `DEPRECATED_CONNECTOR`, the response will also contain **chargi
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -319,7 +318,6 @@ When you include `DEPRECATED_CONNECTOR`, the response will also contain **chargi
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -360,7 +358,6 @@ When you include `DEPRECATED_CONNECTOR`, the response will also contain **chargi
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -413,6 +410,84 @@ When you include `DEPRECATED_CONNECTOR`, the response will also contain **chargi
 - Can be combined with `connectorIdFilters` if you specifically want to **target deprecated connectors**.
 
 - Recommended for use cases like **infrastructure diagnostics**, **legacy fleet support**, or **technical validation**.
+---
+<a name="chargingstation_options_path_auto_tutorial"></a>
+
+## 🔄 PATH_AUTO – Let the number of pools choose the depth
+✅ **Use case**
+
+You don't know in advance how many pools your search area holds — for example, a map the user zooms in and out of — and you want **full details for a few pools**, but a **light answer for many**.
+
+💡 **What it does**
+
+The `PATH_AUTO` option chooses the depth of the answer from the number of pools found:
+
+- **Fewer than `pathAutoMaxPool` pools** (20 by default): the full answer, as with `PATH_POINT`.
+
+- **`pathAutoMaxPool` pools or more**: a light answer per pool — `id`, `brand`, `providerMode`, location, `availabilityStatus`, `open24x7`, `maxNominalPower`, `numberOfChargingPoint`, and for each station only `nature`, `availabilityStatus` and `bookable`.
+
+Measured on production: 38 pools within 1 000 m of the coordinate below give a 35 KB light answer; the same request with `"pathAutoMaxPool": 50` gives the full answer, 2 MB.
+
+🔧 **How to enable**
+```
+"options": ["PATH_AUTO"],
+"pathAutoMaxPool": 20
+```
+📦 **Example**
+```
+{
+  "geoserver": "osm",
+  "providers": ["ecoMovement"],
+  "mode": "LOCAL_OR_REMOTE",
+  "radius": 1000,
+  "coordinate": {
+    "lat": 48.85693,
+    "lon": 2.3412
+  },
+  "options": ["PATH_AUTO"]
+}
+```
+**Response**
+```
+{
+  "pools": [
+    {
+      "providerMode": "REMOTE",
+      "id": "8f709a26-466d-11e9-8601-42010a840003",
+      "brand": "Tesla Destination",
+      "availabilityStatus": "NA",
+      "longitude": 2.34014219,
+      "latitude": 48.8543694,
+      "open24x7": true,
+      "chargingStations": [
+        {
+          "nature": "VGROUP",
+          "availabilityStatus": "NA",
+          "bookable": false
+        },
+        {
+          "nature": "VGROUP",
+          "availabilityStatus": "NA",
+          "bookable": false
+        },
+        {
+          "nature": "VGROUP",
+          "availabilityStatus": "NA",
+          "bookable": false
+        }
+      ],
+      "maxNominalPower": 11,
+      "numberOfChargingPoint": 3
+    },
+    ...
+```
+📝 **Notes**
+
+- `pathAutoMaxPool` sets the threshold; leave it out to use 20.
+
+- Read the answer's shape before using it: the same request can come back full or light as the data changes.
+
+- A good default for **map views** whose area varies with the zoom level.
 ---
 <a name="chargingstation_options_path_point_tutorial"></a>
 
@@ -481,7 +556,6 @@ It is the **most detailed data depth**, ideal when you want to display or analyz
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -522,7 +596,6 @@ It is the **most detailed data depth**, ideal when you want to display or analyz
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -563,7 +636,6 @@ It is the **most detailed data depth**, ideal when you want to display or analyz
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -659,7 +731,9 @@ You don’t get full point details in the response, but filters like `connectorI
       "availabilityStatus": "NA",
       "longitude": 2.34014219,
       "latitude": 48.8543694,
-      "maxNominalPower": 11
+      "open24x7": true,
+      "maxNominalPower": 11,
+      "numberOfChargingPoint": 3
     }
   ]
 }
@@ -747,7 +821,7 @@ However, **individual charging point details** (connectors, power, status) are *
 
 - Great for **directory listings**, **map clustering**, or **operator-focused filtering**.
 
-- Filters on charging points (e.g., power or connector type) are **not effective** here.
+- Filters on charging points (e.g., power or connector type) **still apply**: a pool is returned only if one of its points matches, even though the points are not in the response. Measured on production with this example: `"filters": ["chargingPoint.nominalPower >= 50"]` or `"connectorIdFilters": [35]` answer `{"pools": []}`; `>= 7` or `[32]` keep the 11 kW Type 2 pool.
 
 ---
 <a name="chargingstation_options_path_pool_map_tutorial"></a>
@@ -765,9 +839,9 @@ The `PATH_POOL_MAP` option limits the API response to **only essential informati
 
 - Location (latitude/longitude)
 
-- Basic display label
+- Availability status, `open24x7`, maximum power (`maxNominalPower`) and number of charging points
 
-This allows **fast loading on maps**, especially for wide areas or zoomed-out views. However, **filtering capabilities are limited**, particularly at the point/connector level.
+This allows **fast loading on maps**, especially for wide areas or zoomed-out views. However, **filtering capabilities are limited** at the station and charging point level (see the notes).
 
 🔧 **How to enable**
 
@@ -798,37 +872,40 @@ This allows **fast loading on maps**, especially for wide areas or zoomed-out vi
       "availabilityStatus": "NA",
       "longitude": 2.34014219,
       "latitude": 48.8543694,
-      "maxNominalPower": 11
-    }
-  ]
-}
+      "open24x7": true,
+      "maxNominalPower": 11,
+      "numberOfChargingPoint": 3
+    },
+    ...
 ```
 📝 Notes
 
-Optimized for **map rendering performance**.
+Optimized for **map rendering performance**: this example answers 242 pools in 47 KB.
 
 Best used when showing **many stations** at once (e.g., in large-scale overviews).
 
-**Filtering is limited** to basic pool-level parameters; **connector filters will be ignored**.
+**Filtering is limited.** `connectorIdFilters` and `filters` on the pool (e.g. `pool.brand`) apply. A `filters` pattern on a **station or a charging point** does not: measured on production, `"station.available == true"` or `"chargingPoint.nominalPower >= 20"` within 500 m of this coordinate answer `200` with `{"pools": []}`, where `PATH_POINT_MAP` returns 11 and 4 pools. Use `PATH_POINT_MAP` for those filters.
 ---
 <a name="chargingstation_options_path_station_tutorial"></a>
 
-## 🏬 PATH_STATION – Return only station-level information
+## 🏬 PATH_STATION – Return pool and station information, without charging points
 ✅ **Use case**
 
-You need a **high-level overview** of charging infrastructure, without going into pool or connector details — ideal for summary displays or dashboards.
+You need a **high-level overview** of charging infrastructure, without going into charging point or connector details — ideal for summary displays or dashboards.
 
 💡 **What it does**
 
-The `PATH_STATION` option limits the API response to **station-level metadata only**. Each station includes:
+The `PATH_STATION` option returns **every pool-level field** (as `PATH_POOL` does) **plus the pool's stations** (`chargingStations`). Each station includes its own fields, such as:
 
-- Station ID
+- Nature (`VGROUP` or `REAL`)
 
-- Location (latitude/longitude)
+- Availability status
 
-- Basic details such as name, operator, or general status
+- Charge passes, and whether it is bookable
 
-It **excludes pools and charging points**, reducing payload size and complexity when you only need top-level locations.
+A station has no location or name of its own — those are the pool's. With `ecoMovement`, measured on production, stations carry no ID either.
+
+It **excludes charging points**, reducing payload size and complexity when you don't need connector details.
 
 🔧 **How to enable**
 ```
@@ -877,7 +954,6 @@ It **excludes pools and charging points**, reducing payload size and complexity 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -889,7 +965,6 @@ It **excludes pools and charging points**, reducing payload size and complexity 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -901,7 +976,6 @@ It **excludes pools and charging points**, reducing payload size and complexity 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -922,6 +996,10 @@ It **excludes pools and charging points**, reducing payload size and complexity 
 
 Perfect for **station-level** analytics or **summary views**.
 
-Use when you're **not interested** in pools or charging points.
+Use when you're **not interested** in charging points.
 
-Fastest response when the goal is **listing** or **geolocation only**.
+Lighter than `PATH_POINT`; when the goal is **listing** or **geolocation only**, `PATH_POOL` or `PATH_POOL_MAP` is lighter still (this example: 1.5 KB, against 0.6 KB and 0.2 KB).
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

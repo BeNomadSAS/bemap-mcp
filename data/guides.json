@@ -9,13 +9,13 @@
   "id": "chargingstation-filter-v1.md",
   "family": "general",
   "title": "Charging station filter v1",
-  "bytes": 4516
+  "bytes": 6646
  },
  {
   "id": "chargingstation-filter-v2.md",
   "family": "general",
   "title": "Charging station filter v2",
-  "bytes": 4516
+  "bytes": 8259
  },
  {
   "id": "contact.md",
@@ -1254,112 +1254,142 @@
   "bytes": 1729
  },
  {
+  "id": "rest_1_0_0/tutorials-autocompletegeocoding-service-v1_0_0-parameters.md",
+  "family": "rest_1_0_0",
+  "title": "📖 Autocomplete Geocoding API – Parameters Overview",
+  "bytes": 17324
+ },
+ {
   "id": "rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
   "family": "rest_1_0_0",
   "title": "💶 Step-by-Step – Compute a Charging Cost from Charging Station and Tariffs data",
-  "bytes": 21506
+  "bytes": 23934
  },
  {
   "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
   "family": "rest_1_0_0",
   "title": "🚧 Step-by-Step – Build Your First Charging Station Request",
-  "bytes": 11046
+  "bytes": 11304
  },
  {
   "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
   "family": "rest_1_0_0",
   "title": "⚙️ Charging Station Options – Usage Guide",
-  "bytes": 26225
+  "bytes": 29966
  },
  {
   "id": "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
   "family": "rest_1_0_0",
   "title": "⚡ Charging Station Parameters – Detailed Usage Guide",
-  "bytes": 84978
+  "bytes": 89519
  },
  {
   "id": "rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
   "family": "rest_1_0_0",
   "title": "Tutorial for the first trip in electrical vehicle",
-  "bytes": 21700
+  "bytes": 25596
+ },
+ {
+  "id": "rest_1_0_0/tutorials-geocoding-service-v1_0_0-parameters.md",
+  "family": "rest_1_0_0",
+  "title": "📖 Geocoding API – Parameters Overview",
+  "bytes": 21067
+ },
+ {
+  "id": "rest_1_0_0/tutorials-reversegeocoding-service-v1_0_0-options.md",
+  "family": "rest_1_0_0",
+  "title": "⚙️ Reverse Geocoding Options",
+  "bytes": 69532
+ },
+ {
+  "id": "rest_1_0_0/tutorials-reversegeocoding-service-v1_0_0-parameters.md",
+  "family": "rest_1_0_0",
+  "title": "⚙️ Reverse Geocoding Parameters",
+  "bytes": 34727
+ },
+ {
+  "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-co2.md",
+  "family": "rest_1_0_0",
+  "title": "🌱 How to estimate CO₂ emissions for ICE vehicles",
+  "bytes": 3642
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
   "family": "rest_1_0_0",
   "title": "📍 Routing Criterias Tutorial",
-  "bytes": 23959
+  "bytes": 25689
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
   "family": "rest_1_0_0",
   "title": "🛰️ Routing Event Tutorial",
-  "bytes": 78965
+  "bytes": 80268
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
   "family": "rest_1_0_0",
   "title": "📬 How to Send a Routing Request",
-  "bytes": 2322
+  "bytes": 2795
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
   "family": "rest_1_0_0",
   "title": "🚧 Building a Routing Request",
-  "bytes": 2202
+  "bytes": 2606
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
   "family": "rest_1_0_0",
   "title": "🧪 Routing Mode Tutorial",
-  "bytes": 17193
+  "bytes": 19226
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
   "family": "rest_1_0_0",
   "title": "🧠 Routing Optimization Tutorial",
-  "bytes": 16894
+  "bytes": 20151
  },
  {
   "id": "rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
   "family": "rest_1_0_0",
   "title": "🚗 Routing Vehicle Profile Tutorial",
-  "bytes": 15196
+  "bytes": 18272
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
   "family": "rest_1_0_0",
   "title": "📄 TraceRoute – Beginner Tutorial with a CSV Route",
-  "bytes": 3364
+  "bytes": 3466
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
   "family": "rest_1_0_0",
   "title": "🚗 TraceRoute – Step-by-Step Beginner Tutorial",
-  "bytes": 2421
+  "bytes": 3477
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
   "family": "rest_1_0_0",
   "title": "🎯 TraceRoute - destinations List of GPS Coordinates",
-  "bytes": 5667
+  "bytes": 6569
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
   "family": "rest_1_0_0",
   "title": "🛠️ TraceRoute – options Parameter",
-  "bytes": 150154
+  "bytes": 167700
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
   "family": "rest_1_0_0",
   "title": "📘 TraceRoute Parameters – Detailed Usage Guide",
-  "bytes": 82384
+  "bytes": 82113
  },
  {
   "id": "rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
   "family": "rest_1_0_0",
   "title": "📦 TraceRoute - routingVehicleProfile Detailed Usage",
-  "bytes": 65715
+  "bytes": 66175
  },
  {
   "id": "rest_1_0_0/vehicle-findvehicles-service-v1_0_0.md",
@@ -1461,19 +1491,25 @@
   "id": "rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
   "family": "rest_2_0_0",
   "title": "📦 Condition – Detailed Usage Tutorial",
-  "bytes": 139406
+  "bytes": 156986
+ },
+ {
+  "id": "rest_2_0_0/tutorials-evtrip-csfs-service-v2_0_0.md",
+  "family": "rest_2_0_0",
+  "title": "🚧 Building an EV Smart Routing Request with Charging Station Filters (csfs)",
+  "bytes": 7456
  },
  {
   "id": "rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
   "family": "rest_2_0_0",
   "title": "⚡ Tutorial for the first trip in electrical vehicle",
-  "bytes": 21382
+  "bytes": 25060
  },
  {
   "id": "rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
   "family": "rest_2_0_0",
   "title": "🚚 Tutorial: Truck Routing with EV Smart Routing v2.0.0",
-  "bytes": 4069
+  "bytes": 5650
  },
  {
   "id": "samples.md",
@@ -1503,6 +1539,6 @@
   "id": "tutorials-mapping-wms-1_3_0-satellite.md",
   "family": "general",
   "title": "🛰️ Get a satellite image with WMS 1.3.0",
-  "bytes": 12351
+  "bytes": 13881
  }
 ]

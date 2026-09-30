@@ -1,8 +1,12 @@
 <a name="traceroute_parameters_tutorial"></a>
 # 📘 TraceRoute Parameters – Detailed Usage Guide
-This document provides an in-depth explanation of all the available parameters in the TraceRoute API request. Each field is described with its purpose, usage guidance, and real-world JSON examples. Whether you're building a vehicle tracking application, analyzing driving behavior, or computing travel times, this guide will help you understand how to use each parameter correctly and effectively.
+This document provides an in-depth explanation of the main parameters of the TraceRoute API request. Each field is described with its purpose, usage guidance, and real-world JSON examples. Whether you're building a vehicle tracking application, analyzing driving behavior, or computing travel times, this guide will help you understand how to use each parameter correctly and effectively.
+The request's other fields — `allowOffRoad`, `fenceShapes`, `options` (which has its own tutorial), the per-point `keptByMinimalWp` and the root-level `customData` — are not covered here.
 
 We recommend reading each section individually to understand how it affects route matching and ETA estimation.
+
+> ℹ️ In the examples' `routingVehicleFeature`, `height`, `width` and `length` are in centimetres and `weight` in tenths of a tonne: `35` = 3.5 t.<br>
+> ℹ️ The sample responses were measured on production on 29 September 2026. A response marked *truncated* shows only the first entries of its long arrays (`polyline`, `corridor` coordinates).
 
 ---
 <a name="traceroute_adjustEta_tutorial"></a>
@@ -31,7 +35,7 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
     "transportMode": "CAR",
     "routingVehicleFeature": {
       "height": 380,
-      "width": 40,
+      "width": 250,
       "length": 1875,
       "weight": 35
     }
@@ -134,7 +138,7 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -161,7 +165,7 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -170,11 +174,11 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -184,42 +188,42 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
       "duration": 6,
-      "length": 56
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
       "duration": 96,
-      "length": 1156
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
       "duration": 111,
-      "length": 1352
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -229,11 +233,11 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
       "duration": 138,
-      "length": 1748
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -243,25 +247,25 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
       "duration": 141,
-      "length": 1766
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
       "duration": 162,
-      "length": 1926
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -271,11 +275,11 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
       "duration": 206,
-      "length": 2122
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -285,100 +289,72 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 216,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 224,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 232,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 216,
-      "length": 2180
+      "duration": 322,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 216,
+      "length": 2151,
+      "duration": 322,
+      "totalDuration": 322,
       "trafficDelay": 0,
-      "averageSpeed": 36.333332,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242288,
+      "averageSpeed": 24.048447,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 0,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 4,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 27,
+          "length": 387,
+          "duration": 32,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -388,12 +364,12 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
+          "length": 49,
           "duration": 8,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
@@ -405,14 +381,14 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 16,
+          "length": 224,
+          "duration": 19,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -422,15 +398,15 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 21,
+          "duration": 17,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -445,8 +421,8 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
-          "duration": 29,
+          "length": 513,
+          "duration": 30,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -456,7 +432,7 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -479,7 +455,7 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
+          "length": 360,
           "duration": 20,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
@@ -488,13 +464,13 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 19,
+          "length": 122,
+          "duration": 18,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -504,13 +480,13 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 12,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -521,78 +497,96 @@ Add the `adjustEta` field to the root of your request payload and set it to `tru
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 47,
+          "length": 246,
+          "duration": 95,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
-          "duration": 10,
+          "geoElementType": "ROAD",
+          "length": 29,
+          "duration": 68,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
-> ⏱️ Note: ETA values in the response will reflect actual travel time between GPS points, rather than being estimated from speed limits or routing heuristics.
+> ⏱️ Note: ETA values in the response will reflect actual travel time between GPS points, rather than being estimated from speed limits or routing heuristics — measured with the example above: a duration of 322 s, the span between the first and the last GPS `time`, against 245 s without `adjustEta`.
 ---
 <a name="traceroute_corridorRadius_tutorial"></a>
 ## 🛣️ corridorRadius – Define a Route Corridor Radius
 ✅ **Use Case**
 
-You want to create a buffer zone around the route to allow small deviations from the expected path. This is particularly useful when matching noisy GPS traces or evaluating if the vehicle remained within a defined route corridor.
+You want to create a buffer zone around the route. This is particularly useful when evaluating if the vehicle remained within a defined route corridor.
 
 💡 **What it Does**
 
-When `corridorRadius` is set (in meters), the API creates a virtual corridor of width 2 × `corridorRadius` around the computed route. During analysis, this allows matching coordinates even if they slightly diverge from the ideal path, accounting for GPS drift or minor detours.
+When `corridorRadius` is set (in meters), the API creates a corridor of width 2 × `corridorRadius` around the computed route, and returns it as a polygon in the `corridor` field of each route (`routingRoutes[].corridor[].coordinates`).
+It is an **output only**: it does not change the matching. Measured with the example below, with a `corridorRadius` of 30, of 500 or none, every matched coordinate, confidence value and distance from the request, and the route itself (2151 m, 245 s), are identical; only the `corridor` field is added.
 
 🔧 **How to Enable**
 
@@ -608,7 +602,7 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
     "transportMode": "CAR",
     "routingVehicleFeature": {
       "height": 380,
-      "width": 40,
+      "width": 250,
       "length": 1875,
       "weight": 35
     }
@@ -711,7 +705,7 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -738,7 +732,7 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -747,11 +741,11 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -761,42 +755,42 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -806,11 +800,11 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -820,25 +814,25 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -848,11 +842,11 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -862,100 +856,72 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -965,13 +931,13 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -982,14 +948,14 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -999,15 +965,15 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -1022,7 +988,7 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -1033,7 +999,7 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -1056,8 +1022,8 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -1065,13 +1031,13 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -1081,13 +1047,13 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -1098,57 +1064,111 @@ Add the `corridorRadius` field to the root of your request. The value is in mete
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "corridor": [
         {
           "coordinates": [
             {
-              "lon": 7.07768,
+              "lon": 7.07767,
               "lat": 43.61622
             },
             {
-              "lon": 7.07834,
+              "lon": 7.07833,
               "lat": 43.61586
             },
+            {
+              "lon": 7.07932,
+              "lat": 43.6155
+            },
+            {
+              "lon": 7.07957,
+              "lat": 43.61544
+            },
+            {
+              "lon": 7.08073,
+              "lat": 43.61538
+            }
+          ]
+        }
+      ],
+      "startStopInfo": {
+        "start": {
+          "lon": 7.06602,
+          "lat": 43.61618
+        },
+        "stop": {
+          "lon": 7.08177,
+          "lat": 43.6117
+        },
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
+        "interDests": null
+      },
+      "polyline": [
+        {
+          "lon": 7.06602,
+          "lat": 43.61618
+        },
+        {
+          "lon": 7.06627,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
-> 📏 A wider corridor improves robustness against GPS noise, but may also reduce precision in route adherence analysis.
+> 📏 A wider corridor makes a wider polygon for route adherence analysis; it does not make the matching more tolerant of GPS noise.
 ---
 <a name="traceroute_customData_tutorial"></a>
 ## 🏷️ customData – Tag Coordinates with Custom Information
@@ -1202,7 +1222,7 @@ Add a `customData` field inside any destination object. It should be a list of k
     "transportMode": "CAR",
     "routingVehicleFeature": {
       "height": 380,
-      "width": 40,
+      "width": 250,
       "length": 1875,
       "weight": 35
     }
@@ -1219,22 +1239,22 @@ Add a `customData` field inside any destination object. It should be a list of k
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.06587,
-        "lat": 43.61599
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.145070985788001,
-      "distanceFromRequest": 10.54,
+      "confidenceValue": 0.08437574381641261,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1,
       "customData": [
         {
           "key": "event",
-          "value": "2"
+          "value": "start_brake"
         },
         {
           "key": "sensor",
-          "value": "1"
+          "value": "rear"
         }
       ]
     },
@@ -1243,71 +1263,43 @@ Add a `customData` field inside any destination object. It should be a list of k
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.14543739172562306,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.08997517350099854,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 21,
-      "length": 58,
+      "duration": 4,
+      "length": 31,
       "customData": [
         {
           "key": "event",
-          "value": "1"
+          "value": "release_brake"
         },
         {
           "key": "sensor",
-          "value": "2"
+          "value": "front"
         }
       ]
     }
   ],
   "routingRoutes": [
     {
-      "length": 58,
-      "duration": 21,
+      "length": 31,
+      "duration": 4,
+      "totalDuration": 4,
       "trafficDelay": 0,
-      "averageSpeed": 9.942857,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396241970,
+      "averageSpeed": 27.9,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 12,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 12 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
           "type": "STOP",
           "geoElementType": "ROAD",
           "length": 30,
-          "duration": 7,
+          "duration": 4,
           "fromName": "Route des Lucioles",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -1321,15 +1313,15 @@ Add a `customData` field inside any destination object. It should be a list of k
       ],
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61599
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
           "lon": 7.0664,
           "lat": 43.61621
         },
         "distanceFirstMatched": 0,
-        "distanceLastMatched": 0.56,
+        "distanceLastMatched": 0.35,
         "interDests": null
       }
     }
@@ -1344,7 +1336,7 @@ Add a `customData` field inside any destination object. It should be a list of k
 You want to simulate a route starting at a specific time to influence results like ETA, traffic-based speeds, or scheduled constraints.
 
 💡 **What it Does**
-The `departureTime` defines the starting time of the route. It can be used to:
+The `departureTime` defines the starting time of the route. It is meant to be used to:
 
 Adjust time-dependent calculations (e.g., traffic models, toll conditions, time-restricted roads).
 
@@ -1352,11 +1344,15 @@ Make the ETA of each step relative to a real-world clock.
 
 Sync results with external planning systems.
 
+> ⚠️ Measured on production (29 September 2026): the TraceRoute service reads `departureTime` but does not apply it — the response is identical with or without it. The route's `departureTime` and `arrivalTime` come from the GPS `time` of the points (in seconds: `1396241966` for the example below) and stay `0` when the points carry no `time`; the duration does not change. To place a trace on a real-world clock, send the GPS `time` of each point (see `adjustEta`).
+
 It accepts two formats:
 
 ISO 8601 with time zone, e.g., `2025-07-09T10:00:00+02:00[Europe/Paris]`
 
-Epoch time in milliseconds (UTC), e.g., `1720512000000`
+Epoch time in milliseconds (UTC), e.g., `1752048000000`
+
+A value it cannot parse answers `400` with the code `INTERNAL_ERROR` and a message that does not name the field, e.g. *"Text 'not-a-date' could not be parsed at index 0"*.
 
 🔧 **How to Enable**
 Add the `departureTime` field at the root of your request object.
@@ -1366,7 +1362,7 @@ Add the `departureTime` field at the root of your request object.
 ```
 **Example with Epoch format**
 ```
-"departureTime": 1720512000000
+"departureTime": 1752048000000
 ```
 📦 **Example**
 ```
@@ -1375,7 +1371,7 @@ Add the `departureTime` field at the root of your request object.
     "transportMode": "CAR",
     "routingVehicleFeature": {
       "height": 380,
-      "width": 40,
+      "width": 250,
       "length": 1875,
       "weight": 35
     }
@@ -1479,7 +1475,7 @@ Add the `departureTime` field at the root of your request object.
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -1506,7 +1502,7 @@ Add the `departureTime` field at the root of your request object.
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -1515,11 +1511,11 @@ Add the `departureTime` field at the root of your request object.
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -1529,42 +1525,42 @@ Add the `departureTime` field at the root of your request object.
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -1574,11 +1570,11 @@ Add the `departureTime` field at the root of your request object.
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -1588,25 +1584,25 @@ Add the `departureTime` field at the root of your request object.
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -1616,11 +1612,11 @@ Add the `departureTime` field at the root of your request object.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -1630,100 +1626,72 @@ Add the `departureTime` field at the root of your request object.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1733,13 +1701,13 @@ Add the `departureTime` field at the root of your request object.
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1750,14 +1718,14 @@ Add the `departureTime` field at the root of your request object.
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1767,15 +1735,15 @@ Add the `departureTime` field at the root of your request object.
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -1790,7 +1758,7 @@ Add the `departureTime` field at the root of your request object.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -1801,7 +1769,7 @@ Add the `departureTime` field at the root of your request object.
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -1824,8 +1792,8 @@ Add the `departureTime` field at the root of your request object.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -1833,13 +1801,13 @@ Add the `departureTime` field at the root of your request object.
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -1849,13 +1817,13 @@ Add the `departureTime` field at the root of your request object.
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -1866,57 +1834,85 @@ Add the `departureTime` field at the root of your request object.
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
-      "corridor": [
+      "startStopInfo": {
+        "start": {
+          "lon": 7.06602,
+          "lat": 43.61618
+        },
+        "stop": {
+          "lon": 7.08177,
+          "lat": 43.6117
+        },
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
+        "interDests": null
+      },
+      "polyline": [
         {
-          "coordinates": [
-            {
-              "lon": 7.07768,
-              "lat": 43.61622
-            },
-            {
-              "lon": 7.07834,
-              "lat": 43.61586
-            },
+          "lon": 7.06602,
+          "lat": 43.61618
+        },
+        {
+          "lon": 7.06627,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
-> ✅ Enables ETA calculation based on a future or past departure scenario, accounting for time-based road data if available.
+> ✅ Accepted in both formats; on TraceRoute, the times in the response come from the GPS points, not from `departureTime`.
 ---
 <a name="traceroute_geoserver_tutorial"></a>
 ## 🗺️ geoserver – Choose the Map Data Provider
@@ -2046,7 +2042,7 @@ Add the geoserver field to your request and set it to the desired provider.
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -2073,7 +2069,7 @@ Add the geoserver field to your request and set it to the desired provider.
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -2082,11 +2078,11 @@ Add the geoserver field to your request and set it to the desired provider.
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -2096,42 +2092,42 @@ Add the geoserver field to your request and set it to the desired provider.
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -2141,11 +2137,11 @@ Add the geoserver field to your request and set it to the desired provider.
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -2155,25 +2151,25 @@ Add the geoserver field to your request and set it to the desired provider.
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -2183,11 +2179,11 @@ Add the geoserver field to your request and set it to the desired provider.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -2197,100 +2193,72 @@ Add the geoserver field to your request and set it to the desired provider.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2300,13 +2268,13 @@ Add the geoserver field to your request and set it to the desired provider.
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2317,14 +2285,14 @@ Add the geoserver field to your request and set it to the desired provider.
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2334,15 +2302,15 @@ Add the geoserver field to your request and set it to the desired provider.
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -2357,7 +2325,7 @@ Add the geoserver field to your request and set it to the desired provider.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -2368,7 +2336,7 @@ Add the geoserver field to your request and set it to the desired provider.
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -2391,8 +2359,8 @@ Add the geoserver field to your request and set it to the desired provider.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -2400,13 +2368,13 @@ Add the geoserver field to your request and set it to the desired provider.
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -2416,13 +2384,13 @@ Add the geoserver field to your request and set it to the desired provider.
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -2433,66 +2401,83 @@ Add the geoserver field to your request and set it to the desired provider.
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 > ✅ Choose your `geoserver` wisely depending on regional coverage, regulatory preferences, or internal licensing.
 ---
@@ -2622,7 +2607,7 @@ Add the language field to your request with the desired ISO code.
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -2649,7 +2634,7 @@ Add the language field to your request with the desired ISO code.
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -2658,11 +2643,11 @@ Add the language field to your request with the desired ISO code.
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -2672,42 +2657,42 @@ Add the language field to your request with the desired ISO code.
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -2717,11 +2702,11 @@ Add the language field to your request with the desired ISO code.
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -2731,25 +2716,25 @@ Add the language field to your request with the desired ISO code.
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -2759,11 +2744,11 @@ Add the language field to your request with the desired ISO code.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -2773,100 +2758,72 @@ Add the language field to your request with the desired ISO code.
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "À 10 mètres"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "À 16 mètres",
-          "text": "Depuis Rue Fernand Léger au rond point prendre la 1er sortie en direction de D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2876,13 +2833,13 @@ Add the language field to your request with the desired ISO code.
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "À 388 mètres"
+          "textDist": "À 387 mètres"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2893,14 +2850,14 @@ Add the language field to your request with the desired ISO code.
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "À 50 mètres",
+          "textDist": "À 49 mètres",
           "text": "Depuis Route des Lucioles au rond point prendre la 2e sortie en direction de D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2910,15 +2867,15 @@ Add the language field to your request with the desired ISO code.
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "À 226 mètres"
+          "textDist": "À 224 mètres"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -2933,7 +2890,7 @@ Add the language field to your request with the desired ISO code.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -2944,7 +2901,7 @@ Add the language field to your request with the desired ISO code.
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "À 514 mètres"
+          "textDist": "À 513 mètres"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -2967,8 +2924,8 @@ Add the language field to your request with the desired ISO code.
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -2976,13 +2933,13 @@ Add the language field to your request with the desired ISO code.
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "À 358 mètres"
+          "textDist": "À 360 mètres"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -2992,13 +2949,13 @@ Add the language field to your request with the desired ISO code.
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "À 124 mètres",
+          "textDist": "À 122 mètres",
           "text": "Depuis Route des Chappes au rond point prendre la 4e sortie en direction de D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -3009,65 +2966,86 @@ Add the language field to your request with the desired ISO code.
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "À 108 mètres",
+          "textDist": "À 107 mètres",
           "text": "Depuis Route des Chappes tourner à droite sur Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "À 216 mètres",
-          "text": "Depuis Allée Charles-Victor Naudin prendre un virage serré à gauche"
+          "textDist": "À 246 mètres",
+          "text": "Depuis Allée Charles-Victor Naudin tourner à gauche"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "À 58 mètres",
+          "textDist": "À 29 mètres",
           "text": "Destination atteinte"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 > ✅ Useful for applications targeting international users, multilingual UIs, or localized route guidance.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

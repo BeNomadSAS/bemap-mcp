@@ -10,11 +10,11 @@ Most users can keep `"default"`.
 
 ---
 ## 🏢 Step 2 – Select the Provider(s)
-Choose one or more charging station providers. Always use:
+Choose one or more charging station providers: the keys of `chargingStationProviders` in `GET /bgis/service/acl/1.0/user/details`, which differ per account. This tutorial uses:
 ```
 "providers": ["ecoMovement"]
 ```
-This ensures compatibility with our standard coverage.
+`ecoMovement` is the only provider that carries charge passes and tariffs.
 
 ---
 ## 🧠 Step 3 – Set the Search Mode
@@ -42,13 +42,14 @@ Define how far (in meters) around your coordinate the system should look:
 "radius": 300
 ```
 Here, 300 meters = 0.3 km around the selected point.
+
 ---
-🧪 Optional – Add Options (Advanced)
+## 🧪 Optional – Add Options (Advanced)
 You can request extra detail using the options field. For example, to show connector-level info:
 ```
 "options": ["PATH_POINT"]
 ```
-See [Charging Station Options](index.html#subpage-rest_1_0_0-tutorials-chargingstation-service-v1_0_0-parameters.md#chargingstation_options_tutorial) for more.
+See [Charging Station Options](index.html#subpage-rest_1_0_0-tutorials-chargingstation-service-v1_0_0-options.md#chargingstation_options_tutorial) for more.
 
 🔗 See more details in the [API reference](index.html#subpage-rest_1_0_0-chargingstation-search-service.md).
 
@@ -100,7 +101,6 @@ Include header: `Content-Type: application/json`
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -141,7 +141,6 @@ Include header: `Content-Type: application/json`
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -182,7 +181,6 @@ Include header: `Content-Type: application/json`
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -244,7 +242,7 @@ The root object is a list of `pools`, each representing a group of charging stat
 | `brand`                                       | Brand associated with the pool                                    |
 | `nameOfPool`                                  | Display name of the location                                      |
 | `accessibility`                               | Whether the location is public or restricted (e.g., `RESTRICTED`) |
-| `updateDate`                                  | Last update timestamp (Unix format)                               |
+| `updateDate`                                  | Last update timestamp (epoch, in milliseconds)                    |
 | `siteCategory`                                | Category of the site (e.g., `ON_STREET`)                          |
 | `countryCode`, `city`, `street`, `postalCode` | Address details                                                   |
 | `phoneNumber`                                 | Contact number for the location                                   |
@@ -255,7 +253,7 @@ Each pool contains one or more charging stations, represented by the chargingSta
 
 Each station includes:
 
-- `nature`: Always `"VGROUP"` (grouped station)
+- `nature`: `"VGROUP"` (a simple group, not a physical object — as in this example) or `"REAL"` (an object that exists in the real world)
 
 - `availabilityStatus`: May be `"NA"` if real-time data is not available
 
@@ -300,3 +298,7 @@ This response tells you:
 - No real-time availability info is provided (`availabilityStatus: NA`).
 
 You can now use this structure to interpret any search results and optionally display them on a map or in your UI.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

@@ -4,7 +4,9 @@
 ## 🎯 What We Want to Do
 We want to ask the API:
 
-> “Give me the best route by car from point A to point B.”
+> “Here are GPS positions recorded by a car: match them to the road network and give me the route the car drove.”
+
+That is what TraceRoute does: it road-matches a recorded GPS trace. To plan a route from point A to point B, use the routing service instead.
 
 To do this, we’ll build a small JSON file that the API understands.
 
@@ -18,6 +20,8 @@ In our case, we use a car:
 }
 ```
 🔍 This tells the API to compute a route suitable for a car.
+
+⚠️ Both are required: without `routingVehicleProfile` the API answers `400` “Vehicle profile (vp) is required!”, and without `transportMode` a `400 MISSING_PARAMETER` whose message is a Java NullPointerException.
 
 ### 📦 Step 2: Add Useful Options
 You can ask the API to return useful data, such as:
@@ -38,25 +42,26 @@ Each point must include:
 
 - `lon` → longitude
 - `lat` → latitude
-- `speed` → estimated speed at that moment
-- `time` → timestamp in milliseconds (you can copy/paste this part)
+
+and may include (optional):
+
+- `speed` → speed at that moment, in km/h
+- `time` → GPS timestamp in milliseconds
+
+We leave `speed` and `time` out here: they belong to a real recorded trace (see the tips below).
 
 ```
 "destinations": [
   {
     "coordinateSat": {
       "lon": 2.3488,
-      "lat": 48.8534,
-      "speed": 20.0,
-      "time": 1720519200000
+      "lat": 48.8534
     }
   },
   {
     "coordinateSat": {
       "lon": 2.3600,
-      "lat": 48.8580,
-      "speed": 35.0,
-      "time": 1720519260000
+      "lat": 48.8580
     }
   }
 ]
@@ -73,17 +78,13 @@ Now put all the pieces together:
     {
       "coordinateSat": {
         "lon": 2.3488,
-        "lat": 48.8534,
-        "speed": 20.0,
-        "time": 1720519200000
+        "lat": 48.8534
       }
     },
     {
       "coordinateSat": {
         "lon": 2.3600,
-        "lat": 48.8580,
-        "speed": 35.0,
-        "time": 1720519260000
+        "lat": 48.8580
       }
     }
   ]
@@ -94,13 +95,17 @@ Now put all the pieces together:
 
 **2.** Paste this JSON in the body of a POST request.
 
-**3.** Send the request to your TraceRoute API endpoint.
+**3.** Send the request to `https://bemap.benomad.com/bgis/service/routing/1.0/traceroute`, with the header `Content-Type: application/json` and HTTP Basic authentication: `Authorization: Basic <base64 of account:apikey>`.
 
 **4.** Read the response: you'll get a map polyline and a route sheet.
 
 ## 💡 Tips for New Users
-- Don’t worry too much about `speed` or `time` values — just copy them from examples for now.
+- Leave out `speed` and `time` until you send a real recorded trace, with points a few seconds apart (like the CSV tutorial’s). Measured on production: with a `time` on each of this page’s two points, about 1 km apart, TraceRoute matched both onto the second point and still answered `200` — with `length: 0`, an empty `polyline`, a `boundingBox` of zeros, and the first point moved 969 m with `confidenceValue: 1`. Check `length` and `usedDestinations[].distanceFromRequest` before you trust an answer.
 
-- You can add more points to create a route with stops.
+- You can add more points: TraceRoute reads them as the chronological sequence of positions of one vehicle.
 
 - You can always test with `transportMode: "CAR"` first.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

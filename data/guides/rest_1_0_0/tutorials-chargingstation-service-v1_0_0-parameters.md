@@ -87,12 +87,10 @@ Add a `bbox` object to the root of your request:
           ],
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -147,6 +145,8 @@ Add a `bbox` object to the root of your request:
 - It is often used as an **alternative to** `coordinate` + `radius`, especially for large routes or custom-shaped areas.
 
 - If both `bbox` and `coordinate` are provided, behavior may depend on implementation — prefer using **only one spatial filter** per request for clarity.
+
+- The field is named `bbox`. The specification's descriptions call it `boundingBox`, a name this service does not read: measured on production, a request whose only area is a `boundingBox` answers `400 CHARGING_STATION_FAILED` "Missing coordinate(s)", and the same box as `bbox` answers `200`.
 ---
 <a name="chargingstation_connectorIdFilters_tutorial"></a>
 ## 🔌 connectorIdFilters – Filter by connector type IDs
@@ -157,14 +157,14 @@ You want to **restrict the results to only show charging stations** that support
 💡 **What it does**
 
 The connectorIdFilters parameter lets you filter the list of charging stations by their connector type.
-Each connector type is represented by a **numeric ID** (e.g., `1` for TYPE_2, `2` for CHAdeMO, etc.).
+Each connector type is represented by a **numeric ID** (e.g., `32` for Type 2, `36` for CHAdeMO, `38` for Type 2 Combo (CCS)), listed by `GET /bgis/service/chargingstation/connector/list/1.0`. IDs `1` and `2` are deprecated attached-cable types, not Type 2 and CHAdeMO: measured on production, `[1, 2]` finds nothing within 1 000 m of the example below.
 Only the charging points that include at least one connector matching one of the given IDs will be returned.
 
 🔧 **How to enable**
 
 Add the `connectorIdFilters` field to your request as an array of integers:
 ```
-"connectorIdFilters": [1, 2]
+"connectorIdFilters": [36, 38]
 ```
 📦 **Example**
 ```
@@ -218,187 +218,150 @@ Add the `connectorIdFilters` field to your request as an array of integers:
           ],
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
             {
-              "id": "EnBW mobility+",
               "title": "EnBW mobility+",
               "networkName": "EnBW"
             },
             {
-              "id": "Nissan Charge",
               "title": "Nissan Charge",
               "networkName": "Nissan"
             },
             {
-              "id": "EVBox Charge",
               "title": "EVBox Charge",
               "networkName": "EVBox"
             },
             {
-              "id": "EWE Go",
               "title": "EWE Go",
               "networkName": "EWE Go"
             },
             {
-              "id": "Virta",
               "title": "Virta",
               "networkName": "Virta"
             },
             {
-              "id": "EinfachStromLaden",
               "title": "EinfachStromLaden",
               "networkName": "Maingau Energie"
             },
             {
-              "id": "Freshmile Pass",
               "title": "Freshmile Pass",
               "networkName": "Freshmile"
             },
             {
-              "id": "BMW Charging",
               "title": "BMW Charging",
               "networkName": "BMW"
             },
             {
-              "id": "MyToyota",
               "title": "MyToyota",
               "networkName": "Toyota"
             },
             {
-              "id": "Volvo",
               "title": "Volvo",
               "networkName": "Volvo"
             },
             {
-              "id": "Volkswagen App",
               "title": "Volkswagen App",
               "networkName": "Volkswagen"
             },
             {
-              "id": "Kia Charge",
               "title": "Kia Charge",
               "networkName": "Kia Hypercharge "
             },
             {
-              "id": "Alizé Charge",
               "title": "Alizé Charge",
               "networkName": "Alizé Liberté"
             },
             {
-              "id": "Mobilize charge pass",
               "title": "Mobilize charge pass",
               "networkName": "Renault"
             },
             {
-              "id": "Audi e-tron Charging Service",
               "title": "Audi e-tron Charging Service",
               "networkName": "AUDI"
             },
             {
-              "id": "Chargemap Pass",
               "title": "Chargemap Pass",
               "networkName": "Chargemap"
             },
             {
-              "id": "Mercedes",
               "title": "Mercedes",
               "networkName": "Mercedes"
             },
             {
-              "id": "Mobiflow",
               "title": "Mobiflow",
               "networkName": "Mobiflow"
             },
             {
-              "id": "Métropole Rouen Normandie",
               "title": "Métropole Rouen Normandie",
               "networkName": "Métropole Rouen Normandie"
             },
             {
-              "id": "Charge myHyundai",
               "title": "Charge myHyundai",
               "networkName": "Hyundai"
             },
             {
-              "id": "Corpay Card",
               "title": "Corpay Card",
               "networkName": "Corpay"
             },
             {
-              "id": "ChargeNow Laadkaart",
               "title": "ChargeNow Laadkaart",
               "networkName": "Digital Charging Solutions"
             },
             {
-              "id": "Octopus Electroverse",
               "title": "Octopus Electroverse",
               "networkName": "Octopus Electroverse"
             },
             {
-              "id": "JLR Charging",
               "title": "JLR Charging",
               "networkName": "JLR Charging"
             },
             {
-              "id": "Tap Electric",
               "title": "Tap Electric",
               "networkName": "Tap Electric"
             },
             {
-              "id": "Elli",
               "title": "Elli",
               "networkName": "Elli"
             },
             {
-              "id": "MyŠkoda",
               "title": "MyŠkoda",
               "networkName": "Škoda"
             },
             {
-              "id": "SEAT Easy Charging app",
               "title": "SEAT Easy Charging app",
               "networkName": "Seat"
             },
             {
-              "id": "CHARGE&FUEL CARD ",
               "title": "CHARGE&FUEL CARD ",
               "networkName": "LOGPAY"
             },
             {
-              "id": "Ulys",
               "title": "Ulys",
               "networkName": "Ulys"
             },
             {
-              "id": "D'Ieteren Energy",
               "title": "D'Ieteren Energy",
               "networkName": "EDI"
             },
             {
-              "id": "Lexus Electrified",
               "title": "Lexus Electrified",
               "networkName": "Lexus"
             },
             {
-              "id": "Subaru care",
               "title": "Subaru care",
               "networkName": "Subaru"
             },
             {
-              "id": "Plugsurfing",
               "title": "Plugsurfing",
               "networkName": "Plugsurfing"
             },
             {
-              "id": "Polestar Charge",
               "title": "Polestar Charge",
               "networkName": "Polestar"
             }
@@ -439,13 +402,17 @@ Add the `connectorIdFilters` field to your request as an array of integers:
 ```
 📝 **Notes**
 
-- The list of valid connector IDs depends on the provider or internal configuration. Common examples include:
+- The list of valid connector IDs depends on the provider or internal configuration; `GET /bgis/service/chargingstation/connector/list/1.0` returns it. Common examples include:
 
   - `31` = Type 1
 
   - `32` = Type 2
 
   - `35` = Type 3C
+
+  - `36` = CHAdeMO
+
+  - `38` = Type 2 Combo (CCS)
 
 - You can combine this filter with `filters` or `options` to refine the results even further.
 
@@ -518,7 +485,6 @@ Add a `coordinate` object to your request with `lat` and `lon` values:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -559,7 +525,6 @@ Add a `coordinate` object to your request with `lat` and `lon` values:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -600,7 +565,6 @@ Add a `coordinate` object to your request with `lat` and `lon` values:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -668,12 +632,10 @@ Add a `coordinate` object to your request with `lat` and `lon` values:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -754,12 +716,10 @@ Add a `corridor` field with an array of `Coordinate` objects (each containing `l
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -783,8 +743,8 @@ You want to **precisely control which charging stations are returned**, based on
 💡 **What it does**
 
 The `filters` parameter allows you to apply **define one or more filter patterns**.
-Each pattern is used to **include or prioritize** charging stations that match specific criteria.
-You can also **combine filters**, use **OR logic**, and apply **actions** like prioritizing results using `prefCoeff`.
+Each pattern **keeps only** the charging stations that match specific criteria: the others are **excluded**. A pattern that ends with an **action** (`-> prefCoeff=…;`) excludes nothing under `filtersVersion` 1, the default; under `filtersVersion` 2 it excludes too.
+You can also **combine filters**, use **OR logic**, and apply **actions** like `prefCoeff`.
 
 🔧 **How to enable**
 
@@ -795,7 +755,7 @@ Each filter is a **string** following this structure:
   ]
 ```
 
-📘 For detailed syntax and supported fields, see the [Charging Station Filter Glossary](index.html#page-chargingstation-filter-v1.md#filtersparameter).
+📘 For detailed syntax and supported fields, see the [Charging Station Filter Glossary](index.html#page-chargingstation-filter-v1.md#filtersparameter) — and, with `filtersVersion` 2, [its version 2 page](index.html#page-chargingstation-filter-v2.md).
 
 📦 **Examples**
 ```
@@ -843,7 +803,6 @@ Each filter is a **string** following this structure:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -884,7 +843,6 @@ Each filter is a **string** following this structure:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -925,7 +883,6 @@ Each filter is a **string** following this structure:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -993,12 +950,10 @@ Each filter is a **string** following this structure:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -1009,9 +964,96 @@ Each filter is a **string** following this structure:
 
 - Use `||` to apply **OR logic** between multiple filter patterns.
 
-- Actions like `prefCoeff` do **not exclude** stations but influence their **ranking**.
+- A pattern **without an action excludes** every station it does not match: measured on production, `"pool.brand /= /.*Tesla.*/"` within 500 m of this coordinate keeps 1 pool of 11.
 
-- Improperly formatted filters will be **ignored silently**.
+- `station.available == true`, the example above, also keeps stations whose status is unknown (`NA`), such as the Tesla pool in the response: measured, it keeps all 11 pools, where `"station.availabilityStatus == IN_SERVICE_FREE"` keeps 7.
+
+- Under `filtersVersion` 1, an action like `prefCoeff` does **not exclude** stations: `"pool.brand /= /.*Tesla.*/ -> prefCoeff=5.0;"` keeps all 11 pools. In this search it changed neither the pools returned nor their order (measured with `prefCoeff=10.0` and `0.1`). Under `filtersVersion` 2 the same filter keeps 1 pool.
+
+- Improperly formatted filters are **not ignored**. Under version 1 the search answers `400 CHARGING_STATION_FAILED` and names the filter: an action without its trailing `;` gives "Invalid format of charging station filter with value …", a field the filter language does not know (`pool.nameOfPool`) "Unsupported filter field: 'nameOfPool'". Under version 2 an unknown field is accepted and ignored: `200`, nothing filtered.
+---
+<a name="chargingstation_filtersVersion_tutorial"></a>
+
+## 🔢 filtersVersion – Choose the version of the filter language
+✅ **Use case**
+
+You need a filter that only the newer implementation of the `filters` language evaluates, and you accept how that version treats actions and unknown fields.
+
+💡 **What it does**
+
+The `filtersVersion` parameter selects the implementation that evaluates `filters`: `1` (the default) or `2`. Measured on production, version 2 differs from version 1 in two ways:
+
+- An **action excludes** what it does not match, like a plain pattern.
+
+- A **field it does not know is ignored** (`200`, nothing filtered), where version 1 refuses it (`400`).
+
+The syntax of each version: [version 1](index.html#page-chargingstation-filter-v1.md#filtersparameter), [version 2](index.html#page-chargingstation-filter-v2.md).
+
+🔧 **How to enable**
+
+Send the version as a **number**:
+```
+"filtersVersion": 2
+```
+The specification shows this field as a base64 string (`format: byte`); the service reads a number, and `"Ag=="` answers `400 INVALID_ARGUMENT` "Invalid request".
+
+📦 **Example**
+```
+{
+  "geoserver": "osm",
+  "providers": ["ecoMovement"],
+  "mode": "LOCAL_OR_REMOTE",
+  "options": ["PATH_POOL"],
+  "radius": 500,
+  "coordinate": {
+    "lat": 48.85693,
+    "lon": 2.3412
+  },
+  "filtersVersion": 2,
+  "filters": [
+    "pool.brand /= /.*Tesla.*/ -> prefCoeff=5.0;"
+  ]
+}
+```
+**Response**
+```
+{
+  "pools": [
+    {
+      "providerName": "ecoMovement",
+      "providerMode": "LOCAL",
+      "id": "8f709a26-466d-11e9-8601-42010a840003",
+      "sourceProvider": "Tesla Destination",
+      "updateDate": 1790566612731,
+      "brand": "Tesla Destination",
+      "nameOfPool": "Tesla Destination Charger Relais Christine",
+      "accessibility": "RESTRICTED",
+      "availabilityStatus": "NA",
+      "longitude": 2.34014219,
+      "latitude": 48.8543694,
+      "countryCode": "FRA",
+      "country": "FRA",
+      "postalCode": "75006",
+      "city": "Paris",
+      "street": "3 Rue Christine",
+      "siteCategory": "ON_STREET",
+      "phoneNumber": "+(33)-(9)-70730850",
+      "timeZone": "Europe/Paris",
+      "open24x7": true,
+      "summaryOfConnectorTypeIds": [
+        32
+      ],
+      "maxNominalPower": 11,
+      "numberOfChargingPoint": 3
+    }
+  ]
+}
+```
+📝 **Notes**
+
+- The same request without `filtersVersion` returns all 11 pools: under version 1, the action does not exclude.
+
+- Leave the field out unless you need version 2: under version 2, a misspelt field filters nothing, in silence.
 ---
 
 <a name="chargingstation_geoserver_tutorial"></a>
@@ -1083,7 +1125,6 @@ Add the `geoserver` field to your request with the desired string value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1124,7 +1165,6 @@ Add the `geoserver` field to your request with the desired string value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1165,7 +1205,6 @@ Add the `geoserver` field to your request with the desired string value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1233,12 +1272,10 @@ Add the `geoserver` field to your request with the desired string value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -1259,7 +1296,7 @@ You want the **station addresses or location names** in the API response to be r
 💡 **What it does**
 
 The `language` parameter tells the system to perform **reverse geocoding and address lookups** using the specified **language code** (e.g., `"fr"` for French, `"en"` for English).
-This affects how fields like `address`, `city`, or `country` are returned in the response.
+This affects how address fields like `street`, `streetNumber`, `postalCode`, `city`, or `country` are returned in the response.
 
 🔧 **How to enable**
 
@@ -1311,7 +1348,6 @@ Add the `language` field to your request using a standard language code (ISO 639
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1352,7 +1388,6 @@ Add the `language` field to your request using a standard language code (ISO 639
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1393,7 +1428,6 @@ Add the `language` field to your request using a standard language code (ISO 639
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1461,12 +1495,10 @@ Add the `language` field to your request using a standard language code (ISO 639
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -1488,7 +1520,7 @@ You want to **restrict the number of charging station pools** returned by the AP
 
 💡 **What it does**
 
-The `maxPoolResult` parameter sets an upper limit on the **number of** `ChargingStationPool` **objects** the API will return.
+The `maxPoolResult` parameter sets an upper limit on the **number of** `ChargingStationPool` **objects** the API will return **for each provider** listed in `providers`.
 
 This is useful when working with large search areas or displaying results on devices with limited performance.
 
@@ -1543,7 +1575,6 @@ Add the `maxPoolResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1584,7 +1615,6 @@ Add the `maxPoolResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1625,7 +1655,6 @@ Add the `maxPoolResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1693,12 +1722,10 @@ Add the `maxPoolResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -1710,6 +1737,8 @@ Add the `maxPoolResult` field to your request with an integer value:
 - Use in combination with `filters`, `radius`, or `corridor` to better target the most relevant pools.
 
 - If more pools are available than the limit, **only the top N (unordered)** will be returned.
+
+- The limit applies **per provider**, not to the whole response: measured on production, `"maxPoolResult": 5` within 1 000 m of this coordinate returns 5 pools with `["ecoMovement"]`, 10 with `["ecoMovement", "gireve"]` and 15 with `["ecoMovement", "gireve", "here"]`.
 ---
 <a name="chargingstation_maxProviderResult_tutorial"></a>
 
@@ -1773,7 +1802,6 @@ Add the `maxProviderResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1814,7 +1842,6 @@ Add the `maxProviderResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1855,7 +1882,6 @@ Add the `maxProviderResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -1923,12 +1949,10 @@ Add the `maxProviderResult` field to your request with an integer value:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
             {
-              "id": "Shell Recharge",
               "title": "Shell Recharge",
               "networkName": "Shell Recharge"
             },
@@ -2021,7 +2045,6 @@ Set the `mode` field to one of the following string values (recommended default:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2062,7 +2085,6 @@ Set the `mode` field to one of the following string values (recommended default:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2103,7 +2125,6 @@ Set the `mode` field to one of the following string values (recommended default:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2171,7 +2192,6 @@ Set the `mode` field to one of the following string values (recommended default:
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Ecotap",
               "title": "Ecotap",
               "networkName": "Ecotap"
             },
@@ -2198,7 +2218,7 @@ You want to **retrieve a single specific charging point** based on its unique id
 💡 **What it does**
 
 The `pointIdFilter` parameter filters the result to **only include the charging point** that matches the exact ID provided.
-It bypasses all other spatial filters (like `coordinate`, `bbox`, or `corridor`) and **returns only the matching point** if it exists.
+It does **not** replace the spatial search: it narrows the pools found around `coordinate`, `bbox` or `corridor` (within `radius`) to the matching point, so the search area **must contain the point**. Measured on production: the example below finds point `491848_1`; the same filter around a coordinate in Lyon answers `200` with `{"pools": []}`, and with no spatial field at all `400 CHARGING_STATION_FAILED` "Missing coordinate(s)".
 
 🔧 **How to enable**
 ```
@@ -2248,7 +2268,6 @@ It bypasses all other spatial filters (like `coordinate`, `bbox`, or `corridor`)
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2308,6 +2327,7 @@ You want to **retrieve all the information about a specific charging pool**, ide
 
 The `poolIdFilter` parameter restricts the search to **a single charging pool**, identified by its unique ID.
 The response will include all the stations and points associated with that pool, depending on the selected `options`.
+Like `pointIdFilter`, it narrows a spatial search, which must contain the pool: measured on production, this pool ID around a coordinate in Lyon answers `200` with `{"pools": []}`.
 
 🔧 **How to enable**
 ```
@@ -2358,7 +2378,6 @@ The response will include all the stations and points associated with that pool,
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2399,7 +2418,6 @@ The response will include all the stations and points associated with that pool,
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2440,7 +2458,6 @@ The response will include all the stations and points associated with that pool,
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2504,7 +2521,7 @@ You want to **control which data providers are queried** for charging station in
 💡 **What it does**
 
 The `providers` parameter specifies which **charging data providers** should be used for the request.
-Each provider represents an external or internal source of charging infrastructure data (e.g. `ecoMovement`, `ocm`, `bemap`).
+Each provider represents an external or internal source of charging infrastructure data (e.g. `ecoMovement`).
 The API will **only query the listed providers**, improving performance and consistency.
 
 🔧 **How to enable**
@@ -2558,7 +2575,6 @@ Provide a list of provider names as strings. BeMap recommends always specifying 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2599,7 +2615,6 @@ Provide a list of provider names as strings. BeMap recommends always specifying 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2640,7 +2655,6 @@ Provide a list of provider names as strings. BeMap recommends always specifying 
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2684,17 +2698,13 @@ Provide a list of provider names as strings. BeMap recommends always specifying 
       "numberOfChargingPoint": 3
     },
 ```
-📝 ***Notes**
+📝 **Notes**
 
 Values are case-sensitive and must match the exact provider keys configured in the system.
 
-Common providers:
+The providers your account may use are the keys of `chargingStationProviders` in `GET /bgis/service/acl/1.0/user/details`; they differ per account and per environment. `"ecoMovement"` is recommended, and it is the only provider that carries charge passes and tariffs.
 
-- `"ecoMovement"` (recommended)
-
-- `"ocm"` (Open Charge Map)
-
-- `"bemap"` (BeMap's internal data)
+A provider your account does not hold is refused with `400` and the code `INTERNAL_ERROR` — an access refusal, not a server fault: measured on production, `["ocm", "bemap"]` answers "Not allowed charging station provider for input 'ocm'!".
 
 Combine with `mode: "LOCAL_OR_REMOTE"` to ensure compatibility with both local cache and remote API access.
 
@@ -2715,7 +2725,7 @@ a central `coordinate` (circular search), or
 
 a `corridor` (buffer zone along a path).
 
-Without it, searches using `coordinate` or `corridor` won’t work properly.
+It is **optional**: without it, the environment's default radius applies — **500 m on production**. Measured: the same 11 pools come back with no `radius` as with `"radius": 500` (6 with `400`, 13 with `600`). The specification's description, "Required by the center or corridor parameters", says otherwise.
 
 🔧 **How to enable**
 ```
@@ -2764,7 +2774,6 @@ Without it, searches using `coordinate` or `corridor` won’t work properly.
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2805,7 +2814,6 @@ Without it, searches using `coordinate` or `corridor` won’t work properly.
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2846,7 +2854,6 @@ Without it, searches using `coordinate` or `corridor` won’t work properly.
           "availabilityStatus": "NA",
           "chargePasses": [
             {
-              "id": "Tesla",
               "title": "Tesla",
               "networkName": "Tesla"
             }
@@ -2894,10 +2901,39 @@ Without it, searches using `coordinate` or `corridor` won’t work properly.
 
 - Unit is **meters** (e.g., `1000` = 1 km).
 
-- Required when using either `coordinate` or `corridor`.
+- Optional with `coordinate` or `corridor`: 500 m when omitted, on production.
 
-- Has no effect if using `pointIdFilter`, `poolIdFilter`, or `stationIdFilter`.
+- Still applies with `pointIdFilter`, `poolIdFilter`, or `stationIdFilter`: those narrow the pools found within the radius, so the radius must reach the object.
 
 - Use a **larger value** (e.g. `5000`) for rural or highway searches; smaller values (e.g. `300`) for dense urban areas.
 ---
 
+<a name="chargingstation_stationIdFilter_tutorial"></a>
+
+## 🏷️ stationIdFilter – Filter by a specific charging station ID
+✅ **Use case**
+
+You want to **retrieve a single charging station** based on its unique identifier — for example, to refresh its status on a detail page.
+
+💡 **What it does**
+
+The `stationIdFilter` parameter filters the result to **only include the station** that matches the exact ID provided (`chargingStations[].id` in a response).
+Like `pointIdFilter`, it narrows the pools found around `coordinate`, `bbox` or `corridor` (within `radius`), so the search area **must contain the station**.
+
+🔧 **How to enable**
+```
+"stationIdFilter": "123428"
+```
+
+📝 **Notes**
+
+- Only a provider that gives its stations an ID can be filtered this way. Measured on production around Paris: `ecoMovement`'s stations carry no `id` (none of 2 977 within 3 000 m), so the filter finds nothing with it; `gireve` and `here` give one to every station.
+
+- Measured with `"providers": ["gireve"]`, station `123428` and the Paris coordinate of the examples above, `PATH_STATION`: its pool only, holding that station. Around a coordinate in Lyon: `200` with `{"pools": []}`.
+
+- Use `options` to choose the depth, as with `poolIdFilter`.
+---
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

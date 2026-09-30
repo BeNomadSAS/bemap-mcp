@@ -116,6 +116,37 @@ function roleLine(op) {
   );
 }
 
+/** One security scheme, as its own document describes it. */
+function schemeText(name, scheme = {}) {
+  const how =
+    scheme.type === 'http'
+      ? `HTTP ${scheme.scheme === 'basic' ? 'Basic' : scheme.scheme}`
+      : scheme.type === 'apiKey'
+        ? `\`${scheme.name}\` ${scheme.in === 'query' ? 'query parameter' : scheme.in}`
+        : scheme.type ?? 'unknown';
+  return `\`${name}\` — ${how}${scheme.description ? `: ${clip(scheme.description, 220)}` : ''}`;
+}
+
+/**
+ * Where another platform's operation is and how it signs in — its hosts and
+ * its security, as that platform's own specification states them. BeNomad
+ * Tiles' used to be described only in prose, and a model sent its calls to
+ * BeMap's service root with BeMap's credentials.
+ */
+function platformRows(op, snapshot) {
+  const schemes = snapshot.spec.components?.securitySchemes ?? {};
+  const hosts = op.servers.map((server) => `\`${server.url}\`${server.description ? ` — ${cell(server.description)}` : ''}`).join(' · ') || '—';
+  const auth = op.security.length
+    ? op.security.map((requirement) => Object.keys(requirement).map((name) => schemeText(name, schemes[name])).join(' and ')).join(' · or ')
+    : 'None.';
+  return [
+    `| Endpoint | \`${op.endpoint}\` — on the ${op.tags[0] ?? op.platform} hosts below, not BeMap's |`,
+    `| Hosts | ${hosts} |`,
+    `| Service | ${op.tags.join(', ') || '—'} — its own specification, not BeMap's; \`bemap_try_request\` does not send it |`,
+    `| Authentication | ${cell(auth)} |`,
+  ];
+}
+
 /**
  * One operation, everything needed to call it.
  *
@@ -134,13 +165,17 @@ export function renderOperation(op, { detail = 'summary', snapshot = loadSnapsho
     '| | |',
     '|---|---|',
     `| Method | **${op.method}** |`,
-    `| Endpoint | \`${op.endpoint}\` — relative to the environment host |`,
-    /* The hosts, stated: a model told only "relative to the environment host"
-       guessed `bemap-prod.benomad.com` for prod. */
-    `| Hosts | ${environmentHosts().map((host) => `${host.env} \`${host.bemap}\``).join(' · ')} |`,
-    `| Service | ${op.tags.join(', ') || '—'} |`,
-    '| Authentication | HTTP Basic, `base64(account:apikey)`, on every call. No credentials answer `302` to the login page; wrong ones answer `401`. |',
-    `| Role | ${roleLine(op)} |`,
+    ...(op.platform
+      ? platformRows(op, snapshot)
+      : [
+          `| Endpoint | \`${op.endpoint}\` — relative to the environment host |`,
+          /* The hosts, stated: a model told only "relative to the environment host"
+             guessed `bemap-prod.benomad.com` for prod. */
+          `| Hosts | ${environmentHosts().map((host) => `${host.env} \`${host.bemap}\``).join(' · ')} |`,
+          `| Service | ${op.tags.join(', ') || '—'} |`,
+          '| Authentication | HTTP Basic, `base64(account:apikey)`, on every call. No credentials answer `302` to the login page; wrong ones answer `401`. |',
+          `| Role | ${roleLine(op)} |`,
+        ]),
   ];
   if (op.deprecated) out.push('| Deprecated | **yes** — prefer another operation of this service |');
   out.push('');
@@ -215,6 +250,12 @@ export function renderOperation(op, { detail = 'summary', snapshot = loadSnapsho
          reachable area declare their 200 with no content at all. */
       out.push('The specification declares no response body.', '');
     }
+    /* Every success, not the first alone: a tile's `204` means "beyond the
+       archive's zoom", and read as a failure it made a map stop drawing. */
+    const others = (op.successes ?? []).filter((success) => success.status !== op.response.status);
+    if (others.length) {
+      out.push('Other successes:', '', ...others.map((success) => `- \`${success.status}\`${success.description ? ` ${success.description}` : ''}`), '');
+    }
   }
 
   if (op.errors.length) {
@@ -222,11 +263,13 @@ export function renderOperation(op, { detail = 'summary', snapshot = loadSnapsho
     for (const error of op.errors) {
       out.push(`- \`${error.status}\`${error.description ? ` ${error.description}` : ''}${error.name ? ` — \`${error.name}\`` : ''}`);
     }
-    out.push(
-      '',
-      'A `400` covers both a payload the service refuses and a missing entitlement (`"Access Denied"`) — read the message, not the status.',
-      ''
-    );
+    if (!op.platform) {
+      out.push(
+        '',
+        'A `400` covers both a payload the service refuses and a missing entitlement (`"Access Denied"`) — read the message, not the status.'
+      );
+    }
+    out.push('');
   }
 
   if (!full) out.push('_Condensed. Pass `detail: "full"` for complete descriptions and the meaning of every enum value._');
@@ -363,6 +406,9 @@ export function renderServices({ service, snapshot = loadSnapshot() } = {}) {
   for (const entry of shown) {
     out.push(`## ${entry.name}`, '');
     if (entry.description) out.push(links(entry.description), '');
+    /* Another platform's service is on its own hosts: its endpoints are not under BeMap's root. */
+    const elsewhere = entry.operations.find((op) => op.platform)?.servers ?? [];
+    if (elsewhere.length) out.push(`On its own hosts, with its own sign-in: ${elsewhere.map((server) => `\`${server.url}\``).join(', ')}.`, '');
     out.push('| Method | Endpoint | What it does |', '|---|---|---|');
     for (const op of entry.operations) {
       out.push(`| ${op.method} | \`${op.endpoint}\`${op.deprecated ? ' (deprecated)' : ''} | ${cell(clip(op.summary || op.description, 110))} |`);

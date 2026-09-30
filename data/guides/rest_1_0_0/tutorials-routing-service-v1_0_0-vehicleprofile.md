@@ -14,15 +14,19 @@ It must follow the structure of a [`RoutingVehicleProf`](index.html#subpage-rest
 ```
 "routingVehicleProfile": {
   "transportMode": "CAR",
+  "maxSpeeds": [
+    { "type": "ALL", "maxSpeed": 90 }
+  ],
   "routingVehicleFeature": {
-    "maxSpeed": 90,
-    "vehicleWeight": 1500,
+    "weight": 15,
     "emissionClass": "EURO6"
   }
 }
 ```
 
-You can combine this with other options such as `EVENT` or `OPTIMIZED_ROUTE_FOR_CHARGING_STATION` to get detailed segment info or compute energy-based routes.
+`maxSpeeds` belongs to the profile itself, in km/h. `weight` is in tenths of a metric ton: `15` is 1.5 t.
+
+You can combine this with other options such as `EVENT` or `ENERGY_CONSUMPTION` to get detailed segment info or energy consumption estimates.
 
 ---
 
@@ -61,10 +65,12 @@ Add the `maxSpeeds` field inside your `routingVehicleProfile`:
 "routingVehicleProfile": {
   "transportMode": "CAR",
   "maxSpeeds": [
-    { "type": "ALL", "value": 90 }
+    { "type": "ALL", "maxSpeed": 90 }
   ]
 }
 ```
+The speed is `maxSpeed`, in km/h. A misnamed field (`value`) or `maxSpeeds` placed in `routingVehicleFeature` is ignored without an error: on Lyon to Vienne, `{ "type": "ALL", "maxSpeed": 90 }` turns 2 114 s into 2 223 s, while `{ "type": "ALL", "value": 90 }`, or the right entry inside `routingVehicleFeature`, leaves 2 114 s.
+
 📦 **Example**
 
 ```
@@ -75,15 +81,15 @@ Add the `maxSpeeds` field inside your `routingVehicleProfile`:
   ],
   "routingVehicleProfile": {
     "transportMode": "TRUCK",
-    "routingVehicleFeature": {
-      "maxSpeeds": [
-        { "type": "CAL", "value": 80 },
-        { "type": "ETA", "value": 90 }
-      ]
-    }
+    "maxSpeeds": [
+      { "type": "CAL", "maxSpeed": 80 },
+      { "type": "ETA", "maxSpeed": 90 }
+    ]
   }
 }
 ```
+
+On this short city trip, the limits do not change the route: length and duration are the same without them (3 143 m, 653 s). Only `maximumSpeed` differs: 80 here, 0 without `maxSpeeds`.
 
 📨 **Response**
 
@@ -95,11 +101,11 @@ Add the `maxSpeeds` field inside your `routingVehicleProfile`:
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 4.835805567159972,
-        "lat": 45.7639975
+        "lon": 4.835807292597741,
+        "lat": 45.76399772974804
       },
-      "confidenceValue": 0.11463414634146339,
-      "distanceFromRequest": 8.2,
+      "confidenceValue": 0.11460592913955168,
+      "distanceFromRequest": 8.34,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -109,23 +115,26 @@ Add the `maxSpeeds` field inside your `routingVehicleProfile`:
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 4.826438509920649,
-        "lat": 45.7582675
+        "lon": 4.826440200339454,
+        "lat": 45.75826727456483
       },
-      "confidenceValue": 0.9746478873239437,
-      "distanceFromRequest": 52.81,
+      "confidenceValue": 0.9723756906077351,
+      "distanceFromRequest": 52.68,
       "polylineIndex": -1,
-      "duration": 573,
-      "length": 3648
+      "duration": 653,
+      "length": 3143
     }
   ],
   "routingRoutes": [
     {
-      "length": 3648,
-      "duration": 573,
+      "length": 3143,
+      "duration": 653,
+      "totalDuration": 653,
       "trafficDelay": 0,
-      "averageSpeed": 22.919373,
-      "maximumSpeed": 0,
+      "departureTime": 0,
+      "arrivalTime": 0,
+      "averageSpeed": 17.327412,
+      "maximumSpeed": 80,
       "startUTurnThreshold": 3000,
       "startStopInfo": {
         "start": {
@@ -136,8 +145,8 @@ Add the `maxSpeeds` field inside your `routingVehicleProfile`:
           "lon": 4.82644,
           "lat": 45.75827
         },
-        "distanceFirstMatched": 0.28,
-        "distanceLastMatched": 0.28,
+        "distanceFirstMatched": 0.25,
+        "distanceLastMatched": 0.3,
         "interDests": null
       }
     }
@@ -160,8 +169,9 @@ Provides detailed energy profile for the vehicle to allow:
 - Simulating driving behaviors and conditions (temperature, payload, regen braking...)
 **🔧 How to enable**
 
-You must include a routingVehicleProfile in your routing request and nest routingEnergyVehicleFeature inside it:
+You must include a routingVehicleProfile in your routing request, nest routingEnergyVehicleFeature inside it, and ask for the estimation with the `ENERGY_CONSUMPTION` option: without the option, no `energyConsumption` comes back.
 ```
+"options": [ "ENERGY_CONSUMPTION" ],
 "routingVehicleProfile": {
   "transportMode": "CAR",
   "routingEnergyVehicleFeature": {
@@ -184,7 +194,38 @@ You must include a routingVehicleProfile in your routing request and nest routin
 }
 ```
 
-📨 **Response**
+📦 **Example**
+```
+{
+  "destinations": [
+    { "coordinateSat": { "lon": 4.8357, "lat": 45.7640 } },
+    { "coordinateSat": { "lon": 4.8270, "lat": 45.7580 } }
+  ],
+  "options": [ "POLYLINE", "ENERGY_CONSUMPTION" ],
+  "routingVehicleProfile": {
+    "transportMode": "CAR",
+    "routingEnergyVehicleFeature": {
+      "auxConsumption": 1000,
+      "batCapacity": 60.0,
+      "crr": 0.01,
+      "dryWeight": 1600,
+      "energyLoad": 45.0,
+      "engineEfficiency": 0.9,
+      "extTemp": 20.5,
+      "maxAccel": 2.5,
+      "maxChargePower": 7.2,
+      "maxChargePowerAc3": 11.0,
+      "maxChargePowerDc": 50.0,
+      "maxDecel": -3.0,
+      "payload": 200,
+      "regenerativeBraking": true,
+      "scx": 0.7
+    }
+  }
+}
+```
+
+📨 **Response** (polyline shortened to its first two points; `energyConsumption` is in kWh)
 ```
 {
   "usedDestinations": [
@@ -196,7 +237,7 @@ You must include a routingVehicleProfile in your routing request and nest routin
         "lon": 4.83554,
         "lat": 45.76412
       },
-      "confidenceValue": 0.33438985736925514,
+      "confidenceValue": 0.3344370860927152,
       "distanceFromRequest": 18.24,
       "polylineIndex": -1,
       "duration": -1,
@@ -207,30 +248,33 @@ You must include a routingVehicleProfile in your routing request and nest routin
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 4.826438509920649,
-        "lat": 45.7582675
+        "lon": 4.826440200339454,
+        "lat": 45.75826727456483
       },
-      "confidenceValue": 0.9746478873239437,
-      "distanceFromRequest": 52.81,
+      "confidenceValue": 0.9723756906077351,
+      "distanceFromRequest": 52.68,
       "polylineIndex": -1,
       "duration": 486,
-      "length": 1830
+      "length": 1767
     }
   ],
   "routingRoutes": [
     {
-      "length": 1830,
+      "length": 1767,
       "duration": 486,
+      "totalDuration": 486,
       "trafficDelay": 0,
-      "averageSpeed": 13.555555,
+      "departureTime": 0,
+      "arrivalTime": 0,
+      "averageSpeed": 13.088889,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
-      "energyConsumption": 0.4836538185808414,
+      "energyConsumption": 0.4610347183618907,
       "boundingBox": {
         "minLon": 4.82545,
         "minLat": 45.7578,
         "maxLon": 4.83554,
-        "maxLat": 45.76528
+        "maxLat": 45.76492
       },
       "startStopInfo": {
         "start": {
@@ -242,7 +286,7 @@ You must include a routingVehicleProfile in your routing request and nest routin
           "lat": 45.75827
         },
         "distanceFirstMatched": 0,
-        "distanceLastMatched": 0.28,
+        "distanceLastMatched": 0.3,
         "interDests": null
       },
       "polyline": [
@@ -253,7 +297,11 @@ You must include a routingVehicleProfile in your routing request and nest routin
         {
           "lon": 4.83422,
           "lat": 45.76421
-        },
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="routing_speed_ponderation_tutorial"></a>
@@ -290,19 +338,23 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
     {
       "factor": 1.2,
       "level": 1,
-      "pondType": "CAL",
+      "pondType": "ALL",
       "roadType": "MOTORWAY"
     }
   ]
 }
 ```
 
+`pondType` says what the coefficient changes: `CAL` only the choice of the fastest route, `ETA` only the travel time, `ALL` (default) both. A `CAL` coefficient therefore shows only when it changes the route chosen.
+
 📦 **Example**
+
+From Lyon to Villefranche-sur-Saône, 18 km of it on the motorway:
 ```
 {
   "destinations": [
     { "coordinateSat": { "lon": 4.8357, "lat": 45.7640 } },
-    { "coordinateSat": { "lon": 4.8270, "lat": 45.7580 } }
+    { "coordinateSat": { "lon": 4.7190, "lat": 45.9890 } }
   ],
   "options": ["POLYLINE"],
   "routingVehicleProfile": {
@@ -317,7 +369,7 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
       {
         "factor": 1.2,
         "level": 1,
-        "pondType": "CAL",
+        "pondType": "ALL",
         "roadType": "MOTORWAY"
       }
     ]
@@ -325,7 +377,9 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
 }
 ```
 
-📨 **Response**
+The route is the same 34 843 m with or without the coefficients; its duration is 2 092 s with them and 2 168 s without. With the motorway coefficient as `CAL`, the duration stays 2 168 s.
+
+📨 **Response** (polyline shortened to its first two points)
 ```
 {
   "usedDestinations": [
@@ -337,7 +391,7 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
         "lon": 4.83554,
         "lat": 45.76412
       },
-      "confidenceValue": 0.33438985736925514,
+      "confidenceValue": 0.3344370860927152,
       "distanceFromRequest": 18.24,
       "polylineIndex": -1,
       "duration": -1,
@@ -348,29 +402,32 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 4.826438509920649,
-        "lat": 45.7582675
+        "lon": 4.71857,
+        "lat": 45.989
       },
-      "confidenceValue": 0.9746478873239437,
-      "distanceFromRequest": 52.81,
+      "confidenceValue": 0.17982641828958512,
+      "distanceFromRequest": 33.26,
       "polylineIndex": -1,
-      "duration": 486,
-      "length": 1830
+      "duration": 2092,
+      "length": 34843
     }
   ],
   "routingRoutes": [
     {
-      "length": 1830,
-      "duration": 486,
+      "length": 34843,
+      "duration": 2092,
+      "totalDuration": 2092,
       "trafficDelay": 0,
-      "averageSpeed": 13.555555,
+      "departureTime": 0,
+      "arrivalTime": 0,
+      "averageSpeed": 59.959274,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "boundingBox": {
-        "minLon": 4.82545,
-        "minLat": 45.7578,
-        "maxLon": 4.83554,
-        "maxLat": 45.76528
+        "minLon": 4.71619,
+        "minLat": 45.74845,
+        "maxLon": 4.8382,
+        "maxLat": 45.989
       },
       "startStopInfo": {
         "start": {
@@ -378,11 +435,11 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
           "lat": 45.76412
         },
         "stop": {
-          "lon": 4.82644,
-          "lat": 45.75827
+          "lon": 4.71857,
+          "lat": 45.989
         },
         "distanceFirstMatched": 0,
-        "distanceLastMatched": 0.28,
+        "distanceLastMatched": 0,
         "interDests": null
       },
       "polyline": [
@@ -393,7 +450,11 @@ Add the `routingSpeedPonderations` field to your `routingVehicleProfile`:
         {
           "lon": 4.83422,
           "lat": 45.76421
-        },
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="routing_vehicle_feature_tutorial"></a>
@@ -414,7 +475,9 @@ Each field in `routingVehicleFeature` corresponds to a real-world constraint:
 
 - Physical limits: height, width, length, axleWeight, etc.
 - Legal limits: nbTrailer, hazardous materials, ADR category
-- Toll impact: emission class, vehicle type, number of axles, hybrid, HOV, etc.
+- Toll impact: emission class, toll category (`tollTransportCategory`), number of axles, hybrid, HOV, etc.
+
+📏 **Units:** `height`, `width`, `length`, `vehHeight` and `trailHeight` are in centimeters; `weight`, `axleWeight` and `vehWeight` are in tenths of a metric ton (`35` = 3.5 t, `12` = 1.2 t). The specification says "tens of metric tons", which its own examples (`35` = 3.5t) contradict: read them as tenths. A weight written in kilograms (`3500`) is read as 350 t, without an error.
 
 🔧 **How to enable**
 
@@ -557,7 +620,7 @@ The transportation mode affects:
 
 If omitted, the default mode is:
 - `CAR` (for standard routing)
-- `EMERGENCY` (for Traceroute service)
+- none for the Traceroute service: `transportMode` is required there. Without it, Traceroute answers `400 MISSING_PARAMETER`, whose message is a Java NullPointerException; the `EMERGENCY` default the specification states does not apply.
 
 🔧 **How to enable**
 
@@ -637,3 +700,7 @@ Include the transportMode field in your routingVehicleProfile object:
   ]
 }
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

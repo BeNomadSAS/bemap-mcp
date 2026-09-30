@@ -7,7 +7,7 @@ This tutorial provides clear usage examples for each `routingMode` supported by 
 - 📦 A ready-to-use JSON payload  
 - 💡 An explanation of what the request does  
 
-🔧 **How to enable routing criteria**
+🔧 **How to set the routing mode**
 
 To define the routing mode, simply include the `routingMode` field in your routing request JSON. Example:
 ```
@@ -286,7 +286,7 @@ Calculate independent routes from multiple origins to a single destination.
 
 **💡 What it does**
  
-Returns routes from Lyon, Annecy, and Grenoble **to Dijon** (last point is the destination).
+Returns routes from Lyon, Geneva, and Grenoble **to Dijon** (last point is the destination).
 
 📨 **Response**
 
@@ -389,7 +389,7 @@ Returns routes from Lyon, Annecy, and Grenoble **to Dijon** (last point is the d
 ```
 ---
 <a name="mode_n_to_n"></a>
-## 🧭 `MODE_N_TO_N` – Full NxN route matrix
+## 🧭 `MODE_N_TO_N` – Routes between every pair of N points
 
 **✅ Use case**
 
@@ -414,7 +414,7 @@ Compute all possible routes between each pair of N locations.
 
 **💡 What it does**
 
-Returns **16 route combinations** (4x4), including every possible origin/destination pair.
+Returns **12 route combinations** (4x3): every origin/destination pair, except a point with itself — n points give n²−n routes (the specification's description of `MODE_N_TO_N` says n²). For a value between every pair, the point with itself included (n²), see `MODE_MATRIX`.
 
 📨 **Response**
 
@@ -533,7 +533,6 @@ Get a **matrix** of distances, travel times or energy consumption between multip
     { "coordinateSat": { "lon": 5.40638, "lat": 43.32238 } },
     { "coordinateSat": { "lon": 1.45128, "lat": 43.61487 } }
   ],
-  "options": ["POLYLINE"],
   "routingVehicleProfile": {
     "transportMode": "CAR"
   }
@@ -542,7 +541,9 @@ Get a **matrix** of distances, travel times or energy consumption between multip
 
 **💡 What it does**
 
-Returns a table (matrix) with **distance/time/energy values** between each pair of points. No route geometry is included.
+Returns a table (matrix) with **one value per pair of points**: the weight of the criterion set in `routingCriterias` — seconds in `duration` under `FASTEST` (the default), metres in `length` under `SHORTEST`, Wh in `energyConsumption` under `ECO_ENERGY`, per the specification. The other two fields are `-1`. With 4 points, the answer holds 16 entries, row by row: entry `i × 4 + j` goes from point `i` to point `j` (`0` from a point to itself). No route geometry is included, so the `POLYLINE` option is not needed. Read `duration`, not `totalDuration`, which is `0` in every matrix entry.
+
+📘 **Note:** measured on production (29 September 2026), under `ECO_ENERGY` each `energyConsumption` is the pair's `FASTEST` duration divided by 1 000 (4 558 s gives `4.558`), whatever the energy features sent.
 
 📨 **Response**
 
@@ -710,16 +711,34 @@ Returns the polygon representing the zone reachable **within 30 minutes** from L
     { "coordinateSat": { "lon": 4.9000, "lat": 45.5600 } }
   ],
   "isoChroneLimit": 3000,
+  "routingCriterias": ["ECO_ENERGY"],
   "options": ["POLYLINE"],
   "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "transportMode": "CAR",
+    "routingEnergyVehicleFeature": {
+      "batCapacity": 60,
+      "energyLoad": 50,
+      "engineEfficiency": 0.92,
+      "scx": 0.7,
+      "crr": 0.013,
+      "payload": 100,
+      "dryWeight": 1600,
+      "auxConsumption": 500,
+      "extTemp": 20,
+      "maxAccel": 1.5,
+      "maxDecel": -1.5
+    }
   }
 }
 ```
 
 **💡 What it does**  
 
-Returns the area reachable from Lyon to Valence using **3000 Wh** of energy. Useful for EV range visualization.
+Returns the area reachable from Lyon to Serpaize (Isère) using **3000 Wh** of energy. Useful for EV range visualization.
+
+`isoChroneLimit` is in the unit of the criterion, per the specification: Wh under `ECO_ENERGY`, seconds under `FASTEST` (the default), metres under `SHORTEST`. `ECO_ENERGY` requires `routingVehicleProfile.routingEnergyVehicleFeature`: without it, the service answers `400` `{"code":"VehicleProfileIsRequiredException","message":"Vehicle profile (vp) is required! Or add energy vehicle profile (evf) !"}`, even when a `routingVehicleProfile` is sent (`evf` there is `routingEnergyVehicleFeature`).
+
+📘 **Note:** measured on production (29 September 2026), this polygon is identical to the `FASTEST` isochrone with `isoChroneLimit: 3000` (seconds), and does not change with the energy features sent.
 
 📨 **Response**
 ```
@@ -778,3 +797,7 @@ Returns the area reachable from Lyon to Valence using **3000 Wh** of energy. Use
           "lat": 45.64226
         },
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

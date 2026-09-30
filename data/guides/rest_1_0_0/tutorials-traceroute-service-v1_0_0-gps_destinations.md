@@ -15,7 +15,9 @@ Type: `TraceRouteDest[]`
 | `coordinateSat.lon`      | ✅       | Longitude in decimal degrees (WGS84). |
 | `coordinateSat.speed`    | ❌       | Speed in km/h. Used to refine ETA if provided. |
 | `coordinateSat.time`     | ❌       | Timestamp in milliseconds since Epoch (UTC). |
-| `keptByMinimalWp`        | ❌       | If `true`, forces the waypoint to be kept even if simplification is applied. |
+| `coordinateSat.heading`  | ❌       | Heading in degrees: the vehicle's direction (90° = East). |
+| `coordinateSat.sat`      | ❌       | Number of GPS satellites available. |
+| `keptByMinimalWp`        | ❌       | If `true`, forces the waypoint to be kept even if simplification is applied: in the `waypoints` list of option `WAYPOINTS`, when `NO_MINIMAL_WAYPOINTS` is not set. |
 | `customData`             | ❌       | Array of key-value pairs to tag the coordinate with custom info. |
 
 ---
@@ -48,10 +50,10 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"]
 }
 ```
->✅ This creates a basic trace between two points (e.g., Eiffel Tower → Louvre).
+>✅ This creates a basic trace between two points in Sophia Antipolis.
 ---
 ### 📤 Example – With Speed
 ```
@@ -67,7 +69,7 @@ Type: `TraceRouteDest[]`
     {
       "coordinateSat": {
         "lon": 7.0664,
-        "lat": 43.6162
+        "lat": 43.6162,
         "speed": 29.3
       }
     }
@@ -82,7 +84,7 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"]
 }
 ```
 >✅ Used to refine ETA calculation based on vehicle speed at each point.
@@ -116,7 +118,7 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"]
 }
 ```
 >✅ Heading is used to indicate the vehicle's direction (90° = East).
@@ -150,10 +152,11 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"],
+  "adjustEta": true
 }
 ```
->✅ Use when you want ETA to align with the time of each point (requires adjustEta: true in main request).
+>✅ Use when you want ETA to align with the time of each point (requires `adjustEta: true` in the main request, as here: the route's `duration` is then the GPS time span, 6 s).
 ---
 ### 📤 Example - With Sat
 ```
@@ -169,7 +172,7 @@ Type: `TraceRouteDest[]`
     {
       "coordinateSat": {
         "lon": 7.0664,
-        "lat": 43.6162
+        "lat": 43.6162,
         "sat": 11
       },
       "keptByMinimalWp": true
@@ -185,7 +188,7 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"]
 }
 ```
 > ✅ Satellite count can improve location accuracy and matching quality.
@@ -218,10 +221,12 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE", "WAYPOINTS"]
 }
 ```
->✅ Forces the waypoint to be retained even if the system applies simplification (e.g. NO_MINIMAL_WAYPOINTS is not used).
+>✅ Forces the waypoint to be retained in the `waypoints` list (option `WAYPOINTS`) even if the system applies simplification (e.g. NO_MINIMAL_WAYPOINTS is not used). On this two-point trace both points are waypoints anyway; the flag matters on a longer trace.
+>
+>⚠️ Measured on production: when the matcher skips the flagged point (its waypoint shows `ignorePoint: true`), the whole request fails with `400 RouteNotFoundException`, “Route not found: Cannot perform the minimal way-points”.
 ---
 ### 📤 Example – With customData
 ```
@@ -260,7 +265,11 @@ Type: `TraceRouteDest[]`
       "axleWeight": 10
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE", "POLYLINE_INDEX"]
+  "options": ["ROUTESHEET", "POLYLINE", "EVENT", "EVT_POLYLINE"]
 }
 ```
 >✅ Adds extra tags to a waypoint, useful for post-processing or debugging.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

@@ -6,7 +6,7 @@ description: >
   Judgment layer for consuming the BeNomad BeMap REST API: which service to
   pick for a given need, the unit and naming traps that silently produce wrong
   results, and how to read BeMap's error responses. Use whenever someone calls
-  a Bemap REST service (routing, geocoding, nearpoi, traceroute, roadsextractor,
+  a BeMap REST service (routing, geocoding, nearpoi, traceroute, roadsextractor,
   chargingstation, evsmartrouting, evreachablearea, chargingtime, vehicle,
   traffic, geofencing, weather), builds a request payload, or debugs a BeMap
   302, 401 or 400. Complements the `bemap` MCP server, which holds the parameter
@@ -36,6 +36,13 @@ that configured nothing. `bemap_try_request` checks every field name, enum value
 and required field against the specification before it sends anything, and
 `validateOnly: true` does just the check, with no credentials.
 
+**A guide's example can be wrong too.** BeMap's 22 tutorials were checked
+request by request on 29 September 2026, and every one had defects — its v2 EV
+tutorial showed a v1 body, others sent fields no class declares. This server
+serves corrected copies of them, each ending with a line that says so, until
+BeMap publishes the corrections. Run any other guide's body through
+`bemap_try_request` with `validateOnly: true` before copying it.
+
 ### Requiredness is the specification's, and the service has the last word
 
 `required` in these tools is what the specification declares. It is right for
@@ -49,9 +56,10 @@ body missing a field proves only that BeMap answered: compare its result with
 one where the field is present.
 
 If the `bemap` MCP is not available in the session, say so and help the user
-repair its installation. `https://docs.benomad.com` is a partial public
-reference: a service or field missing there may still exist, and the rule above
-holds for the MCP alone.
+repair its installation. `https://benomad.com/dev/doc/bemap-api/` is BeNomad's
+public documentation. It leaves out the operations BeMap does not offer
+publicly, so one missing there may still exist, and the rule above holds for
+the MCP alone.
 
 ## Which tool answers which question
 
@@ -231,8 +239,9 @@ which contradicts itself, since twelve tens of tonnes is 120 t. The worked
 examples are the reliable half: divide by ten, so one unit is 100 kg.
 
 A developer writing `weight: 3500` for a 3.5-tonne van is asking for a
-350-tonne vehicle, and will get a route avoiding most of the network — with no
-error. This is the single most costly mistake on this API. Convert explicitly
+350-tonne vehicle, and gets a heavy truck's route — with no error: measured on
+prod, Paris → Lyon at `3500` is 11 km longer than at `35`, and identical to
+`400` (40 t). This is the single most costly mistake on this API. Convert explicitly
 and comment the conversion in generated code.
 
 `routingVehicleProfile.maxSpeeds[].maxSpeed` is plain km/h.
@@ -265,8 +274,13 @@ shared class `RoutingEnergyVehicleFtr`, reached under a different name and depth
 in each service: `energyVehicleFeature.…` on chargingtime,
 `routingVehicleProfile.routingEnergyVehicleFeature.…` on routing and traceroute,
 `rvp.routingEnergyVehicleFeature.…` on routeHorizon — note `rvp`, not
-`routingVehicleProfile`. Every field of that class is mandatory once you supply
-it: a partial object answers `400`, e.g. `scxOutOfRange`.
+`routingVehicleProfile`. **An omitted field reads as 0, and BeMap checks the
+values**: `scx`, `crr`, `engineEfficiency`, `dryWeight`, `maxAccel` and
+`batCapacity` must be above 0 and `maxDecel` below 0, so leaving one out
+answers `400` — `scxOutOfRange`, *"batCapacity is inferior or equal to 0!"*.
+`energyLoad`, `extTemp`, `payload`, `auxConsumption` and the charge powers may
+be left out (measured on prod, 29 September 2026). Take the required ones from
+the vehicle's data, and leave the others out rather than invent them.
 
 **Two measured examples of what a wrong path costs.** On evsmartrouting v2, a
 root `minArrivalBatLvl: 60` answers `200` and is ignored — the journey is
@@ -280,8 +294,8 @@ the root instead of inside `charges[]` answers `200` with **23.40 EUR** and
 its two field families suggest — it reads exactly one, chosen by whether
 `vehicle` is set. With `vehicle` (a UUID), the state of charge is
 `remainingBatteryLevel` in percent and the whole `energyVehicleFeature` object is
-ignored: measured on prod, `energyVehicleFeature.energyLoad` at 10 % and at 80 %
-both return the baseline `chargingTime: 2773`, identical to a deliberately bogus
+ignored: measured on prod, `energyVehicleFeature.energyLoad` set low and set high
+(it is kWh, never a percent) both return the baseline `chargingTime: 2773`, identical to a deliberately bogus
 key. Without `vehicle`, supply `energyVehicleFeature` and the charge comes from
 `energyLoad` in kWh against `batCapacity`. `energyLoad` is **never** a root
 field: at the root it is dropped like any unknown key. Read the field name *and*
@@ -357,23 +371,39 @@ Coordinates are named objects (`{"lon": …, "lat": …}`), so REST has no
 lon/lat ordering trap — but the **JS SDK does**: `bemap.Coordinate(lon, lat)`
 and `map.move(lon, lat, zoom)` take longitude first.
 
+**Not every answer says `lon`/`lat`.** Autocomplete's `items[].coordinate`,
+nearpoi's polylines, charging-station pools, EV smart routing v1's step points
+and OpenLR routes answer `{"longitude": …, "latitude": …}` (`CoordinateFullName`,
+`ChargingStationPool`, `StepPointFront`, `CoordinateWgs84` in the
+specification), while a nearpoi result's own `coordinate` says `lon`/`lat` —
+measured on prod for autocomplete, nearpoi and charging-station search. Read an
+answer's field names off its schema, not off a request's.
+
 ### EV smart routing needs `csps` for any trip that needs a charge
 
 On v1 and v2, a trip that needs a charge answers `400 NO_REACHABLE_STEP_POINT`
 — "All charging stations found cannot be reachable" — unless `csps` lists the
-charging providers to use: the keys of `chargingStationProviders` in
-`GET /bgis/service/acl/1.0/user/details`. The specification shows `csps` as
-optional, so a check passes without it. Measured on prod, Paris → Lyon in a Zoe
-at 80 %: without `csps`, 400 on both versions; with `["gireve"]`, 200 and two
-charging stops. Check it first when that error comes back, before the filter
-traps below.
+charging-station providers to use. The specification shows `csps` as optional,
+so a check passes without it. Check it first when that error comes back, before
+the filter traps below.
+
+**The values are the account's own**: the keys of `chargingStationProviders` in
+`GET /bgis/service/acl/1.0/user/details`. A provider the account lacks answers
+`400 INTERNAL_ERROR` "Not allowed charging station provider for input
+'benomad'!" — `benomad` being the value BeMap's v2 tutorial gives.
+
+**The result follows the provider, and varies.** Measured on prod on
+29 September 2026, Paris → Lyon in a Renault Megane EV60 at 80 %: without
+`csps`, 400; `["ecoMovement"]`, 200; `["gireve"]`, 400 — where it answered 200
+on 25 September. Use `ecoMovement` in an example, and the user's own providers
+in an application.
 
 ### A charging-station filter with no action excludes, and excluding can mean no route at all
 
 `csfs` (EV smart routing) and `filters` (charging-station search) share one
-filter language. It has its own reference page — **`chargingstation-filter-v1.md`**,
-read it with `bemap_read_guide`. It is linked from both schemas but sits in no
-menu branch of the documentation site.
+filter language. It has two reference pages, **`chargingstation-filter-v1.md`**
+(the default) and **`chargingstation-filter-v2.md`** (`csfsVersion` /
+`filtersVersion` 2); read them with `bemap_read_guide`.
 
 Four traps, all measured on `/bgis/service/2.0/evsmartrouting` (preprod,
 Paris→Lyon, Tesla Model 3 RWD 50 kWh at 80 %), each by comparing two responses
@@ -384,7 +414,11 @@ to a network that has none reachable and the answer is not a route without a
 preference — it is `400 NO_REACHABLE_STEP_POINT`, "All charging stations found
 cannot be reachable". Measured: a hard filter on Tesla, Electra or Allego all
 returned 400 on that trip. An action makes the filter weight instead of
-exclude, and the same three then return 200.
+exclude, and the same three then return 200 — **under `csfsVersion` 1, the
+default.** Under `csfsVersion: 2` an action excludes too: measured on prod on
+29 September 2026, `pool.brand /= /.*(nosuchbrand).*/i -> prefCoeff=10.0;`
+answers `200` by default (nothing matches, nothing is excluded) and
+`400 NO_REACHABLE_STEP_POINT` with `csfsVersion: 2`.
 
 **2. The regex is anchored** — it must cover the whole field, and real values
 are compound. `pool.brand` holds `Tesla Supercharger`, `ENGIE Vianeo`,
@@ -396,9 +430,9 @@ one that reads as "the network has no stations": `/.*(tesla).*/` → 400,
 `/.*(tesla).*/i` → 200 with Tesla Superchargers chosen. Prefer `/i` over
 listing every casing a brand might use.
 
-**4. The action's trailing semicolon is mandatory.** Drop it and the action is
-not parsed, the filter silently reverts to a hard one, and a valid preference
-answers 400:
+**4. The action's trailing semicolon is mandatory** (measured under version 1).
+Drop it and the action is not parsed, the filter silently reverts to a hard one,
+and a valid preference answers 400:
 
 ```jsonc
 "pool.brand /= /.*(tesla).*/i -> prefCoeff=10.0"   // → 400 NO_REACHABLE_STEP_POINT
@@ -416,12 +450,18 @@ for Izivia or Electra came back as the unchanged reference route. Pairing
 brand at `0.1` does force the detour, but pushed the computation to 56–66 s
 on three of seven networks — usually the wrong trade.
 
-Two more measured details. `filters`/`csfs` are combined with **AND**; use `||`
-inside one pattern for OR. And **`csfsVersion: 2` changes more than the syntax**:
-on the same request it ignored a `prefCoeff=0.1` penalty that v1 honoured, and
-took 15–23 s against v1's 3 s. Set it only for what needs it — the truck
+Three more measured details. `filters`/`csfs` are combined with **AND**; use
+`||` inside one pattern for OR. **`chargingPoint.currency` is no filter field
+under version 1**, though BeMap's filter page lists it: charging-station search
+answers `400 CHARGING_STATION_FAILED "Unsupported filter field: 'currency'"`,
+and EV smart routing a reachability error. And **`csfsVersion: 2` changes more
+than the syntax**: an action excludes what it does not match (trap 1); on the
+same request it ignored a `prefCoeff=0.1` penalty that v1 honoured, and took
+15–23 s against v1's 3 s. Set it only for what needs it — the truck
 parking filter (`pool.stations.chargingPoints.parkingSpot.transportTypes ==
-TRUCK`) is the documented case.
+TRUCK`) is the documented case, though measured on prod on 29 September 2026
+no station declares transport types yet: that filter matches nothing, and a
+trip that needs a charge answers `400 NO_REACHABLE_STEP_POINT`.
 
 ### EV smart routing v2 inverts the URL
 
@@ -436,6 +476,11 @@ Prefer v2 for new work.
 or an ISO local date-time string: `2011-12-03T10:15:30`,
 `2011-12-03T10:15:30+01:00`, or `2011-12-03T10:15:30+01:00[Europe/Paris]`.
 
+**On EV smart routing v2, send epoch milliseconds.** An ISO time loses its
+offset there: measured on prod on 29 September 2026,
+`"2026-10-10T08:00:00+02:00"` departs at 08:00 UTC — two hours late — while the
+same instant as `"1791612000000"` is kept.
+
 **The answer's times are not in the request's unit.** Routing answers
 `routingRoutes[].departureTime` and `arrivalTime` in epoch **seconds** of the
 start point's **local** clock, written as if it were UTC — measured on prod, a
@@ -445,14 +490,17 @@ pass them to `new Date()` as milliseconds, nor feed one back as the next leg's
 UTC milliseconds.
 
 **`arrivalTime` is honoured only for 1-to-1 routing** — `MODE_VIAS` with
-exactly two destinations. Everywhere else it is not rejected and not ignored:
-it is **silently read as a departure time**. Add one via, or switch to
-`MODE_1_TO_N`, `MODE_N_TO_1`, `MODE_N_TO_N` or `MODE_ISOCHRONE`, and the
-response is byte-identical to sending `departureTime` with the same value — so
-a caller asking to arrive at 18:15 departs at 18:15 and arrives a whole trip
-later, with `200` and no message. `MODE_MATRIX` is the exception that ignores
-both timestamps outright. Verified on prod, comparing the two responses
-byte for byte rather than reading the status.
+exactly two destinations. Everywhere else BeMap does not read which of the two
+fields you sent: add one via, or switch to `MODE_1_TO_N`, `MODE_N_TO_1`,
+`MODE_N_TO_N` or `MODE_ISOCHRONE`, and the time is read as a departure *or* an
+arrival according to **the previous 1-to-1 request the server computed** —
+anyone's. Measured on prod on 29 September 2026: after a 1-to-1 `departureTime`
+request, a `MODE_1_TO_N` `arrivalTime` departed at that time 6 times out of 6;
+after a 1-to-1 `arrivalTime` request, a `MODE_1_TO_N` `departureTime` *arrived*
+at it 5 times out of 6 — `200` and no message either way. So never send
+`arrivalTime` outside 1-to-1, and check a multi-destination answer's
+`departureTime` against the time you sent. `MODE_MATRIX` ignores both
+timestamps outright.
 
 ### "Comma-separated list" in the documentation means a JSON array
 
@@ -536,8 +584,9 @@ request answers `200`** — at every nesting level, including the top. So a fiel
 placed on the wrong object does nothing at all, and the call still succeeds:
 
 ```jsonc
-// wrong object: RoutingEnergyVehicleFtr has no `hybrid`. Silently ignored.
-"routingVehicleProfile": { "routingEnergyVehicleFeature": { "hybrid": "YES" } }
+// wrong object: RoutingEnergyVehicleFtr has no `hybrid`. Silently ignored —
+// in a block whose own fields are valid; otherwise it answers 400 scxOutOfRange.
+"routingVehicleProfile": { "routingEnergyVehicleFeature": { …, "hybrid": "YES" } }
 // right object: RoutingVehicleFtr declares it. A bad value here is rejected.
 "routingVehicleProfile": { "routingVehicleFeature": { "hybrid": "YES" } }
 ```
@@ -585,9 +634,11 @@ the measurement behind it and the release it was measured on. Query
     not a result.
   - **The polarity reads backwards.** *Below* the threshold your requested
     direction is honoured; *above* it the U-turn is taken.
-  - **`0` and negatives disable it**, they do not mean "never detour": at `0` and
-    at `-1` the heading is honoured exactly as at `99999`. Only a value at or
-    above `1` and below the detour cost makes the direction be abandoned.
+  - **`0` disables it** — it does not mean "never detour": at `0` the heading is
+    honoured exactly as at `99999`. **A negative value is not the same**:
+    measured on prod on 29 September 2026, `-1` is honoured like `0` under
+    `SHORTEST`, but under `FASTEST` `-1` to `-100` take the U-turn. Send `0` to
+    disable it, never a negative.
   - **On 4.0.3 the field is not read at all**: the route is byte-identical
     whatever you send, and the request answers `200`. **The response is the
     only witness** — it carries `routingRoutes[].startUTurnThreshold`, which
@@ -754,8 +805,10 @@ on prod, preprod and beta, and on 4.0.3 as well as 4.1:
 
 That settles an `Access Denied` in one call, and the last two lists settle the
 other half of it: `geoservers` is the geocoders this environment actually wires
-up, and `chargingStationProviders` the charging providers — both differ per
+up, and `chargingStationProviders` the charging providers — both can differ per
 environment, which is why the same payload can work on beta and fail on prod.
+On 29 September 2026 the geocoders were the same seven everywhere; the charging
+providers were not.
 Without credentials the call answers `302` to the login page, like every other
 BeMap endpoint.
 
@@ -784,8 +837,8 @@ holds.
 
   A bare `Invalid request` never names the offending field, so do not hunt for
   a typo: suspect the structure first. Errors come back as JSON,
-  `{"code": "…", "message": "…"}`; the one known exception is evsmartrouting
-  v1 given a string `vehicle`, which answers an XML `<error>` body.
+  `{"code": "…", "message": "…"}` — on 4.1.0 every one measured,
+  evsmartrouting v1 included (its XML error body was a 4.0.3 answer).
 - **`403 "Wrong site"`** — per BeMap's source, the key's usage is locked to a
   web site (an HTTP referer), and a call that sends none — from a server, a
   script, these tools — is refused. Test with a key whose usage has no such

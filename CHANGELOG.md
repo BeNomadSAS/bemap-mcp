@@ -11,6 +11,9 @@ First version, built from BeMap's own OpenAPI specification.
 
 - API reference from BeMap's specification: every operation, field, type,
   required flag and allowed value.
+- BeNomad Tiles' API, from its own specification: its hosts, its sign-in and
+  its 11 operations in `bemap_get_operation` and `bemap_list_services`;
+  `bemap_try_request` does not send them: it sends to BeMap only.
 - `bemap_search`, `bemap_get_operation`, `bemap_get_schema`, `bemap_read_guide`,
   `bemap_list_services`, `bemap_limits` and `bemap_status`.
 - `bemap_try_request` checks a request — names, values, types, required fields,
@@ -21,10 +24,15 @@ First version, built from BeMap's own OpenAPI specification.
   cancel them, and are never sent over plain HTTP to another machine
   (`BEMAP_ALLOW_INSECURE_HTTP=1` allows it on a network you trust).
 - Guides link to each other as `guide:<id>`, which `bemap_read_guide` opens.
+- BeMap's tutorials in corrected copies — 24 pages and 6 new ones, every
+  request checked against the specification and sent to production, each
+  marked at its end — until BeMap publishes the corrections.
 - `bemap_map_setup`: the map for your application — BeNomad Tiles, BeMap WMS or
   another provider's.
-- The `benomad-bemap-api` skill, installed by `npx bemap-install-skill` for
-  Claude Code, Codex, Cursor, GitHub Copilot, VS Code and Gemini CLI.
+- The `benomad-bemap-api` skill, installed by
+  `npx --no-install bemap-install-skill`, from the folder the package is
+  installed in, for Claude Code, Codex, Cursor, GitHub Copilot, VS Code and
+  Gemini CLI.
 - Install notes for Claude Code, Claude Desktop, Cursor, VS Code Copilot, Codex,
   Gemini CLI, Zed and Devin Desktop — from the Desktop extension, the package, or
   a clone of the repository; the files on each release's page.

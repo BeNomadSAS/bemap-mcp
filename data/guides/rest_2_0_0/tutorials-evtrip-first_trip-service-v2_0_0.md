@@ -1,5 +1,5 @@
 # ⚡ Tutorial for the first trip in electrical vehicle
-<span class="float-right shadow">![Illustration of near POI service](images/evsmartrouting-service-map.jpg)</span>
+<span class="float-right shadow">![Illustration of an EV smart routing trip](images/evsmartrouting-service-map.jpg)</span>
 
 This tutorial explains **how to perform a simple electric vehicle route calculation** using the EV Smart Routing API.
 
@@ -40,13 +40,18 @@ GET ${HOST_URL}/bgis/service/vehicle/1.1/getbrands
 {"bemap":{"language":"javascript"}}
 {
   "brands": [{
-      "id": "609a4642c9cb5b0b1846c0d4",
-      "label": "Aiways"
+      "id": "6862890593f67e33df977de9",
+      "label": "Abarth"
     }, {
-      "id": "609a4642c9cb5b0b1846c0d7",
+      "id": "6a280fea0e36a02c67d568de",
+      "label": "AION"
+    },
+    . . .
+    {
+      "id": "5e903acb9548987051674099",
       "label": "Audi"
     }, {
-      "id": "609a4642c9cb5b0b1846c0e6",
+      "id": "5e903acb95489870516740a0",
       "label": "BMW"
     },
     . . .
@@ -64,15 +69,15 @@ For example the `label` can be used to fill a drop-down list or to perform a sea
 
 After the brand name is selected, store the `id`. This `id` will be used in the next step to get the vehicle key id.
 
-For example the `id` of brand `Audi` is `609a4642c9cb5b0b1846c0d7`.
+For example the `id` of brand `Audi` is `5e903acb9548987051674099` on production.
 
-> ⚠️ **Important:** The id is unique only for on one environment (production, preproduction, etc). When your application switches environments (for example from preproduction to production), you will need to call the API again.
+> ⚠️ **Important:** The id is unique to one environment (production, preproduction, etc). When your application switches environments (for example from preproduction to production), you will need to call the API again. The ids on this page are production's.
 
 
 
 ### 🚙 Select the Vehicle (Get Vehicle Key ID)
 
-To compute the trip, the EV Smart Routing API needs to know which vehicle to use. The vehicle is represented by an identifier, the `vehicle key id`. This identifier is an simple string like `eb72114c-1f74-4854-b4ce-c2b3f06405d5` for an `Audi e-Tron 50 Quattro`. 
+To compute the trip, the EV Smart Routing API needs to know which vehicle to use. The vehicle is represented by an identifier, the `vehicle key id`. This identifier is a simple string like `eb72114c-1f74-4854-b4ce-c2b3f06405d5` for an `Audi e-tron 50 quattro` (2019-2022). 
 
 > NOTE: The  ` vehicle key id` is the same on all environments (production and preproduction).
 
@@ -80,7 +85,7 @@ To compute the trip, the EV Smart Routing API needs to know which vehicle to use
 
 To do this selection we have two main APIs:
 
-- A helper API to fill a drop-down list. See the chapter `Select the vehicle by drop list` below.
+- A helper API to fill a drop-down list. See the chapter `Select the vehicle from a drop-down list` below.
 - An API to find or list the vehicles. See the `Find vehicle` chapter below.
 
 
@@ -93,45 +98,64 @@ The **vehicle key ID** is a unique string used to identify a vehicle model.
 
 ```
 {"bemap":{"language":"request"}}
-GET ${HOST_URL}/bgis/service/vehicle/1.0/getlevelvehicleinfo?level=NAME&brandId=609a4642c9cb5b0b1846c0d7
+GET ${HOST_URL}/bgis/service/vehicle/1.1/getlevelvehicleinfo?level=NAME&brandId=5e903acb9548987051674099
 ```
 
 The response is a JSON array.
 
 ```
 {"bemap":{"language":"javascript"}}
-["Q4 e-tron 35", "Q4 e-tron 40", "R8 e-tron", "e-tron 50 Quattro", ...]
+["A6 Avant e-tron", "A6 Sportback e-tron", "Q4 Sportback e-tron", "Q4 e-tron", ..., "e-tron", "e-tron 55 Quattro", "e-tron GT", ...]
 ```
 
 You can use it to fill a drop-down list in your user interface.
 Get the searched vehicle name to fill the next step request url and the final `find vehicle` request.
 
-#### 🔋 2. Get the available battery names for the vehicle name.
+#### 🏷️ 2. Get the variants for the vehicle name.
 
-The battery name is the public or commercial name of battery like "50". This information should not be confused with the actual battery capacity (kWh). For example, a battery with 52 kWh of capacity is called "50".
+A vehicle name can have several variants, like "50 quattro" and "55 quattro" for the `e-tron`.
 
 ```
 {"bemap":{"language":"request"}}
-GET ${HOST_URL}/bgis/service/vehicle/1.0/getlevelvehicleinfo?level=BATTERY_NAME&brandId=609a4642c9cb5b0b1846c0d7&name=e-tron+50+Quattro
+GET ${HOST_URL}/bgis/service/vehicle/1.1/getlevelvehicleinfo?level=VARIANT&brandId=5e903acb9548987051674099&name=e-tron
 ```
 
 The response is a JSON array.
 
 ```
 {"bemap":{"language":"javascript"}}
-["64.7"]
+["50 quattro", "55 quattro"]
+```
+
+You can use it to fill a drop-down list in your user interface.
+Get the searched variant to fill the next step request url and the final `find vehicle` request.
+
+#### 🔋 3. Get the available battery names for the vehicle name and variant.
+
+The battery name is the public or commercial name of battery like "50". This information should not be confused with the actual battery capacity (kWh). For example, a battery with 52 kWh of capacity is called "50".
+
+```
+{"bemap":{"language":"request"}}
+GET ${HOST_URL}/bgis/service/vehicle/1.1/getlevelvehicleinfo?level=BATTERY_NAME&brandId=5e903acb9548987051674099&name=e-tron&variant=50+quattro
+```
+
+The response is a JSON array.
+
+```
+{"bemap":{"language":"javascript"}}
+["71"]
 ```
 
 You can use it to fill a drop-down list in your user interface. 
 Get the searched battery name to fill the next step request url and the final `find vehicle` request.
 
-#### ⚡ 3. Get available chargers for the vehicle name and battery name.
+#### ⚡ 4. Get available chargers for the vehicle name, variant and battery name.
 
 **a.** List of DC chargers
 
 ```
 {"bemap":{"language":"request"}}
-GET ${HOST_URL}/bgis/service/vehicle/1.0/getlevelvehicleinfo?level=CHARGE_POWER_DC&brandId=609a4642c9cb5b0b1846c0d7&name=e-tron+50+Quattro&batteryName=64.7
+GET ${HOST_URL}/bgis/service/vehicle/1.1/getlevelvehicleinfo?level=CHARGE_POWER_DC&brandId=5e903acb9548987051674099&name=e-tron&variant=50+quattro&batteryName=71
 ```
 
 The response is a JSON array.
@@ -148,20 +172,20 @@ Get the searched DC charge to fill the next step request url and the final `find
 
 ```
 {"bemap":{"language":"request"}}
-GET ${HOST_URL}/bgis/service/vehicle/1.0/getlevelvehicleinfo?level=CHARGE_POWER_AC&brandId=609a4642c9cb5b0b1846c0d7&name=e-tron+50+Quattro&batteryName=64.7&chargerPowerDC=120.0
+GET ${HOST_URL}/bgis/service/vehicle/1.1/getlevelvehicleinfo?level=CHARGE_POWER_AC&brandId=5e903acb9548987051674099&name=e-tron&variant=50+quattro&batteryName=71&chargerPowerDC=120.0
 ```
 
 The response is a JSON array.
 
 ```
 {"bemap":{"language":"javascript"}}
-["120.0"]
+["11.0", "3.67", "0.0"]
 ```
 
 You can use it to fill a drop-down list in your user interface.
 Get the searched AC charge to fill the final `find vehicle` request.
 
-#### 🆔 4. Get the `vehicle key id`.
+#### 🆔 5. Get the `vehicle key id`.
 
 Now, we have all the elements to perform a request with the find vehicle API. See the next chapter.
 
@@ -180,16 +204,21 @@ You can:
 **Request:**
 
 ```
-{"bemap":{"language":"javascript"}}
+{"bemap":{"language":"request"}}
+POST ${HOST_URL}/bgis/service/vehicle/1.1/findvehicles
 {
-    "brandId": "609a4642c9cb5b0b1846c0d7",
-    "name": "e-tron 50 Quattro",
-    "batteryName": "64.7",
+    "brandId": "5e903acb9548987051674099",
+    "name": "e-tron",
+    "variant": "50 quattro",
+    "year": "2019-2022",
+    "batteryName": "71",
     "chargerPowerDC": 120.0,
     "chargerPowerAC": 11.0,
     "enableDatasheet": false
 }
 ```
+
+Without `year`, this request returns two vehicles: the 2019-2022 and 2021-2022 model years of the same variant. The level `YEAR` of `getlevelvehicleinfo` lists the years of a vehicle name and variant.
 
 **Response:**
 
@@ -198,20 +227,28 @@ You can:
 {
     "vehicles": [
         {
-            "key": "eb72114c-1f74-4854-b4ce-c2b3f06405d5",
-            "brandId": "609a4642c9cb5b0b1846c0d7",
-            "brandName": "Audi",
-            "name": "e-tron 50 Quattro",
-            "year": "2020",
             "motorType": "EV",
-            "batteryName": "64.7",
+            "key": "eb72114c-1f74-4854-b4ce-c2b3f06405d5",
+            "brandId": "5e903acb9548987051674099",
+            "brandName": "Audi",
+            "name": "e-tron",
+            "year": "2019-2022",
+            "variant": "50 quattro",
+            "transportType": "CAR",
+            "height": 162,
+            "width": 194,
+            "length": 490,
+            "batteryName": "71",
+            "chargerPowerAcThreePhases": 11.0,
+            "chargerPowerDC": 120.0,
             "connectorTypes": [
                 32,
-                38,
-                48
+                38
             ],
-            "chargerPowerAcThreePhases": 11.0,
-            "chargerPowerDC": 120.0
+            "wltp": {
+                "completeWltp": 341.0
+            },
+            "consumptionInWhPerKm": 189.74
         }
     ]
 }
@@ -225,14 +262,9 @@ Here is another example to get all the vehicles for a brand.
 **Request:**
 ```http
 {"bemap":{"language":"request"}}
-POST /bgis/service/vehicle/1.0/findvehicles
-```
-
-**Payload:**
-```
-{"bemap":{"language":"javascript"}}
+POST ${HOST_URL}/bgis/service/vehicle/1.1/findvehicles
 {
-  "brandId": "609a4642c9cb5b0b1846c0d7"
+  "brandId": "5e903acb9548987051674099"
 }
 ```
 
@@ -260,7 +292,7 @@ This API can take the postal address in categorized fields and returns the coord
 
 - The `address` field contains subfields like `country`, `city` and `street`. More fields are available.
 - The `language` field defines the language in search and response.
-- The `maximumResult` field defines the maximum results to be returned in the response.
+- The `maximumResults` field defines the maximum results to be returned in the response. The response names it `maximunResult`, spelled so by the service.
 
 For more details, see the [API reference](index.html#subpage-rest_1_0_0-geocoding-service.md).
 
@@ -276,7 +308,7 @@ POST ${HOST_URL}/bgis/service/geocoding/1.0
 		"street": "villa des pyrénées"
 	},
 	"searchType": "FUZZY",
-	"maximumResult": 2,
+	"maximumResults": 2,
 	"language": "fr"
 }
 ```
@@ -313,8 +345,7 @@ POST ${HOST_URL}/bgis/service/geocoding/1.0
                 "city": "Paris",
                 "district": "Paris 20e Arrondissement",
                 "postalCode": "75020",
-                "street": "Villa des Pyrénées",
-                "streetNumber": "1"
+                "street": "Villa des Pyrénées"
             },
             "postalAddressClassType": "ROAD_FOURTH",
             "postalAddressClassId": 4048,
@@ -323,14 +354,14 @@ POST ${HOST_URL}/bgis/service/geocoding/1.0
             "administrativeSpeedLimit": 0.0,
             "relevanceScore": 1.0,
             "countryRelevanceScore": 1.0,
-            "cityRelevanceScore": 1.0,
+            "cityRelevanceScore": 0.75,
             "postalCodeRelevanceScore": 1.0,
             "streetRelevanceScore": 1.0,
-            "streetNumberRelevanceScore": 1.0,
+            "streetNumberRelevanceScore": 0.0,
             "segmentId": 0
         }
     ],
-    "maximumResult": 1
+    "maximunResult": 1
 }
 ```
 
@@ -350,9 +381,9 @@ This API can take the postal address, place or POI name as free text and returns
 
 The `place` field defines the postal address, place or POI name.
 
-The `coordinate` field is used to select the continent (Europe, North America, Asia, etc.).
+The `coordinate` field biases the search towards a point: each item's `distance` (in meters) is measured from it, and nearby places rank high, which is why the Rue de Lyon in Paris comes second below. It is mandatory with `herehlp`.
 
-> ⚠️ **IMPORTANT:** this feature is only available with providers `herehlp`, `nominatim` and `addok`.
+> ⚠️ **IMPORTANT:** this feature is only available with providers `herehlp`, `nominatim`, `addok` and `photon`.
 
 **Request:**
 
@@ -362,8 +393,8 @@ POST ${HOST_URL}/bgis/service/geocoding/autocomplete/1.0
 {
     "geoserver": "herehlp",
     "coordinate": {
-        "longitude": 2.3412,
-        "latitude": 48.85692999999998
+        "lon": 2.3412,
+        "lat": 48.85693
     },
     "place": "lyon"
 }
@@ -390,10 +421,10 @@ POST ${HOST_URL}/bgis/service/geocoding/autocomplete/1.0
             "place": "Rue de Lyon, 75012 Paris, France",
             "addressLabel": "Rue de Lyon, 75012 Paris, France",
             "coordinate": {
-                "longitude": 2.37095,
-                "latitude": 48.84927
+                "longitude": 2.37008,
+                "latitude": 48.85099
             },
-            "distance": 2337
+            "distance": 2214
         },
         ...
     ]
@@ -412,13 +443,13 @@ See more details in the [API reference](index.html#subpage-rest_1_0_0-autocomple
 
 ## How to run the trip computation
 
-The API EV Smart Routing is used to perform the trip computation.
+The API EV Smart Routing v2 is used to perform the trip computation. Its URL is `/bgis/service/2.0/evsmartrouting`: the version comes before the name.
 The example trip is from Paris to Lyon. To make this trip computation with the API, some fields are required:
 
-- `vehicle`: this field can be set with the value of `vehicle key id` retrieved above in this tutorial in the chapter `How to get the vehicle key`.
-- `startLon` and `startLat`: these fields can be set with GPS-like coordinates. If you have a postal address, see the chapter `How to convert a postal address to coordinates` available above in this tutorial.
-- `stopLon` and `stopLat`: these fields can be set with GPS-like coordinates. If you have a postal address, see the chapter `How to convert a postal address to coordinates` available above in this tutorial.
-- `temperature`: this field can be set with an outside temperature in degrees Celsius. If you don't have this value, you can set it to `20`.
+- `vehicle`: an object whose `key` field can be set with the value of `vehicle key id` retrieved above in this tutorial in the chapter `How to get the vehicle key`.
+- `start`: an object with the `lon` and `lat` fields of the departure. These fields can be set with GPS-like coordinates. If you have a postal address, see the chapter `How to convert a postal address to coordinates` available above in this tutorial.
+- `stop`: an object with the `lon` and `lat` fields of the destination, set in the same way.
+- `csps`: the charging station providers to be used during the trip. The specification shows it as optional, but a trip that needs a charge fails without it: `400 NO_REACHABLE_STEP_POINT`, "All charging stations found cannot be reachable". The values are your account's providers, the keys of `chargingStationProviders` in `GET /bgis/service/acl/1.0/user/details`. This tutorial uses `ecoMovement`.
 
 Now we have all required values to start the computation.
 
@@ -426,14 +457,22 @@ Now we have all required values to start the computation.
 
 ```
 {"bemap":{"language":"request"}}
-POST ${HOST_URL}/bgis/service/evsmartrouting/1.0
+POST ${HOST_URL}/bgis/service/2.0/evsmartrouting
 {
-  "vehicle": "eb72114c-1f74-4854-b4ce-c2b3f06405d5",
-  "temperature": 20,
-  "startLon": 2.3414,
-  "startLat": 48.85717,
-  "stopLon": 4.82965,
-  "stopLat": 45.75917
+  "csps": [
+    "ecoMovement"
+  ],
+  "vehicle": {
+    "key": "eb72114c-1f74-4854-b4ce-c2b3f06405d5"
+  },
+  "start": {
+    "lon": 2.3414,
+    "lat": 48.85717
+  },
+  "stop": {
+    "lon": 4.82965,
+    "lat": 45.75917
+  }
 }
 ```
 
@@ -441,17 +480,18 @@ POST ${HOST_URL}/bgis/service/evsmartrouting/1.0
 
 **📌 Some optional fields:**
 
+The options and settings of the trip go inside the `condition` object.
+
 - `geoserver`: allows you to define the `geoserver`. The `geoserver` defines the server configuration to use for the calculation. For example `here` is a configuration running with the HERE map data.
-- `algo`: the algorithm used to perform the trip computation.
-- `csps`: the charging station providers to be used during the trip.
-- `initBatLvl`: the initial battery level in percent. This value will be used from the start coordinate to the destination or to the first charge (if required).
-- `minBatLvl`: the minimal battery level in percent. Defines the value below which the battery should be charged during the trip.
-- `minArrivalBatLvl`: the minimal arrival battery level in percent. Defines the value below which the battery should be charged at arrival of trip.
-- `extraPayload`: defines the payload.
-- `cur`: the currency as a 3-digit ISO code.
-- `departureTime`: the departure time as EPOCH in milliseconds.
-- `stepPointPluggingTime`: the time to take the cable, plug and unplug the connector.
-- `pl` and `epl`: if the `pl` field is set to `true`, the geometry of the route is returned as a `JSON` object composed by longitude and latitude fields. This is very verbose. To reduce this information, you can set the `pl` field to `false` and set the `epl` field to `true`. Then, the returned geometry will be a Google Encoded Polyline.
+- `vehicle.initBatLvl`: the initial battery level in percent, 100 by default. This value will be used from the start coordinate to the destination or to the first charge (if required).
+- `vehicle.payload`: the payload in kg (passengers, luggage and consumables), 75 by default.
+- `condition.temperature`: the outside temperature in degrees Celsius, 20 by default.
+- `condition.minBatLvl`: the minimal battery level in percent. Defines the value below which the battery should be charged during the trip.
+- `condition.minArrivalBatLvl`: the minimal arrival battery level in percent. Defines the value below which the battery should be charged at arrival of trip.
+- `condition.currency`: the currency of the charging costs, as a 3-letter ISO 4217 code such as `EUR`.
+- `condition.departureTime`: the departure time as EPOCH in milliseconds. The field also takes an ISO date, but measured on prod its offset is dropped (`08:00+02:00` departs at 08:00 UTC), so send EPOCH milliseconds.
+- `condition.chargePluggingTime`: the time in seconds to take the cable, plug and unplug the connector at each charging stop, 300 by default.
+- `condition.geometry` and `condition.encodedGeometry`: if `geometry` is set to `true`, the geometry of the route is returned as an array of objects composed by longitude and latitude fields. This is very verbose. To reduce this information, you can set `geometry` to `false` and `encodedGeometry` to `true`. Then, the returned geometry will be a Google Encoded Polyline. Measured on prod, a request that sets neither gets no geometry, although the specification says `geometry` is true by default.
 
 See more details in the [API reference](index.html#subpage-rest_2_0_0-evsmartrouting-service-v2_0_0.md).
 
@@ -461,190 +501,205 @@ See more details in the [API reference](index.html#subpage-rest_2_0_0-evsmartrou
 
 ```
 {"bemap":{"language":"request"}}
-POST ${HOST_URL}/bgis/service/evsmartrouting/1.0
+POST ${HOST_URL}/bgis/service/2.0/evsmartrouting
 {
   "geoserver": "here",
-  "algo": "v3",
   "csps": [
-    "benomad"
+    "ecoMovement"
   ],
-  "vehicle": "eb72114c-1f74-4854-b4ce-c2b3f06405d5",
-  "initBatLvl": 100,
-  "minBatLvl": 10,
-  "minArrivalBatLvl": 15,
-  "temperature": 20,
-  "extraPayload": 75,
-  "startLon": 2.3414,
-  "startLat": 48.85717,
-  "stopLon": 4.82965,
-  "stopLat": 45.75917,
-  "pl": false,
-  "epl": true,
-  "cur": "EUR",
-  "departureTime": 1675444140000,
-  "stepPointPluggingTime": 300
+  "vehicle": {
+    "key": "eb72114c-1f74-4854-b4ce-c2b3f06405d5",
+    "initBatLvl": 100,
+    "payload": 75
+  },
+  "start": {
+    "lon": 2.3414,
+    "lat": 48.85717
+  },
+  "stop": {
+    "lon": 4.82965,
+    "lat": 45.75917
+  },
+  "condition": {
+    "minBatLvl": 10,
+    "minArrivalBatLvl": 15,
+    "temperature": 20,
+    "currency": "EUR",
+    "departureTime": 1675444140000,
+    "chargePluggingTime": 300,
+    "geometry": false,
+    "encodedGeometry": true
+  }
 }
 ```
 
 
 
-**Response:**
+**Response (trimmed):**
 
 ```
 {"bemap":{"language":"javascript"}}
 {
-  "logTag": "c6766967-2360-4074-9633-6b82d6f06b9c",
-  "journey": {
-    "distance": 467750,
-    "duration": 18155,
-    "batteryLevel": 15,
-    "consumed": 104.48,
-    "chargingTime": 1661,
-    "departureTime": 1675444140000,
-    "arrivalTime": 1675463956000,
-    "vehicle": "e-tron 50 Quattro",
-    "savedCo2Emissions": 0
-  },
-  "inputInfo": {
-    "start": {
-      "address": "Pont Neuf, 75001 Paris, France",
-      "lon": 2.3413990156969615,
-      "lat": 48.85717
-    },
-    "stop": {
-      "address": "Place Antonin Gourju, 69002 Lyon, France",
-      "lon": 4.8296482489665165,
-      "lat": 45.75917
-    }
-  },
-  "boundingBox": {
-    "minLon": 2.3059,
-    "minLat": 45.75149,
-    "maxLon": 4.91991,
-    "maxLat": 48.85848
-  },
-  "route": {
-    "stepPoints": [
-      {
-        "id": "43032",
-        "brand": "IONITY",
-        "nameOfPool": "IONITY Aire de la Réserve",
-        "accessibility": "NA",
-        "availabilityStatus": "IN_SERVICE",
-        "longitude": 3.197267,
-        "latitude": 47.974493,
-        "distance": 131170,
-        "duration": 5490,
-        "arrivalTime": 1675453230000,
-        "departureTime": 1675453882000,
-        "consumed": 29.243336564137937,
-        "arrivalBatteryLevel": 58.812202022340934,
-        "departureBatteryLevel": 69.98247794117722,
-        "chargingPower": {
-          "currentType": "DC",
-          "power": 120,
-          "cnnTypeId": 38
+  "logTag": "a8ef59f1-f2b9-40e6-b793-2e95f7502dba",
+  "journeys": [
+    {
+      "summary": {
+        "vehicleInfo": {
+          "brand": "Audi",
+          "name": "e-tron",
+          "variant": "50 quattro",
+          "year": "2019-2022"
         },
-        "chargingTime": 352,
-        "countryCode": "FRA",
-        "country": "Frankreich",
-        "postalCode": "89116",
-        "city": "Précy-sur-Vrin",
-        "street": "A6",
-        "open24x7": false,
-        "comment": "Recharge jusqu'à 350KW - CCS",
-        "chargingStations": [
-          {
-            "id": "43032-Station1",
-            "availabilityStatus": "IN_SERVICE",
-            "bookable": false,
-            "chargingPoints": [
-              {
-                "id": "1",
-                "availabilityStatus": "IN_SERVICE",
-                "type": 38,
-                "connectorTypes": [
-                  {
-                    "id": 38,
-                    "key": "TYPE_2-CABLE_COMBO_CCS",
-                    "deprecated": false,
-                    "name": "Type 2 Combo",
-                    "norm": "Combo Type 2 based, DC",
-                    "maxPower": 350,
-                    "acSingle": false,
-                    "acThree": false,
-                    "dc": true,
-                    "cable": true
-                  }
-                ],
-                "currentType": "DC",
-                "power": 350
-              }
-            ]
-          }
-        ],
-        "theoreticalOptimalSpeed": 0
+        "distance": 465905,
+        "duration": 16582,
+        "batteryLevel": 15.0,
+        "consumed": 121.31,
+        "chargingTime": 2366,
+        "departureTime": 1675444140000,
+        "arrivalTime": 1675463688000,
+        "boundingBox": {
+          "minLon": 2.30592,
+          "minLat": 45.7515,
+          "maxLon": 4.91991,
+          "maxLat": 48.85848
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 14.1678,
+          "includeVat": 17.00136
+        }
       },
-      {
-        "id": "66352",
-        "brand": "Electra",
-        "nameOfPool": "greet hotel",
-        "accessibility": "NA",
-        "availabilityStatus": "IN_SERVICE",
-        "longitude": 4.851663,
-        "latitude": 47.009289,
-        "distance": 184784,
-        "duration": 6279,
-        "arrivalTime": 1675460161000,
-        "departureTime": 1675461770000,
-        "consumed": 42.587559338235835,
-        "arrivalBatteryLevel": 9.99999999999998,
-        "departureBatteryLevel": 60.98900904734302,
-        "chargingPower": {
-          "currentType": "DC",
-          "power": 120,
-          "cnnTypeId": 38
+      "events": [
+        {
+          "eventType": "START",
+          "coord": {
+            "lon": 2.3414011701366593,
+            "lat": 48.85716963819132
+          },
+          "address": "Pont Neuf, 75001 Paris, France",
+          "departureTime": 1675444140000
         },
-        "chargingTime": 1309,
-        "country": "Frankreich",
-        "postalCode": "21200",
-        "city": "Beaune",
-        "street": "Route de Verdun 58",
-        "chargingStations": [
-          {
-            "id": "66352-Station1",
-            "availabilityStatus": "IN_SERVICE",
-            "bookable": false,
-            "chargingPoints": [
+        {
+          "eventType": "ROUTE",
+          "distance": 218099,
+          "duration": 7951,
+          "consumed": 57.68289269052022,
+          "encodedGeometry": "ileiHwhhMGEKI[WYUu@g@_BmAII..."
+        },
+        {
+          "eventType": "CHARGE",
+          "coord": {
+            "lon": 3.99160365,
+            "lat": 47.50860064
+          },
+          "arrivalTime": 1675452091000,
+          "departureTime": 1675453604000,
+          "arrivalBatteryLevel": 10.840305252749204,
+          "departureBatteryLevel": 63.0249272574425,
+          "chargingTime": 1213,
+          "chargingPower": {
+            "currentType": "DC",
+            "power": 120.0,
+            "cnnTypeId": 38
+          },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 14.1678,
+            "includeVat": 17.00136,
+            "tariffChargePassHashId": "54f7f457a004285cbd9eeed89df76986"
+          },
+          "pool": {
+            "providerName": "ecoMovement",
+            "providerMode": "LOCAL",
+            "id": "29877aee-8bd4-11ed-8bd2-42010aa40fc0",
+            "brand": "SDEY",
+            "name": "SDEY - SAUVIGNY LE BOIS (89) - Sortie 22 Avallon sur A6",
+            "countryCode": "FRA",
+            "address": {
+              "countryCode": "FRA",
+              "country": "FRA",
+              "city": "Sauvigny-le-Bois",
+              "postalCode": "89200",
+              "street": "Échangeur d'Avallon"
+            },
+            "siteCategory": "ON_STREET",
+            "accessibility": "PUBLIC",
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "open24x7": true,
+            "numberOfChargingPoint": 4,
+            "stations": [
               {
-                "id": "1",
-                "availabilityStatus": "IN_SERVICE",
-                "type": 38,
-                "connectorTypes": [
+                "availabilityStatus": "IN_SERVICE_FREE",
+                "bookable": true,
+                "chargingPoints": [
                   {
-                    "id": 38,
-                    "key": "TYPE_2-CABLE_COMBO_CCS",
-                    "deprecated": false,
-                    "name": "Type 2 Combo",
-                    "norm": "Combo Type 2 based, DC",
-                    "maxPower": 350,
-                    "acSingle": false,
-                    "acThree": false,
-                    "dc": true,
-                    "cable": true
+                    "id": "d9bf99f9-bcda-5f22-a1a2-bd0539215005",
+                    "availabilityStatus": "IN_SERVICE_FREE",
+                    "currentType": "DC",
+                    "power": 160.0,
+                    "type": 38,
+                    "connectorTypes": [
+                      {
+                        "id": 38,
+                        "key": "TYPE_2-CABLE_COMBO_CCS",
+                        "deprecated": false,
+                        "name": "Type 2 Combo",
+                        "norm": "Combo Type 2 based, DC",
+                        "maxPower": 350.0,
+                        "dc": true,
+                        "cable": true
+                      }
+                    ]
                   }
-                ],
-                "currentType": "DC",
-                "power": 300
+                ]
               }
             ]
           }
-        ],
-        "theoreticalOptimalSpeed": 0
-      }
-    ],
-    "encodedPolyline": "ileiHwhhMGEg@a@YUu@g@_BmET..."
-  }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 132753,
+          "duration": 4290,
+          "consumed": 34.31055774651636,
+          "encodedGeometry": "q_~`HuqjWa@NETBTLJj@YFK?[..."
+        },
+        {
+          "eventType": "CHARGE",
+          "coord": {
+            "lon": 4.84293398,
+            "lat": 46.69314818
+          },
+          "arrivalTime": 1675457894000,
+          "departureTime": 1675459347000,
+          "arrivalBatteryLevel": 9.999999999999986,
+          "departureBatteryLevel": 60.304797226976696,
+          "chargingTime": 1153,
+          . . .
+          "pool": {
+            "providerName": "ecoMovement",
+            "brand": "TotalEnergies",
+            "name": "RELAIS DE LA FERTE",
+            . . .
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 115053,
+          "duration": 4341,
+          "consumed": 29.31220380585392,
+          "encodedGeometry": "iw~{Gi|p\\HCLWH]vCMzBS`BA..."
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.829650718111577,
+            "lat": 45.7591712233967
+          },
+          "address": "Place Antonin Gourju, 69002 Lyon, France"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -654,10 +709,16 @@ See more details in the [API reference](index.html#subpage-rest_2_0_0-evsmartrou
 
 ### ✅ Use the results
 
-The API returns a `JSON` object with two main fields: `journey` and `route`. The `journey` contains the summary information of the trip. The `route` lists the charge steps in the `stepPoints` field and contains the route geometry in the `encodedPolyline` field.
+The API returns a `JSON` object with a `journeys` array. Each journey has two main fields: `summary` and `events`. The `summary` contains the summary information of the trip. The `events` describe the trip in order: a `START`, a `ROUTE` for each leg of driving, a `CHARGE` for each charging stop, and a `STOP`.
 
-The `journey` object can be used to display the summary of trip in your application: the distance (`distance`), duration (`duration`), time spent in charge (`chargingTime`), arrival date and time (`arrivalTime`) and consumption (`consumed`). See the [API reference](index.html#subpage-rest_2_0_0-evsmartrouting-service-v2_0_0.md) for more details about these fields.
+The `summary` object can be used to display the summary of trip in your application: the distance (`distance`, in meters), duration (`duration`, in seconds), time spent in charge (`chargingTime`, in seconds), arrival date and time (`arrivalTime`, EPOCH in milliseconds), consumption (`consumed`, in kWh), battery level at arrival (`batteryLevel`, in percent) and charging cost (`chargingCost`). See the [API reference](index.html#subpage-rest_2_0_0-evsmartrouting-service-v2_0_0.md) for more details about these fields.
 
-The trip geometry can be used to display the trip on a map in your application. Two fields are available for the geometry. One is the `polyline`, which contains an array of coordinate objects with `lon` (longitude) and `lat` (latitude) fields. The second is `encodedPolyline`, which represents the geometry as a Google Encoded Polyline.
+Each `CHARGE` event describes a charging stop: the charging station pool (`pool`), the battery levels at arrival and departure (`arrivalBatteryLevel`, `departureBatteryLevel`), the charging time (`chargingTime`), the charging power (`chargingPower`) and the cost (`chargingCost`).
+
+The trip geometry can be used to display the trip on a map in your application. It is given leg by leg, in the `ROUTE` events. Two fields are available for the geometry. One is `geometry`, returned when `condition.geometry` is `true`, which contains an array of coordinate objects with `lon` (longitude) and `lat` (latitude) fields. The second is `encodedGeometry`, returned when `condition.encodedGeometry` is `true`, which represents the geometry as a Google Encoded Polyline.
 
 You can use the [interactive example](index.html#subpage-rest_2_0_0-examples-evsmartrouting-service-v2_0_0.md).
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

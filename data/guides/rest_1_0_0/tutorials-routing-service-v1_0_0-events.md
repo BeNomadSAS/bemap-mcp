@@ -262,6 +262,8 @@ Appends a `duration` field to each segment of the route. Useful for detailed tim
           "lon": 2.3217,
           "lat": 48.86551
         },
+        ...
+      ],
       "events": [
         {
           "type": "SEGMENT",
@@ -328,7 +330,7 @@ Include start and end altitude of each segment to assess elevation changes.
 
 **💡 What it does** 
 
-Returns `startElevation` and `endElevation` for each segment, enabling slope and terrain analysis.
+Returns `fromAltitude` and `toAltitude` (in meters) for each segment, in an entry named `altitude`, enabling slope and terrain analysis.
 📨 **Response**
 ```
 {
@@ -398,7 +400,9 @@ Returns `startElevation` and `endElevation` for each segment, enabling slope and
           "lon": 2.3217,
           "lat": 48.86551
         },
-  "events": [
+        ...
+      ],
+      "events": [
         {
           "type": "SEGMENT",
           "distanceUnit": "meters",
@@ -573,7 +577,7 @@ This is useful for minimizing response size when rendering geometry on a map cli
 
 **✅ Use case**  
 
-Estimate energy consumption per segment (requires EV profile).
+Find where the battery runs out along the route (requires an energy vehicle profile).
 
 **📦 Example**
 ```
@@ -585,14 +589,14 @@ Estimate energy consumption per segment (requires EV profile).
   "routingVehicleProfile": {
     "transportMode": "CAR",
     "routingEnergyVehicleFeature": {
-      "initBatLevel": 60,
+      "energyLoad": 42,
       "batCapacity": 70,
       "scx": 0.6,
-      "crr": 0.07,
+      "crr": 0.01,
       "dryWeight": 2000,
-      "engineEfficiency": 0.6,
-      "maxAccel": 130,
-      "maxDecel": -100
+      "engineEfficiency": 0.9,
+      "maxAccel": 1.5,
+      "maxDecel": -1.5
     }
   },
   "options": [ "EVENT", "EVT_ENERGY_CONSUMPTION" ]
@@ -601,68 +605,16 @@ Estimate energy consumption per segment (requires EV profile).
 
 **💡 What it does**  
 
-Provides energy cost and end-of-autonomy indicators. Useful for EV range prediction.
-📨 **Response**
+Adds the autonomy-limit event. When the energy loaded at departure (`energyLoad`, in kWh; without it the battery is taken as full) runs out before the destination, the marker where it happens carries three entries: `energyTooLow` (`RECHARGE`), `energyEndOfAutonomyAt` (distance from start, in meters) and `energyEndOfAutonomyCoord` (its location). When the energy is enough, no entry is added.
+The route's total `energyConsumption` (in kWh) comes with it. The `ENERGY_CONSUMPTION` option alone returns that total without events, and `EVT_ENERGY_CONSUMPTION_SAMPLE` gives the per-second detail. Useful for EV range prediction.
+📨 **Response** (trimmed to the route's totals, the first marker and the marker of the autonomy limit: 42 kWh loaded, 58.9 kWh needed)
 ```
 {
-  "usedDestinations": [
-    {
-      "inputOrder": 0,
-      "used": true,
-      "usedOrder": 0,
-      "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
-      },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
-      "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
-    },
-    {
-      "inputOrder": 1,
-      "used": true,
-      "usedOrder": 1,
-      "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
-      },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
-      "polylineIndex": -1,
-      "duration": 12422,
-      "length": 308422
-    }
-  ],
   "routingRoutes": [
     {
-      "length": 308422,
-      "duration": 12422,
-      "trafficDelay": 0,
-      "averageSpeed": 89.383286,
-      "maximumSpeed": 0,
-      "startUTurnThreshold": 3000,
-      "energyConsumption": 386.61808375813365,
-      "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
-      },
-      "startStopInfo": {
-        "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
-        },
-        "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
-        },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
-        "interDests": null
-      },
+      "length": 308429,
+      "duration": 12255,
+      "energyConsumption": 58.86175368008488,
       "events": [
         {
           "type": "SEGMENT",
@@ -682,17 +634,38 @@ Provides energy cost and end-of-autonomy indicators. Useful for EV range predict
               ]
             },
             {
-              "distance": 22,
-              "time": 4,
-              "percent": 0.007133083891551187,
+              "distance": 215136,
+              "time": 8115,
+              "percent": 69.75219580519342,
               "entries": [
                 {
                   "type": "String",
                   "name": "countryCode",
                   "jsonObject": "{\"type\":\"String\",\"value\":\"FRA\"}"
+                },
+                {
+                  "type": "String",
+                  "name": "energyTooLow",
+                  "jsonObject": "{\"type\":\"String\",\"value\":\"RECHARGE\"}"
+                },
+                {
+                  "type": "long",
+                  "name": "energyEndOfAutonomyAt",
+                  "jsonObject": "{\"type\":\"long\",\"value\":215533}"
+                },
+                {
+                  "type": "Coordinate",
+                  "name": "energyEndOfAutonomyCoord",
+                  "jsonObject": "{\"type\":\"Coordinate\",\"longitude\":3.6124472457038133,\"latitude\":50.388144517774236,\"altitude\":31.507477330161798}"
                 }
               ]
-            },
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evt_energy_consumption_sample"></a>
@@ -711,14 +684,14 @@ Retrieve per-second energy consumption data along the route, useful for electric
   "routingVehicleProfile": {
     "transportMode": "CAR",
     "routingEnergyVehicleFeature": {
-      "initBatLevel": 60,
+      "energyLoad": 42,
       "batCapacity": 70,
       "scx": 0.6,
-      "crr": 0.07,
+      "crr": 0.01,
       "dryWeight": 2000,
-      "engineEfficiency": 0.6,
-      "maxAccel": 130,
-      "maxDecel": -100
+      "engineEfficiency": 0.9,
+      "maxAccel": 1.5,
+      "maxDecel": -1.5
     }
   },
   "options": [ "EVENT", "EVT_ENERGY_CONSUMPTION_SAMPLE" ]
@@ -739,67 +712,16 @@ Each sample includes:
 - altitude (meters)
 
 ⚠️ Requires routingEnergyVehicleFeature to be set in the vehicle profile.
-📨 **Response**
+
+⚠️ The answer is large: on this 3 h 24 min trip, 12 256 samples make a 4.9 MB response. The autonomy-limit entries of `EVT_ENERGY_CONSUMPTION` come with it.
+📨 **Response** (trimmed to the route's totals and the first marker)
 ```
 {
-  "usedDestinations": [
-    {
-      "inputOrder": 0,
-      "used": true,
-      "usedOrder": 0,
-      "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
-      },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
-      "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
-    },
-    {
-      "inputOrder": 1,
-      "used": true,
-      "usedOrder": 1,
-      "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
-      },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
-      "polylineIndex": -1,
-      "duration": 12422,
-      "length": 308422
-    }
-  ],
   "routingRoutes": [
     {
-      "length": 308422,
-      "duration": 12422,
-      "trafficDelay": 0,
-      "averageSpeed": 89.383286,
-      "maximumSpeed": 0,
-      "startUTurnThreshold": 3000,
-      "energyConsumption": 386.61808375813365,
-      "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
-      },
-      "startStopInfo": {
-        "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
-        },
-        "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
-        },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
-        "interDests": null
-      },
+      "length": 308429,
+      "duration": 12255,
+      "energyConsumption": 58.86175368008488,
       "events": [
         {
           "type": "SEGMENT",
@@ -819,13 +741,21 @@ Each sample includes:
                 {
                   "type": "EnergySample",
                   "name": "energySample",
-                  "jsonObject": "{\"type\":\"EnergySample\",\"distFromStart\":0.0,\"speed\":5.6277354258978125,\"acceleration\":0.0,\"angle\":25.412364342910674,\"slope\":-0.03571428571428571,\"cumulativeConsumption\":0.0,\"pos\":{\"altitude\":34.79140029426688,\"longitude\":2.321574222824279,\"latitude\":48.86533125}}"
+                  "jsonObject": "{\"type\":\"EnergySample\",\"distFromStart\":0.0,\"speed\":4.959671332660909,\"acceleration\":0.0,\"angle\":26.26036645969532,\"slope\":-0.06515868705508647,\"cumulativeConsumption\":0.0,\"pos\":{\"altitude\":31.323165672260934,\"longitude\":2.320602551430303,\"latitude\":48.86560827817406}}"
                 },
                 {
                   "type": "EnergySample",
                   "name": "energySample",
-                  "jsonObject": "{\"type\":\"EnergySample\",\"distFromStart\":5.6277354258978125,\"speed\":5.6277354258978125,\"acceleration\":0.0,\"angle\":25.412364342910674,\"slope\":-0.03571428571428571,\"cumulativeConsumption\":1.682558786543018,\"pos\":{\"altitude\":34.59040974334196,\"longitude\":2.321603015873016,\"latitude\":48.86537571428572}}"
-                },
+                  "jsonObject": "{\"type\":\"EnergySample\",\"distFromStart\":3.2298356663304544,\"speed\":2.0957323255010385,\"acceleration\":-1.1341033408294159,\"angle\":26.26036645969532,\"slope\":-0.6048787911094248,\"cumulativeConsumption\":-7.324892953739883,\"pos\":{\"altitude\":32.04634090666793,\"longitude\":2.3206195365909332,\"latitude\":48.865636048787906}}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 
@@ -850,8 +780,10 @@ Ensure all event values are returned as structured JSON objects instead of plain
 ```
 **💡 What it does**
 
-By default, some event fields may be returned as strings.
-This option forces all entries to use structured JSON format, making them easier to parse and consume programmatically.
+By default, the value of each entry is a JSON string in its `jsonObject` field, to be parsed a second time.
+This option places the value's fields on the entry itself, beside `type` and `name` (`value` for a simple value, `fromAltitude`, `toAltitude`… for an `Elevation2` entry), making them easier to parse and consume programmatically.
+
+ℹ️ The specification declares `jsonObject` without a type and describes none of these value fields: the entry's `type` (`String`, `double`, `Elevation2`, `SegmentInfo`, `TollCost`, `TaxCost`, `TrafficElement`, `EnergySample`, `Waypoint`…) is what tells you its shape.
 📨 **Response**
 ```
 {
@@ -2044,9 +1976,11 @@ Get technical information about each segment, including its unique ID and travel
 ```
 **💡 What it does**
 
-Adds metadata to each event segment:
+Adds a `segmentInfo` entry to each event segment:
 
-`segmentId`: unique identifier for the segment (if available in map data)
+`id`: identifier of the segment, as a string (if available in map data)
+
+`length` (in meters) and `duration` (in seconds) of the segment
 
 `reverseDirection`: `true` if the segment is traversed in the opposite direction to how it’s stored in the map
 
@@ -2167,87 +2101,53 @@ Estimate the tax-related cost per road segment, useful for logistics or transpor
     { "coordinateSat": { "lon": 4.35655, "lat": 50.8447  } }
   ],
   "routingVehicleProfile": {
-    "transportMode": "CAR",
+    "transportMode": "TRUCK",
     "routingVehicleFeature": {
-      "vehicleType": "CAR",
-      "axleNumber": 4
+      "tollTransportCategory": "TRUCK",
+      "nbVehAxles": 4,
+      "weight": 400,
+      "emissionClass": "EURO6"
     }
   },
   "options": [ "EVENT", "EVT_TAX_COST" ]
 }
 ```
+`weight` is in tenths of a metric ton: `400` is a 40 t truck.
+
 **💡 What it does**
 
-Adds a `TaxCost` entry to each event segment, containing fields like:
+Adds a `taxSection` entry (type `TaxCost`) to the segments of each tax section, with:
 
-- `RoutingTaxCst`: total tax value
+- `taxCategory`, `countryCode`, `length` (in meters) and `meanOfPayments` of the section
 
-- `RoutingTaxSect`: tax per segment (if applicable)
+- `taxCharges`: the price of the section (`currency`, `category`, `price`)
+
+Without `EVT_DUPLICATE_FILTER`, the entry is repeated on every segment of its section; with it, the entry appears once, where the section starts.
+
+The route's total is in `routingRoutes[].routingTaxCost.sumFees` (`currency`, `feeMin`, `feeMax`). Without `EVENT`, `EVT_TAX_COST` returns the sections in `routingRoutes[].routingTaxCost.taxSections` instead of event entries.
+
+On this route, the truck crosses four Belgian tax sections, 16.93 EUR in all.
 
 **⚠️ Requires:**
 
 - A complete `routingVehicleProfile` including `routingVehicleFeature`
 
 - Specific map data (contact support to enable)
-📨 **Response**
+📨 **Response** (trimmed to the route's totals, the first marker and the first tax section)
 ```
 {
-  "usedDestinations": [
-    {
-      "inputOrder": 0,
-      "used": true,
-      "usedOrder": 0,
-      "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
-      },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
-      "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
-    },
-    {
-      "inputOrder": 1,
-      "used": true,
-      "usedOrder": 1,
-      "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
-      },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
-      "polylineIndex": -1,
-      "duration": 12422,
-      "length": 308422
-    }
-  ],
   "routingRoutes": [
     {
-      "length": 308422,
-      "duration": 12422,
-      "trafficDelay": 0,
-      "averageSpeed": 89.383286,
-      "maximumSpeed": 0,
-      "startUTurnThreshold": 3000,
-      "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
-      },
-      "startStopInfo": {
-        "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
-        },
-        "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
-        },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
-        "interDests": null
+      "length": 308631,
+      "duration": 12334,
+      "routingTaxCost": {
+        "sumFees": [
+          {
+            "currency": "EUR",
+            "feeMin": 16.93,
+            "feeMax": 16.93
+          }
+        ]
       },
       "events": [
         {
@@ -2268,17 +2168,28 @@ Adds a `TaxCost` entry to each event segment, containing fields like:
               ]
             },
             {
-              "distance": 22,
-              "time": 4,
-              "percent": 0.007133083891551187,
+              "distance": 222906,
+              "time": 8399,
+              "percent": 72.22411228943301,
               "entries": [
                 {
                   "type": "String",
                   "name": "countryCode",
-                  "jsonObject": "{\"type\":\"String\",\"value\":\"FRA\"}"
+                  "jsonObject": "{\"type\":\"String\",\"value\":\"BEL\"}"
+                },
+                {
+                  "type": "TaxCost",
+                  "name": "taxSection",
+                  "jsonObject": "{\"type\":\"TaxCost\",\"taxSection\":{\"taxCategory\":\"TAX_CATEGORY_3\",\"meanOfPayments\":[\"PAYMENT_CREDIT_CARD\"],\"countryCode\":\"BEL\",\"length\":64751,\"firstFrmIdx\":615,\"lastFrmIdx\":771,\"taxCharges\":[{\"currency\":\"EUR\",\"category\":\"TRUCK (WT_VEH_MIN,32001)(EM_TYPE,EURO VI)\",\"price\":12.561694000000001}]}}"
                 }
               ]
-            },
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ---
@@ -2297,22 +2208,32 @@ Estimate toll costs per road segment, especially for trucks or paid highways.
     { "coordinateSat": { "lon": 4.35655, "lat": 50.8447  } }
   ],
   "routingVehicleProfile": {
-    "transportMode": "CAR",
+    "transportMode": "TRUCK",
     "routingVehicleFeature": {
-      "vehicleType": "TRUCK",
+      "tollTransportCategory": "TRUCK",
+      "nbVehAxles": 4,
+      "weight": 400,
       "emissionClass": "EURO6"
     }
   },
   "options": [ "EVENT", "EVT_TOLL_COST" ]
 }
 ```
+`weight` is in tenths of a metric ton: `400` is a 40 t truck.
 
 **💡 What it does**
 
-Adds a `TollCost` entry to each event segment, with fields like:
+Adds a `toll` entry (type `TollCost`) at each toll gate, with:
 
-- `RoutingTollCst`: total toll amount
-- `Tol`: toll details per section
+- `tollType`: for example `TOLL_OBTAIN_TICKET` where the ticket is taken, `TOLL_PAY_PER_TICKET` where it is paid
+- `meanOfPayments`, and `tollCharges` (`currency`, `category`, `price`) at the gate where you pay
+- `coordinateWgs84`: the gate's position (`longitude`, `latitude`)
+
+Without `EVT_DUPLICATE_FILTER`, the entry is repeated on the segments that follow the gate; with it, the entry appears once per gate.
+
+The route's total is in `routingRoutes[].routingTollCost.sumFees` (`currency`, `feeMin`, `feeMax`). Without `EVENT`, `EVT_TOLL_COST` returns the gates in `routingRoutes[].routingTollCost.tolls` instead of event entries; there the position is `coordinate` (`lon`, `lat`), the only form the specification declares.
+
+On this route, the truck takes a ticket at one gate and pays 50.2 EUR at the next.
 
 **⚠️ Requires:**
 
@@ -2320,74 +2241,21 @@ Adds a `TollCost` entry to each event segment, with fields like:
 - Specific toll map data (contact support to activate)
 
 Useful for trip cost estimation, invoicing, or route optimization avoiding excessive tolls.
-📨 **Response**
+📨 **Response** (trimmed to the route's totals, the first marker and the two toll gates)
 ```
 {
-  "usedDestinations": [
-    {
-      "inputOrder": 0,
-      "used": true,
-      "usedOrder": 0,
-      "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
-      },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
-      "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
-    },
-    {
-      "inputOrder": 1,
-      "used": true,
-      "usedOrder": 1,
-      "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
-      },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
-      "polylineIndex": -1,
-      "duration": 12433,
-      "length": 308600
-    }
-  ],
   "routingRoutes": [
     {
-      "length": 308600,
-      "duration": 12433,
-      "trafficDelay": 0,
-      "averageSpeed": 89.35574,
-      "maximumSpeed": 0,
-      "startUTurnThreshold": 3000,
+      "length": 308631,
+      "duration": 12334,
       "routingTollCost": {
         "sumFees": [
           {
             "currency": "EUR",
-            "feeMin": 9.6,
-            "feeMax": 16
+            "feeMin": 50.2,
+            "feeMax": 50.2
           }
         ]
-      },
-      "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
-      },
-      "startStopInfo": {
-        "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
-        },
-        "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
-        },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
-        "interDests": null
       },
       "events": [
         {
@@ -2408,10 +2276,15 @@ Useful for trip cost estimation, invoicing, or route optimization avoiding exces
               ]
             },
             {
-              "distance": 22,
-              "time": 4,
-              "percent": 0.00712896953985742,
+              "distance": 23930,
+              "time": 1953,
+              "percent": 7.753595717863727,
               "entries": [
+                {
+                  "type": "TollCost",
+                  "name": "toll",
+                  "jsonObject": "{\"type\":\"TollCost\",\"toll\":{\"tollType\":\"TOLL_OBTAIN_TICKET\",\"meanOfPayments\":[],\"polylineIndex\":267,\"coordinateWgs84\":{\"longitude\":2.62796,\"latitude\":49.21563}}}"
+                },
                 {
                   "type": "String",
                   "name": "countryCode",
@@ -2419,6 +2292,29 @@ Useful for trip cost estimation, invoicing, or route optimization avoiding exces
                 }
               ]
             },
+            {
+              "distance": 52666,
+              "time": 2916,
+              "percent": 17.064390809737194,
+              "entries": [
+                {
+                  "type": "TollCost",
+                  "name": "toll",
+                  "jsonObject": "{\"type\":\"TollCost\",\"toll\":{\"tollType\":\"TOLL_PAY_PER_TICKET\",\"meanOfPayments\":[\"PAYMENT_CASH\",\"PAYMENT_BANK_CARD\",\"PAYMENT_CREDIT_CARD\"],\"polylineIndex\":490,\"tollCharges\":[{\"currency\":\"EUR\",\"category\":\"ALL (AX_VEH_MIN,3)(WT_VEH_MIN,3501)\",\"price\":50.2}],\"coordinateWgs84\":{\"longitude\":3.2721,\"latitude\":50.22922}}}"
+                },
+                {
+                  "type": "String",
+                  "name": "countryCode",
+                  "jsonObject": "{\"type\":\"String\",\"value\":\"FRA\"}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evt_traffic"></a>
@@ -2441,15 +2337,17 @@ Get real-time traffic conditions per segment for display, alerting, or post-anal
 }
 ```
 **💡 What it does**
-Adds a `TrafficElement` to each event segment, including:
+Adds a `trafficElement` entry (type `TrafficElement`) to the segments the traffic supplier reports on, including:
 
-`jamFactor` (in %): traffic congestion level
+`jamFactor` (in %): traffic congestion level, with `currentJamFactor` and `statisticJamFactor` beside it
 
 `reason`: textual reason for the traffic (e.g., "accident", "congestion")
 
-`currentAvrSpeed`: average speed currently observed (in km/h)
+`elementId`, `polyline` and `segmentInfos`: the traffic element and the road segments it covers, with its ALERT-C location (`alertcTableId`, `alertcLocationId`, `alertcCode`…)
 
-`freeFlowAvrSpeed`: normal average speed without congestion (in km/h)
+`info.copyright`: the traffic supplier
+
+`currentAvrSpeed` and `freeFlowAvrSpeed` (in km/h) depend on the supplier: with the HERE traffic that production uses, they are not sent.
 
 **⚠️ Note:**
 
@@ -2769,7 +2667,7 @@ Get reproducible waypoints along the computed route for syncing across devices o
 
 Adds a list of waypoints in the event structure. Each waypoint includes:
 - A coordinate (`lat`, `lon`) in WGS84
-- Optional metadata (e.g., order, original destination match, segment ID)
+- Optional metadata (e.g., order, original destination match)
 
 These waypoints represent key points along the route that can be:
 - Used to redraw the route on another map system
@@ -2874,3 +2772,7 @@ Ideal for applications that need offline navigation continuity or route sharing.
               ]
             },
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

@@ -135,8 +135,29 @@ function sourceLine() {
  * @param {string} body - Rendered Markdown, already truncated.
  * @returns {object} MCP tool result.
  */
-function sourced(body) {
-  return text(body + sourceLine());
+function sourced(body, platform = null) {
+  return text(body + (platform ? platformLine(platform) : sourceLine()));
+}
+
+/**
+ * The provenance line of another platform's operation — BeNomad Tiles' —
+ * which the build read from that platform's own specification
+ * (`manifest.platforms`), not from BeMap's, and which `bemap_try_request`
+ * never sends.
+ *
+ * @param {string} family - The operation's `x-benomad-platform`, e.g. `maptiles`.
+ * @returns {string}
+ */
+function platformLine(family) {
+  const { manifest } = loadSnapshot();
+  const platform = (manifest.platforms ?? []).find((entry) => entry.family === family);
+  if (!platform) return sourceLine();
+  const parts = [
+    `${platform.title} ${platform.version ?? ''}`.trim(),
+    platform.commit ? `source ${platform.ref}@${String(platform.commit).slice(0, 8)}` : null,
+    `built ${String(manifest.generatedAt).slice(0, 10)}`,
+  ].filter(Boolean);
+  return `\n\n---\n_Source: ${parts.join(' · ')} — its own specification, a snapshot: the application calls these hosts itself; \`bemap_try_request\` does not._`;
 }
 
 /**
@@ -214,8 +235,9 @@ const server = new McpServer(
       '`bemap_get_schema` drills into a type and explains every enum value. Field names, types, enum values ' +
       'and requiredness come from the specification: copy them from these tools and never invent one they do ' +
       'not show — BeMap answers `200` to an unknown field name and silently ignores it. Guides ' +
-      "(`bemap_read_guide`) are BeMap's hand-written documentation, served as text; where a guide and the " +
-      'specification disagree, the specification is the contract. `bemap_try_request` checks a body against ' +
+      "(`bemap_read_guide`) are BeMap's hand-written documentation, served as text — its tutorials in BeNomad's " +
+      'corrected copies, each marked at its end; for field names, types and requiredness the specification is ' +
+      'the contract. `bemap_try_request` checks a body against ' +
       'the specification and then sends it, which is the only proof of what the service does. ' +
       "Maps: BeNomad's map by default — BeNomad Tiles or BeMap's WMS; another provider's map (Google, " +
       'OpenStreetMap, Mapbox…) only when the user chooses it, never as a default or a placeholder. Call ' +
@@ -322,6 +344,10 @@ server.registerTool(
             ? `- Account: **set** in this server, and not used in this session. ${liveRefused()}`
             : '- Account: **set** in this server — live calls are possible.',
         `- Describes: **${spec.title ?? 'BeMap'} ${spec.version ?? 'unknown'}** — ${spec.operations} operations, ${spec.schemas} schemas`,
+        /* Another platform the build merged from its own specification (BeNomad Tiles). */
+        ...(manifest.platforms ?? []).map(
+          (platform) => `- Also: **${platform.title} ${platform.version ?? ''}** — ${platform.operations} operations, from its own specification${platform.commit ? ` (\`${platform.ref}\` = \`${String(platform.commit).slice(0, 10)}\`)` : ''}`
+        ),
         /SNAPSHOT/i.test(spec.version ?? '')
           ? '- ⚠️ **A pre-release specification.** `checkLive` names the release an environment runs; on one older than this, a field added since is ignored in silence — send an invalid value in it: a `400` shows it is read.'
           : null,
@@ -343,7 +369,9 @@ server.registerTool(
         ...shippedSkills().map(
           (skill) =>
             `- Companion skill shipped here: **${skill.name} v${skill.version}**. If the copy you were taught announces a ` +
-            'different version, it is out of date — prefer these tools over it and say so.'
+            'different version, it is out of date — prefer these tools over it and say so. Between previews of one ' +
+            'release the version does not change: after an upgrade, `npx --no-install bemap-install-skill --check` ' +
+            'says whether the installed copy is current.'
         ),
       ];
 
@@ -578,7 +606,7 @@ server.registerTool(
         renderOperation(match, { detail }) +
         (samePath.length ? `\n\nThe same path also answers: ${samePath.map((op) => `\`${op.key}\``).join(', ')}.` : '') +
         (variants.length ? `\n\nVariants of this path: ${variants.map((op) => `\`${op.key}\` (${clip(op.summary, 40)})`).join(', ')}.` : '');
-      return sourced(truncate(body, MAX_RESPONSE_CHARS, 'Use `detail: "summary"`, or `bemap_get_schema` for one nested type.'));
+      return sourced(truncate(body, MAX_RESPONSE_CHARS, 'Use `detail: "summary"`, or `bemap_get_schema` for one nested type.'), match.platform);
     })
 );
 
@@ -627,8 +655,9 @@ server.registerTool(
   {
     title: 'Read a BeMap guide',
     description:
-      "BeMap's own documentation pages — tutorials, worked examples, the JavaScript and Flutter SDKs, WMS, " +
-      'BeNomad Tiles — served verbatim. Accepts a guide id, a title or words; with no guide, lists what exists. ' +
+      "BeMap's documentation pages — tutorials, worked examples, the JavaScript and Flutter SDKs, WMS, " +
+      'BeNomad Tiles — served as text; a tutorial BeNomad corrected or added says so at its end. ' +
+      'Accepts a guide id, a title or words; with no guide, lists what exists. ' +
       'Use it for how and why; use `bemap_get_operation` for the exact contract, which wins where they differ.',
     inputSchema: strict({
       guide: z.string().max(500).optional().describe('Guide id ("rest_1_0_0/routing-service.md"), title or words. Omit to list guides.'),
@@ -670,6 +699,8 @@ server.registerTool(
       if (part > parts) return failure(`\`${match.id}\` has ${parts} part(s).`);
       const slice = pieces[part - 1];
       const named = schemasNamedIn(raw);
+      const tutorials = snapshot.manifest.guides?.tutorials ?? {};
+      const ours = new Set([...(tutorials.corrected ?? []), ...(tutorials.added ?? [])]);
       const out = [
         `# ${match.title}`,
         '',
@@ -684,7 +715,12 @@ server.registerTool(
         named.length ? `Schemas this guide refers to: ${named.map((name) => `\`${name}\``).join(', ')} — \`bemap_get_schema\` for the contract.` : null,
         /\]\(guide:|href="guide:/.test(slice) ? 'A link written `guide:<id>` is another guide: read it with `bemap_read_guide`.' : null,
         /!\[[^\]]*\]\((?!https?:)/.test(slice) ? 'The images this part shows are not in the snapshot: only their captions are.' : null,
-        "_A hand-written guide, served as BeMap wrote it. For field names, types and requiredness the specification is the contract (`bemap_get_operation`, `bemap_get_schema`); where they disagree, trust the specification and confirm with `bemap_try_request`._",
+        /* The tutorials BeNomad corrected or added, as the build recorded them
+           (scripts/tutorials.js): their text is BeNomad's, and where it says the
+           specification's own text is wrong, it gives the measurement. */
+        ours.has(match.id)
+          ? "_BeNomad's copy of this tutorial, as its last line says. For field names, types and requiredness the specification is the contract (`bemap_get_operation`, `bemap_get_schema`); where this page says the specification's text is wrong, it gives the measurement — confirm with `bemap_try_request`._"
+          : "_A hand-written guide, served as BeMap wrote it. For field names, types and requiredness the specification is the contract (`bemap_get_operation`, `bemap_get_schema`); where they disagree, trust the specification and confirm with `bemap_try_request`._",
       ].filter((line) => line !== null);
       return sourced(truncate(out.join('\n'), MAX_RESPONSE_CHARS));
     })
@@ -1099,7 +1135,7 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
       '',
       `In JavaScript, BeMap's SDK does all three: \`new bemap.Context({ host: '${bare(bemap ?? '')}', tilesHost: '${bare(tiles)}', secure: true, login, password })\` — host names without a scheme; without \`secure: true\` it calls them over plain HTTP.`,
       '',
-      "_Where a guide's style handling differs from these steps, the steps are how BeNomad Tiles answers today: it has no specification to settle it, so check the style the application builds against a live login._",
+      "_Where a guide's style handling differs from these steps, BeNomad Tiles' own specification settles it: `bemap_get_operation` gives each of its operations — `POST /api/login`, `GET /api/maps`, the tiles, styles and glyphs — with its hosts and its sign-in._",
       ''
     );
   }
@@ -1135,6 +1171,15 @@ async function renderMapSetup({ env, bemap, tiles, sources, live, answered, from
     });
     out.push('', 'Read one with `bemap_read_guide`.');
   }
+
+  /* BeMap's own pages say it (jsapi_2_0_0/security-proxy.md, install.md), and
+     a model building a web page would otherwise put the key in its source. */
+  out.push(
+    '',
+    '## The account in a browser',
+    '',
+    'In a page that runs in a browser, the account and key — `login` / `password`, a Basic header, `appid` / `appcode` — can be read by anyone with the browser\'s developer tools: fine for a local test, never for a published page. BeMap\'s guides describe how to keep them on your own server (`bemap_search` "proxy").'
+  );
 
   out.push(
     '',
@@ -1437,6 +1482,16 @@ server.registerTool(
         }
       } else {
         return failure('Provide `operation` or `path`.');
+      }
+      /* Another platform's operation, BeNomad Tiles': on its own hosts, with
+         its own sign-in. Sent to BeMap's service root with the account, it
+         would reach the wrong service. */
+      if (op?.platform) {
+        return failure(
+          `\`${op.key}\` is a ${op.tags[0] ?? op.platform} operation, on its own hosts (${op.servers.map((server) => `\`${server.url}\``).join(', ') || 'see its specification'}) ` +
+            'with its own sign-in: this tool sends only to BeMap. `bemap_get_operation` describes it, and the application calls it; ' +
+            "`bemap_map_setup`, with live testing, signs in to the environment's Tiles host and reads what it serves."
+        );
       }
       let endpoint = endpointOf(path ?? op.endpoint, snapshot.basePath);
       if (query) endpoint += `${endpoint.includes('?') ? '&' : '?'}${query.replace(/^\?/, '')}`;

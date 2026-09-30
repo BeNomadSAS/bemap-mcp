@@ -29,14 +29,14 @@ Everything that makes this request work — and that makes a hand-written one fa
 | Item | Value |
 |------|-------|
 | End point | `https://[environment]/bgis/wms` |
-| Environments | `bemap-prod`, `bemap-preprod`, `bemap-beta`, or `localhost:8380` |
+| Environments | `bemap.benomad.com` (production) or `bemap-preprod.benomad.com` (preproduction) |
 | Protocol | WMS `1.3.0` |
 | Geo-server | `herehlp` |
 | Credentials | An account allowed to use the `herehlp` geo-server |
 
 Authentication is the standard BeMap one (HTTP `Authorization: Basic`, `X-Auth-ID`, `SESSION` cookie, or the deprecated `appid` / `appcode` URL parameters). See the [authentication page](index.html#page-authentication.md).
 
-> 📌 The `herehlp` geo-server is **not** listed in the *Geo-server* selector of this documentation portal. It must always be requested explicitly with the `geoserver=herehlp` parameter.
+> 📌 `herehlp` must be named explicitly: send the `geoserver=herehlp` parameter on every request.
 
 
 
@@ -54,7 +54,7 @@ Authentication is the standard BeMap one (HTTP `Authorization: Basic`, `X-Auth-I
 | `WIDTH` / `HEIGHT` | `256` / `256` | Mandatory. Size of the returned image, in pixels. |
 | `LAYERS` | `here-satellite.day` | The satellite layer, see chapter 3. |
 | `STYLES` | *(empty)* | Rendering style. Empty means "use the layer default". |
-| `FORMAT` | `image/png` | Output format: `image/png`, `image/png24`, `image/gif` or `image/jpeg`. Defaults to `image/png`. |
+| `FORMAT` | `image/png` | Output format: `image/png`, `image/png24` or `image/jpeg` — the satellite tile is JPEG in every case, see chapter 6. `image/gif` answers an error on `herehlp`. Defaults to `image/png`. |
 | `TRANSPARENT` | `false` | Keep it `false` for a satellite basemap. |
 | `geoserver` | `herehlp` | BeMap extra parameter. Selects the data provider. |
 | `TILED` | `true` | Not a WMS parameter: it is emitted by OpenLayers / Leaflet and simply ignored by BeMap. Harmless. |
@@ -79,7 +79,7 @@ Good to know:
 * The `here-` prefix is optional — `LAYERS=satellite.day` is equivalent. The prefix is stripped by the server before the provider call.
 * `STYLES` accepts the same values as `LAYERS`, and **takes precedence** over `LAYERS` when both are filled. Sending an empty `STYLES` and the layer name in `LAYERS`, as in the example, is the recommended way.
 * For backward compatibility, `hybrid.day` and `terrain.day` are also mapped to the satellite rendering, while `normal.day` and `default` are mapped to the standard rendering.
-* Depending on the deployment, the `herehlp` geo-server can be configured in *satellite only* mode. In that case every `GetMap` on this geo-server returns satellite imagery, whatever `LAYERS` and `STYLES` contain.
+* Depending on the deployment, the `herehlp` geo-server can be configured in *satellite only* mode. In that case every `GetMap` on this geo-server returns satellite imagery, whatever `LAYERS` and `STYLES` contain. Production is in that mode (measured on 29 September 2026: `normal.day`, `default`, an unknown name and an empty `LAYERS` all return the satellite tile).
 * `GetCapabilities` on `geoserver=herehlp` does not advertise a layer list: use the layer names documented here.
 
 
@@ -160,7 +160,7 @@ WMS 1.3.0 changed the axis order for geographic CRS. With `CRS=EPSG:4326` the bo
 &CRS=EPSG%3A4326&BBOX=minLat%2CminLon%2CmaxLat%2CmaxLon
 ```
 
-With `EPSG:3857` (and the other Mercator codes) the order stays `minx,miny,maxx,maxy` — easting first. This axis inversion is the main incompatibility between a WMS 1.1.1 request and its 1.3.0 counterpart.
+With `EPSG:3857` (and the other Mercator codes) the order stays `minx,miny,maxx,maxy` — easting first. This axis inversion is the main incompatibility between a WMS 1.1.1 request and its 1.3.0 counterpart. Always send `VERSION=1.3.0`: without it BeMap reads the request as 1.1.1, which takes `SRS` rather than `CRS` and reads an `EPSG:4326` box longitude first.
 
 
 
@@ -171,7 +171,7 @@ With `EPSG:3857` (and the other Mercator codes) the order stays `minx,miny,maxx,
 ```
 curl -o tile.png \
   -H "Authorization: Basic <base64 of account:apikey>" \
-  "https://bemap-beta.benomad.com/bgis/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&geoserver=herehlp&LAYERS=here-satellite.day&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=false&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&BBOX=786384.1469978951%2C5411741.602590479%2C787607.1394504579%2C5412964.595043042"
+  "https://bemap.benomad.com/bgis/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&geoserver=herehlp&LAYERS=here-satellite.day&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=false&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&BBOX=786384.1469978951%2C5411741.602590479%2C787607.1394504579%2C5412964.595043042"
 ```
 
 ### From a browser
@@ -190,9 +190,11 @@ On success the server returns the raw image bytes with:
 | `Last-Modified` | Date of the cached tile, when it comes from the tile cache |
 | `Cache-Control` | Server-side caching policy |
 
+> ⚠️ **The satellite tile is JPEG, whatever the label.** Measured on production (29 September 2026): with `FORMAT=image/png` or `image/png24` the bytes are a JPEG image (they start with `FF D8 FF E0`) sent as `Content-Type: image/png`; with `image/jpeg` the same bytes come as `image/jpeg`. Code that reads the tile itself must go by its first bytes, not by the header.
+
 Sending an `If-Modified-Since` header on the next call for the same tile makes the server answer `304 Not Modified` with no payload — use it to spare bandwidth in a tile-heavy client.
 
-On failure the response is a WMS service exception, formatted according to `EXCEPTIONS` (XML by default).
+On failure the response is a WMS service exception, formatted according to `EXCEPTIONS` (XML by default) — **with status `200`**: an XML exception comes as `text/xml`, an `INIMAGE` or `BLANK` one as a PNG. Check the `Content-Type`, not the status. The exception code is `FrontendException` for each exception listed in chapter 8; the message says what went wrong.
 
 
 
@@ -251,7 +253,7 @@ L.tileLayer.wms('/bgis/wms', {
 }).addTo(map);
 ```
 
-> 📌 From outside the BeMap host, append the credentials to the WMS URL — `'https://<host>/bgis/wms?appid=<login>&appcode=<password>'` — or configure your client to send the `Authorization` header.
+> 📌 From outside the BeMap host, each tile request must be authenticated: send the `Authorization: Basic` header (a custom tile loader in OpenLayers or Leaflet), or, on a public page, fetch the tiles through your own back end so that the key never reaches the browser. The `appid` / `appcode` URL parameters are deprecated and put the key in every tile URL.
 
 
 
@@ -259,11 +261,11 @@ L.tileLayer.wms('/bgis/wms', {
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `InvalidCRS` exception | `CRS` missing, misspelled or not supported | Use `EPSG:3857` (or `EPSG:4326`, `EPSG:4979`, `EPSG:3785`, `EPSG:900913`) |
-| `MissingDimensionValue` / `InvalidDimensionValue` | `BBOX`, `WIDTH` or `HEIGHT` missing or malformed | The four `BBOX` values are required, comma-separated and URL-encoded |
-| `InvalidFormat` | Unsupported `FORMAT` | `image/png`, `image/png24`, `image/gif`, `image/jpeg` |
-| `Unable to perform mapping with provider HereHlp` | The `BBOX` does not match a tile of the grid, or its resolution does not match a zoom level | Recompute the `BBOX` with the formulas of chapter 4 |
-| Error on a large image | `WIDTH` or `HEIGHT` greater than `256` | Request 256 × 256 tiles and assemble them client-side |
+| `Request contains a CRS not offered by the server…` | `CRS` missing, misspelled or not supported | Use `EPSG:3857` (or `EPSG:4326`, `EPSG:4979`, `EPSG:3785`, `EPSG:900913`) |
+| `Request does not include a sample dimension value…` / `Request contains an invalid sample dimension value.` | `BBOX`, `WIDTH` or `HEIGHT` missing or malformed | The four `BBOX` values are required, comma-separated and URL-encoded |
+| `Invalid Format` | Unsupported `FORMAT` | `image/png`, `image/png24`, `image/jpeg` |
+| `Unable to perform mapping with provider HereHlp` | The `BBOX` does not match a tile of the grid (`Current x value is too far from tile corner…`), or its resolution does not match a zoom level (`Resolution not found`); or `FORMAT=image/gif` (`HereHlp returned an HTTP error with code 400`) | Recompute the `BBOX` with the formulas of chapter 4; use `image/png` or `image/jpeg` |
+| `Request not valided by Validator` | `WIDTH` or `HEIGHT` greater than `256` — the message names neither | Request 256 × 256 tiles and assemble them client-side |
 | The returned image is a standard map, not satellite | Layer name not recognised, or `STYLES` overriding `LAYERS` | Send `LAYERS=here-satellite.day` with an empty `STYLES` |
 | `401` or a login page is returned | Missing or invalid credentials | See [authentication](index.html#page-authentication.md) |
 | Rendering works on another geo-server but not here | The account is not allowed to use `herehlp` | Contact your BeNomad account manager |
@@ -278,3 +280,7 @@ L.tileLayer.wms('/bgis/wms', {
 * [Coordinate system](index.html#page-glossary-coordinate_system.md) — projections and axis orders.
 * [Map display with OpenLayers](index.html#page-examples-mapping-display-ol4.md) · [Map display with Leaflet](index.html#page-examples-mapping-display-leaflet-raw.md) — ready-to-run basemap templates.
 * [Authentication](index.html#page-authentication.md) — credentials and request signing.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

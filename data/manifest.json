@@ -1,17 +1,17 @@
 {
   "format": 2,
-  "generatedAt": "2026-09-28T14:29:14.434Z",
-  "generator": "bemap-mcp 0.0.1-dev.111",
+  "generatedAt": "2026-09-30T07:01:45.959Z",
+  "generator": "bemap-mcp 0.0.1-dev.134",
   "build": {
-    "number": 111,
-    "commit": "d0f66579",
+    "number": 134,
+    "commit": "855655d1",
     "uncommitted": false
   },
   "specification": {
     "origin": "https://bemap-dev.benomad.org/bgis/service/api-docs",
     "servedFrom": "bemap-dev.benomad.org",
     "tlsInsecure": true,
-    "sha256": "514f640de5a31de0509baed6b5160e9e2d45e667fc219e4ae61ae656a70c9007",
+    "sha256": "63eea7c61e37892bc000e584e7a68bcdef807f9b0e1ae0ddad6d9d08a879b973",
     "openapi": "3.1.0",
     "title": "BeNomad BeMap Service REST API",
     "version": "4.2.0-SNAPSHOT",
@@ -23,13 +23,13 @@
     "repo": "bemap",
     "fetched": true,
     "ref": "origin/dev",
-    "commit": "c724c4a41000122db5e4d4aaa2b130c514683e83",
-    "committedAt": "2026-09-28T16:27:51+02:00"
+    "commit": "13e3ffb44b08f1a26172c1f4b4c6d877d979d840",
+    "committedAt": "2026-09-29T14:48:03+02:00"
   },
   "enrichment": {
     "enumSites": 153,
-    "enumsFromSource": 137,
-    "enumsFromSpecification": 0,
+    "enumsFromSource": 0,
+    "enumsFromSpecification": 137,
     "enumValues": 1706,
     "enumValuesDescribed": 1466,
     "ambiguousEnums": 0,
@@ -42,18 +42,92 @@
         "repo": "bemap",
         "fetched": true,
         "ref": "origin/dev",
-        "commit": "c724c4a41000122db5e4d4aaa2b130c514683e83",
-        "committedAt": "2026-09-28T16:27:51+02:00",
-        "pages": 251
+        "commit": "13e3ffb44b08f1a26172c1f4b4c6d877d979d840",
+        "committedAt": "2026-09-29T14:48:03+02:00",
+        "pages": 257
       }
     ],
-    "count": 251
+    "count": 257,
+    "tutorials": {
+      "replaced": [
+        "rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
+        "rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
+        "rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
+        "rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+        "chargingstation-filter-v1.md",
+        "chargingstation-filter-v2.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+        "tutorials-mapping-wms-1_3_0-satellite.md"
+      ],
+      "corrected": [
+        "rest_2_0_0/tutorials-evtrip-first_trip-service-v2_0_0.md",
+        "rest_2_0_0/tutorials-evtrip-conditions-service-v2_0_0.md",
+        "rest_2_0_0/tutorials-evtrip-truck-service-v2_0_0.md",
+        "rest_1_0_0/tutorials-evtrip-service-v1_0_0-first_trip.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-first_request.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-options.md",
+        "rest_1_0_0/tutorials-chargingstation-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-chargingcost_from_charging_station_tariffs-v1_0_0.md",
+        "chargingstation-filter-v1.md",
+        "chargingstation-filter-v2.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-introduction.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-how_to_send_a_routing_request.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-criteria.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-modes.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-events.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-optimized.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-vehicleprofile.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-first_request_with_csv.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-gps_destinations.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-options.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-traceroute-service-v1_0_0-vehicleprofile.md",
+        "tutorials-mapping-wms-1_3_0-satellite.md"
+      ],
+      "added": [
+        "rest_1_0_0/tutorials-geocoding-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-autocompletegeocoding-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-reversegeocoding-service-v1_0_0-parameters.md",
+        "rest_1_0_0/tutorials-reversegeocoding-service-v1_0_0-options.md",
+        "rest_1_0_0/tutorials-routing-service-v1_0_0-co2.md",
+        "rest_2_0_0/tutorials-evtrip-csfs-service-v2_0_0.md"
+      ]
+    }
   },
+  "platforms": [
+    {
+      "family": "maptiles",
+      "title": "BeNomad Tiles API",
+      "version": "1.0.0",
+      "repo": "mptiles-proxy-cloudflare-worker",
+      "ref": "origin/dev",
+      "commit": "1ac5a51410f2902855b5d31deeb5eab079440144",
+      "file": "openapi.json",
+      "operations": 11
+    }
+  ],
   "findings": {
     "undescribedEnums": 16,
-    "partialEnums": 4,
+    "partialEnums": 0,
     "ambiguousEnums": 0,
-    "enumDisagreements": 0,
+    "enumDisagreements": 2,
     "noDescription": 7,
     "numberedIds": 30,
     "pathAliases": 4,
@@ -67,7 +141,7 @@
     "hidden": 2,
     "aliases": 28,
     "byteNumbers": 5,
-    "total": 245
+    "total": 243
   },
   "maps": {
     "sources": [
@@ -376,7 +450,7 @@
   },
   "environmentProfile": {
     "environment": "prod",
-    "capturedAt": "2026-09-28T14:29:14.118Z",
+    "capturedAt": "2026-09-30T07:01:45.777Z",
     "cartoRelease": "Here Maps 2026.2",
     "geoservers": [
       "addok",

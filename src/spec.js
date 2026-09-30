@@ -86,23 +86,41 @@ function bodySchema(content) {
  * @returns {Array<object>}
  */
 export function listOperations(spec, basePath) {
+  /* A parameter or a response may be a reference to one the document declares
+     once under `components` — springdoc writes none, BeNomad Tiles' own
+     specification does (`#/components/parameters/File`). Resolving it reads
+     the document; it changes nothing in it. */
+  const component = (node, kind) => {
+    const ref = typeof node?.$ref === 'string' && node.$ref.startsWith(`#/components/${kind}/`) ? node.$ref : null;
+    return ref ? spec.components?.[kind]?.[refName(ref)] ?? node : node;
+  };
   const out = [];
   for (const [path, item] of Object.entries(spec.paths ?? {})) {
     for (const method of HTTP_METHODS) {
-      const operation = item[method];
-      if (!operation) continue;
+      const raw = item[method];
+      if (!raw) continue;
+      const operation = { ...raw, responses: Object.fromEntries(Object.entries(raw.responses ?? {}).map(([code, response]) => [code, component(response, 'responses')])) };
       const success = Object.entries(operation.responses ?? {}).find(([code]) => /^2/.test(code));
+      /* Another platform's operation — BeNomad Tiles' — sits on its own hosts,
+         named by its own `servers`, and not under BeMap's service root. */
+      const platform = operation['x-benomad-platform'] ?? null;
       out.push({
         key: `${method.toUpperCase()} ${path}`,
         method: method.toUpperCase(),
         path,
-        endpoint: `${basePath}${path}`,
+        endpoint: platform ? path : `${basePath}${path}`,
+        platform,
+        servers: platform ? (operation.servers ?? []).map((server) => ({ url: server.url, description: server.description ?? '' })) : null,
+        security: platform ? operation.security ?? [] : null,
+        successes: Object.entries(operation.responses ?? {})
+          .filter(([code]) => /^2/.test(code))
+          .map(([status, response]) => ({ status, description: response.description ?? '' })),
         tags: operation.tags ?? [],
         summary: operation.summary ?? '',
         description: operation.description ?? '',
         operationId: operation.operationId ?? null,
         deprecated: operation.deprecated === true,
-        parameters: [...(item.parameters ?? []), ...(operation.parameters ?? [])],
+        parameters: [...(item.parameters ?? []), ...(operation.parameters ?? [])].map((parameter) => component(parameter, 'parameters')),
         request: bodySchema(operation.requestBody?.content),
         requestRequired: operation.requestBody?.required === true,
         response: success ? { status: success[0], ...(bodySchema(success[1].content) ?? {}) } : null,

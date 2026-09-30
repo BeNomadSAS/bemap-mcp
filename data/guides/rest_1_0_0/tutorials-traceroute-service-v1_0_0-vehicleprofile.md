@@ -17,7 +17,11 @@ You want the route to avoid restricted roads or infrastructure based on the vehi
 The `routingVehicleProfile` affects how the trace is matched to the road network:
 - **transportMode** tells the system how to interpret movement patterns (e.g., car vs pedestrian)
 - **routingVehicleFeature** contains legal and physical specs (height, weight, hazardous material) used for more precise trace correction
-- **routingEnergyVehicleFeature** and **maxSpeeds** are ignored in TraceRoute
+- **routingEnergyVehicleFeature** is used by the energy options (`ENERGY_CONSUMPTION`, `EVT_ENERGY_*`), and **maxSpeeds** caps the speed and changes the ETA (measured on this page's trace: 827 s with a `maxSpeed` of 10 km/h, 245 s without)
+- **routingSpeedPonderations** and **routingCrossPenaltiesCoefficients** have no effect on TraceRoute (per the specification)
+
+> ℹ️ Units of `routingVehicleFeature`: `height`, `width` and `length` in centimetres, `weight` and `axleWeight` in tenths of a tonne (`35` = 3.5 t). The specification describes the weights as "in tens of metric tons", which its own examples (`35` = 3.5t, `12` = 1.2t) contradict: one unit is 100 kg.<br>
+> ℹ️ The sample responses were measured on production on 29 September 2026. A response marked *truncated* shows only the first points of its `polyline`.
 
 🔧 **How to enable**
 
@@ -75,7 +79,7 @@ Add a `maxSpeeds` array to the `routingVehicleProfile`. Each entry must include:
       "maxSpeed": 80,
       "type": "ALL"
     }
-  ],
+  ]
 }
 ```
 📦 **Example**
@@ -195,7 +199,7 @@ Here's a full TraceRoute request using `maxSpeeds`:
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -222,7 +226,7 @@ Here's a full TraceRoute request using `maxSpeeds`:
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -231,11 +235,11 @@ Here's a full TraceRoute request using `maxSpeeds`:
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -245,42 +249,42 @@ Here's a full TraceRoute request using `maxSpeeds`:
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -290,11 +294,11 @@ Here's a full TraceRoute request using `maxSpeeds`:
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -304,25 +308,25 @@ Here's a full TraceRoute request using `maxSpeeds`:
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -332,11 +336,11 @@ Here's a full TraceRoute request using `maxSpeeds`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -346,100 +350,72 @@ Here's a full TraceRoute request using `maxSpeeds`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 80,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -449,13 +425,13 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -466,14 +442,14 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -483,15 +459,15 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -506,7 +482,7 @@ Here's a full TraceRoute request using `maxSpeeds`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -517,7 +493,7 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -540,8 +516,8 @@ Here's a full TraceRoute request using `maxSpeeds`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -549,13 +525,13 @@ Here's a full TraceRoute request using `maxSpeeds`:
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -565,13 +541,13 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -582,66 +558,83 @@ Here's a full TraceRoute request using `maxSpeeds`:
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 > ✅ Used to simulate a max speed limit of 80 km/h for both route and ETA calculation.
 ---
@@ -659,7 +652,7 @@ You want to provide physical and energy-related properties of the vehicle to:
 
 - Match the profile of a specific EV model.
 
-Even though `TraceRoute` doesn't calculate energy usage, this field can be stored for consistency or future compatibility, and some implementations may leverage it for internal analytics or post-processing.
+`TraceRoute` calculates energy usage when you ask for it: the `ENERGY_CONSUMPTION` option returns one total per route (`routingRoutes[].energyConsumption`, in kWh), and `EVENT` with `EVT_ENERGY_CONSUMPTION` or `EVT_ENERGY_CONSUMPTION_SAMPLE` returns it in the route's events. Without one of these options, this block is not used.
 
 💡 **What it does**
 
@@ -670,10 +663,13 @@ This field allows you to define detailed characteristics of an electric or hybri
 - Weight (`dryWeight`, `payload`)
 - Efficiency (`engineEfficiency`)
 - Regenerative braking
-- Outside temperature, frontal surface area (`scx`), etc.
+- Maximum acceleration and deceleration (`maxAccel`, `maxDecel`)
+- Outside temperature, aerodynamic drag area S×Cx (`scx`), etc.
+
+> ⚠️ When an energy option is set, the service checks these values, although the specification marks every field optional: an omitted number reads as `0`, and `scx`, `crr`, `engineEfficiency`, `dryWeight`, `batCapacity` and `maxAccel` must be above 0, `maxDecel` below 0. Measured on production: without `maxAccel`, `400` maxAccelOutOfRange, *"maxAccel must be over 0."*; then, without `maxDecel`, `400` maxDecelOutOfRange, *"maxDecel must be under 0."*.
 
 🔧 **How to enable**
-Add a `routingEnergyVehicleFeature` block to the `routingVehicleProfile`. Example:
+Add a `routingEnergyVehicleFeature` block to the `routingVehicleProfile`, and an energy option to `options`. Example:
 ```
 "routingVehicleProfile": {
   "transportMode": "CAR",
@@ -686,12 +682,14 @@ Add a `routingEnergyVehicleFeature` block to the `routingVehicleProfile`. Exampl
     "scx": 0.64,
     "auxConsumption": 800,
     "regenerativeBraking": true,
-    "extTemp": 20.0
+    "extTemp": 20.0,
+    "maxAccel": 1.0,
+    "maxDecel": -1.0
   }
 }
 ```
 📦 **Example**
-Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`:
+Here is a **working TraceRoute request** including `routingEnergyVehicleFeature` and the `ENERGY_CONSUMPTION` option:
 ```
 {
   "routingVehicleProfile": {
@@ -705,10 +703,12 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
       "scx": 0.64,
       "auxConsumption": 800,
       "regenerativeBraking": true,
-      "extTemp": 20.0
+      "extTemp": 20.0,
+      "maxAccel": 1.0,
+      "maxDecel": -1.0
     }
   },
-  "options": ["ROUTESHEET", "POLYLINE"],
+  "options": ["ENERGY_CONSUMPTION", "ROUTESHEET", "POLYLINE"],
     "destinations" : [
         {
             "coordinateSat" : {
@@ -806,7 +806,7 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -833,7 +833,7 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -842,11 +842,11 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -856,42 +856,42 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -901,11 +901,11 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -915,25 +915,25 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -943,11 +943,11 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -957,100 +957,73 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
+      "energyConsumption": 0.18269515488916505,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1060,13 +1033,13 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1077,14 +1050,14 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1094,15 +1067,15 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -1117,7 +1090,7 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -1128,7 +1101,7 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -1151,8 +1124,8 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -1160,13 +1133,13 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -1176,13 +1149,13 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -1193,66 +1166,83 @@ Here is a **working TraceRoute request** including `routingEnergyVehicleFeature`
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="traceroute_routingVehicleFeature_tutorial"></a>
@@ -1409,7 +1399,7 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -1436,7 +1426,7 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
     ]
 }
 ```
-**Response:**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -1445,11 +1435,11 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -1459,42 +1449,42 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -1504,11 +1494,11 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -1518,25 +1508,25 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -1546,11 +1536,11 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -1560,100 +1550,72 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1663,13 +1625,13 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1680,14 +1642,14 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -1697,15 +1659,15 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -1720,7 +1682,7 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -1731,7 +1693,7 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -1754,8 +1716,8 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -1763,13 +1725,13 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -1779,13 +1741,13 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -1796,66 +1758,83 @@ Here’s a **working TraceRoute request** including `routingVehicleFeature`:
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 > ✅ Used to avoid roads that are physically or legally restricted based on the vehicle’s size, weight, or cargo.
 ---
@@ -1880,7 +1859,7 @@ The `transportMode` defines how the routing engine interprets the road network f
 - Toll and traffic rules
 - Routing preferences and road types used
 
-If omitted, the default value for TraceRoute is `EMERGENCY`.
+`transportMode` is **required**. The specification marks it optional, with a default of `EMERGENCY` for TraceRoute, but measured on production a request without it fails: `400` MISSING_PARAMETER, with a message that does not name the field — *"Some parameter are missing, please check your request."*, followed by a Java error about the vehicle's transport type. For the emergency-vehicle behaviour, send `"transportMode": "EMERGENCY"` explicitly.
 
 🔧 **How to enable**
 
@@ -1995,7 +1974,7 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
                 "lat" : 43.6119,
                 "heading" : 47.3,
                 "speed" : 14.9,
-                "time" : 1396241966000,
+                "time" : 1396242190000,
                 "sat" : 11
             }
         },
@@ -2022,7 +2001,7 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
     ]
 }
 ```
-**Response**
+**Response (truncated)**
 ```
 {
   "usedDestinations": [
@@ -2031,11 +2010,11 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 7.065868896076493,
-        "lat": 43.616005
+        "lon": 7.06602,
+        "lat": 43.61618
       },
-      "confidenceValue": 0.9892469222386688,
-      "distanceFromRequest": 10.58,
+      "confidenceValue": 0.08574764015778809,
+      "distanceFromRequest": 20.1,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -2045,42 +2024,42 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 7.066398283397998,
-        "lat": 43.616205
+        "lon": 7.066400317430266,
+        "lat": 43.61620682152609
       },
-      "confidenceValue": 0.3377806566738217,
-      "distanceFromRequest": 0.56,
+      "confidenceValue": 0.10601713385854422,
+      "distanceFromRequest": 0.76,
       "polylineIndex": -1,
-      "duration": 19,
-      "length": 56
+      "duration": 4,
+      "length": 31
     },
     {
       "inputOrder": 2,
       "used": true,
       "usedOrder": 2,
       "matchedCoordinateGps": {
-        "lon": 7.078630440418273,
-        "lat": 43.61534125
+        "lon": 7.078630465561669,
+        "lat": 43.61534202308657
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 5.21,
+      "confidenceValue": 0.51092712176195,
+      "distanceFromRequest": 5.28,
       "polylineIndex": -1,
-      "duration": 134,
-      "length": 1156
+      "duration": 118,
+      "length": 1128
     },
     {
       "inputOrder": 3,
       "used": true,
       "usedOrder": 3,
       "matchedCoordinateGps": {
-        "lon": 7.080403748959592,
-        "lat": 43.6147275
+        "lon": 7.08040384430796,
+        "lat": 43.61472713942907
       },
-      "confidenceValue": 0.9910778137778522,
-      "distanceFromRequest": 8.34,
+      "confidenceValue": 0.36879436163061363,
+      "distanceFromRequest": 8.32,
       "polylineIndex": -1,
-      "duration": 156,
-      "length": 1352
+      "duration": 139,
+      "length": 1324
     },
     {
       "inputOrder": 4,
@@ -2090,11 +2069,11 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         "lon": 7.07845,
         "lat": 43.61179
       },
-      "confidenceValue": 0.17461304514376935,
+      "confidenceValue": 0.1570877388041818,
       "distanceFromRequest": 10.8,
       "polylineIndex": -1,
-      "duration": 192,
-      "length": 1748
+      "duration": 178,
+      "length": 1718
     },
     {
       "inputOrder": 5,
@@ -2104,25 +2083,25 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         "lon": 7.07866,
         "lat": 43.61185
       },
-      "confidenceValue": 0.8311396809663245,
+      "confidenceValue": 0.17740010014753527,
       "distanceFromRequest": 6.43,
       "polylineIndex": -1,
-      "duration": 194,
-      "length": 1766
+      "duration": 180,
+      "length": 1737
     },
     {
       "inputOrder": 6,
       "used": true,
       "usedOrder": 6,
       "matchedCoordinateGps": {
-        "lon": 7.07938069386973,
-        "lat": 43.61286125
+        "lon": 7.079380021004235,
+        "lat": 43.61285888564006
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 9.42,
+      "confidenceValue": 0.21769057231240393,
+      "distanceFromRequest": 9.2,
       "polylineIndex": -1,
-      "duration": 212,
-      "length": 1926
+      "duration": 198,
+      "length": 1896
     },
     {
       "inputOrder": 7,
@@ -2132,11 +2111,11 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.6537464392808423,
+      "confidenceValue": 0.15771606787125328,
       "distanceFromRequest": 20.37,
       "polylineIndex": -1,
-      "duration": 239,
-      "length": 2122
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 8,
@@ -2146,100 +2125,72 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         "lon": 7.08118,
         "lat": 43.61169
       },
-      "confidenceValue": 0.19594762970404958,
+      "confidenceValue": 0.15738207601732185,
       "distanceFromRequest": 6.54,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 9,
       "used": true,
       "usedOrder": 9,
       "matchedCoordinateGps": {
-        "lon": 7.0812,
-        "lat": 43.6119
+        "lon": 7.08118,
+        "lat": 43.61169
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1758813458024068,
+      "distanceFromRequest": 23.43,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 226,
+      "length": 2090
     },
     {
       "inputOrder": 10,
       "used": true,
       "usedOrder": 10,
       "matchedCoordinateGps": {
-        "lon": 7.081468042538314,
-        "lat": 43.61183298936542
+        "lon": 7.081305634154667,
+        "lat": 43.61164064372495
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 7.89,
+      "confidenceValue": 0.1620184383434684,
+      "distanceFromRequest": 32.85,
       "polylineIndex": -1,
-      "duration": -1,
-      "length": -1
+      "duration": 230,
+      "length": 2102
     },
     {
       "inputOrder": 11,
       "used": true,
       "usedOrder": 11,
       "matchedCoordinateGps": {
-        "lon": 7.0816,
-        "lat": 43.6118
+        "lon": 7.081772121283489,
+        "lat": 43.61169746672947
       },
-      "confidenceValue": 1,
-      "distanceFromRequest": 0,
+      "confidenceValue": 0.1875133785230111,
+      "distanceFromRequest": 17.96,
       "polylineIndex": -1,
-      "duration": 251,
-      "length": 2180
+      "duration": 245,
+      "length": 2151
     }
   ],
   "routingRoutes": [
     {
-      "length": 2180,
-      "duration": 251,
+      "length": 2151,
+      "duration": 245,
+      "totalDuration": 245,
       "trafficDelay": 0,
-      "averageSpeed": 31.266932,
+      "departureTime": 1396241966,
+      "arrivalTime": 1396242211,
+      "averageSpeed": 31.606531,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "routingInstructions": [
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 10,
-          "duration": 1,
-          "fromName": "Rue Fernand Léger",
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06588,
-            "lat": 43.6161
-          },
-          "roundAboutExitNumber": 1,
-          "textDist": "At 10 meters"
-        },
-        {
-          "type": "EXIT_ROUNDABOUT",
-          "geoElementType": "ROUNDABOUT",
-          "length": 16,
-          "duration": 12,
-          "manoeuvre": "RIGHT",
-          "coordinate": {
-            "lon": 7.06602,
-            "lat": 43.61618
-          },
-          "roundAboutExitNumber": 1,
-          "toName": "D504",
-          "toOn": "Route des Lucioles",
-          "toRn": "D504",
-          "textDist": "At 16 meters",
-          "text": "From Rue Fernand Léger at roundabout take 1st exit on D504"
-        },
-        {
-          "type": "ENTER_ROUNDABOUT",
-          "geoElementType": "ROAD",
-          "length": 388,
-          "duration": 39,
+          "length": 387,
+          "duration": 37,
           "fromName": "Route des Lucioles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2249,13 +2200,13 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "roundAboutExitNumber": 2,
           "toName": "Carrefour du Golf",
           "toOn": "Carrefour du Golf",
-          "textDist": "At 388 meters"
+          "textDist": "At 387 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 50,
-          "duration": 11,
+          "length": 49,
+          "duration": 10,
           "fromName": "Carrefour du Golf",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2266,14 +2217,14 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "toName": "D504",
           "toOn": "Route des Colles",
           "toRn": "D504",
-          "textDist": "At 50 meters",
+          "textDist": "At 49 meters",
           "text": "From Route des Lucioles at roundabout take 2nd exit on D504"
         },
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 226,
-          "duration": 20,
+          "length": 224,
+          "duration": 24,
           "fromName": "Route des Colles",
           "manoeuvre": "RIGHT",
           "coordinate": {
@@ -2283,15 +2234,15 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "roundAboutExitNumber": 3,
           "toName": "Carrefour Saint-Philippe",
           "toOn": "Carrefour Saint-Philippe",
-          "textDist": "At 226 meters"
+          "textDist": "At 224 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
           "length": 104,
-          "duration": 27,
+          "duration": 22,
           "fromName": "Carrefour Saint-Philippe",
-          "manoeuvre": "SLIGHT_RIGHT",
+          "manoeuvre": "RIGHT",
           "coordinate": {
             "lon": 7.07463,
             "lat": 43.61674
@@ -2306,7 +2257,7 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 514,
+          "length": 513,
           "duration": 39,
           "fromName": "Route des Colles",
           "manoeuvre": "STRAIGHT",
@@ -2317,7 +2268,7 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "roundAboutExitNumber": 1,
           "toName": "Carrefour des Chappes",
           "toOn": "Carrefour des Chappes",
-          "textDist": "At 514 meters"
+          "textDist": "At 513 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
@@ -2340,8 +2291,8 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
         {
           "type": "ENTER_ROUNDABOUT",
           "geoElementType": "ROAD",
-          "length": 358,
-          "duration": 26,
+          "length": 360,
+          "duration": 29,
           "fromName": "Route des Chappes",
           "manoeuvre": "STRAIGHT",
           "coordinate": {
@@ -2349,13 +2300,13 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
             "lat": 43.61221
           },
           "roundAboutExitNumber": 4,
-          "textDist": "At 358 meters"
+          "textDist": "At 360 meters"
         },
         {
           "type": "EXIT_ROUNDABOUT",
           "geoElementType": "ROUNDABOUT",
-          "length": 124,
-          "duration": 20,
+          "length": 122,
+          "duration": 21,
           "manoeuvre": "BEAR_RIGHT",
           "coordinate": {
             "lon": 7.07869,
@@ -2365,13 +2316,13 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "toName": "D535",
           "toOn": "Route des Chappes",
           "toRn": "D535",
-          "textDist": "At 124 meters",
+          "textDist": "At 122 meters",
           "text": "From Route des Chappes at roundabout take 4th exit on D535"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 108,
+          "length": 107,
           "duration": 9,
           "fromName": "Route des Chappes",
           "manoeuvre": "RIGHT",
@@ -2382,65 +2333,86 @@ Here’s a **functional TraceRoute request** using `transportMode: CAR`:
           "roundAboutExitNumber": 0,
           "toName": "Allée Charles-Victor Naudin",
           "toOn": "Allée Charles-Victor Naudin",
-          "textDist": "At 108 meters",
+          "textDist": "At 107 meters",
           "text": "From Route des Chappes make a right turn on Allée Charles-Victor Naudin"
         },
         {
           "type": "FOLLOW",
           "geoElementType": "ROAD",
-          "length": 216,
-          "duration": 31,
+          "length": 246,
+          "duration": 38,
           "fromName": "Allée Charles-Victor Naudin",
-          "manoeuvre": "SHARP_LEFT",
+          "manoeuvre": "LEFT",
           "coordinate": {
-            "lon": 7.08118,
-            "lat": 43.61169
+            "lon": 7.08151,
+            "lat": 43.61153
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 216 meters",
-          "text": "From Allée Charles-Victor Naudin make a sharp left turn"
+          "textDist": "At 246 meters",
+          "text": "From Allée Charles-Victor Naudin make a left turn"
         },
         {
           "type": "STOP",
-          "length": 58,
+          "geoElementType": "ROAD",
+          "length": 29,
           "duration": 12,
           "manoeuvre": "STRAIGHT",
           "coordinate": {
-            "lon": 7.0816,
-            "lat": 43.6118
+            "lon": 7.08177,
+            "lat": 43.6117
           },
           "roundAboutExitNumber": 0,
-          "textDist": "At 58 meters",
+          "textDist": "At 29 meters",
           "text": "Destination reached"
         }
       ],
       "boundingBox": {
-        "minLon": 7.065868896076493,
-        "minLat": 43.61169,
-        "maxLon": 7.0816,
+        "minLon": 7.06602,
+        "minLat": 43.61153,
+        "maxLon": 7.081772121283489,
         "maxLat": 43.6175
       },
       "startStopInfo": {
         "start": {
-          "lon": 7.06587,
-          "lat": 43.61601
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         "stop": {
-          "lon": 7.08118,
-          "lat": 43.61169
+          "lon": 7.08177,
+          "lat": 43.6117
         },
-        "distanceFirstMatched": 0.56,
-        "distanceLastMatched": 36,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.28,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 7.065868896076493,
-          "lat": 43.616005
+          "lon": 7.06602,
+          "lat": 43.61618
         },
         {
-          "lon": 7.06588,
-          "lat": 43.6161
+          "lon": 7.06627,
+          "lat": 43.61621
         },
+        {
+          "lon": 7.06668,
+          "lat": 43.6162
+        },
+        {
+          "lon": 7.06701,
+          "lat": 43.61621
+        },
+        {
+          "lon": 7.06751,
+          "lat": 43.61625
+        }
+      ]
+    }
+  ]
+}
 ```
 > ✅ Ensures the routing engine applies car-specific traffic rules and avoids restricted zones.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

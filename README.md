@@ -25,7 +25,9 @@ Documentation, and the small program that serves it:
   generated from BeMap's own OpenAPI specification, with what BeMap's code
   declares about it: what most values mean, and the role a service needs
   where its endpoint declares one;
-- BeMap's guides and SDK pages;
+- BeNomad Tiles' API reference, from its own specification;
+- BeMap's guides and SDK pages, with its tutorials in corrected copies checked
+  against production;
 - the service limits of BeMap's production (points per request, radii…);
 - a skill: plain-text advice on choosing a service and avoiding BeMap's traps,
   with example requests and responses — for every assistant but Claude Desktop,
@@ -59,7 +61,7 @@ Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
 | `bemap_search` | Ranked search over operations, schemas, fields, enum values and guides | no |
 | `bemap_get_operation` | One endpoint in full: method, URL, request body, response | no |
 | `bemap_get_schema` | One type: its fields, and what every enum value means | no |
-| `bemap_read_guide` | BeMap's tutorials and SDK pages, served as written | no |
+| `bemap_read_guide` | BeMap's guides and SDK pages; its tutorials in BeNomad's corrected copies | no |
 | `bemap_map_setup` | For any platform: asks which BeMap, which map and with or without an account; then the hosts, the sign-in and every guide using that map | no (live defaults: yes) |
 | `bemap_try_request` | Check a body against the specification, then send it | **yes** (`validateOnly`: no) |
 <!-- END TOOL TABLE -->
@@ -77,3 +79,5 @@ Step by step: **[INSTALL.md](INSTALL.md)**. Then ask your assistant:
 
 **bgis-support@benomad.com**. Use of this package is governed by
 [LICENSE.md](LICENSE.md).
+
+Documentation: https://benomad.com/dev/doc/bemap-api/

@@ -115,6 +115,10 @@
   {
    "name": "Routing",
    "description": "About the routing calculation or retrace realised route"
+  },
+  {
+   "name": "BeNomad Tiles",
+   "description": "BeNomad's vector map, on its own hosts (`mptiles-api…benomad.net`) with its own login: exchange a BeMap account for a session token, list the tilesets and styles the environment serves, then read tiles — by byte range from a PMTiles archive (web, pmtiles.js) or one at a time by z/x/y (MapLibre Native and its offline cache) — MapLibre styles and their glyphs."
   }
  ],
  "paths": {
@@ -351,8 +355,7 @@
         "EV": "Electric Vehicle.",
         "HEV": "Hybrid Electric Vehicle.",
         "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-       },
-       "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+       }
       }
      },
      {
@@ -557,8 +560,7 @@
         "EV": "Electric Vehicle.",
         "HEV": "Hybrid Electric Vehicle.",
         "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-       },
-       "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+       }
       }
      },
      {
@@ -777,8 +779,7 @@
         "EV": "Electric Vehicle.",
         "HEV": "Hybrid Electric Vehicle.",
         "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-       },
-       "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+       }
       }
      },
      {
@@ -3089,7 +3090,15 @@
            "PERSPECTIVE",
            "UP",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "FRONT": "Front View of the vehicle's picture.",
+           "REAR": "Rear View of the vehicle's picture.",
+           "SIDE": "Side View of the vehicle's picture.",
+           "PERSPECTIVE": "Perspective View of the vehicle's picture.",
+           "UP": "Up View of the vehicle's picture.",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        },
@@ -3105,7 +3114,15 @@
            "PERSPECTIVE",
            "UP",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "FRONT": "Front View of the vehicle's picture.",
+           "REAR": "Rear View of the vehicle's picture.",
+           "SIDE": "Side View of the vehicle's picture.",
+           "PERSPECTIVE": "Perspective View of the vehicle's picture.",
+           "UP": "Up View of the vehicle's picture.",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        }
@@ -3169,8 +3186,7 @@
         "PERSPECTIVE": "Perspective View of the vehicle's picture.",
         "UP": "Up View of the vehicle's picture.",
         "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.PictureViewInfo"
+       }
       }
      }
     ],
@@ -3288,7 +3304,13 @@
            "HEV",
            "PHEV",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "EV": "Electric Vehicle.",
+           "HEV": "Hybrid Electric Vehicle.",
+           "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        },
@@ -3302,7 +3324,13 @@
            "HEV",
            "PHEV",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "EV": "Electric Vehicle.",
+           "HEV": "Hybrid Electric Vehicle.",
+           "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        }
@@ -3502,7 +3530,13 @@
            "HEV",
            "PHEV",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "EV": "Electric Vehicle.",
+           "HEV": "Hybrid Electric Vehicle.",
+           "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        },
@@ -3516,7 +3550,13 @@
            "HEV",
            "PHEV",
            "NOT_SUPPORTED_VALUE"
-          ]
+          ],
+          "x-enumDescriptions": {
+           "EV": "Electric Vehicle.",
+           "HEV": "Hybrid Electric Vehicle.",
+           "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
+           "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
+          }
          }
         }
        }
@@ -3617,8 +3657,7 @@
         "EV": "Electric Vehicle.",
         "HEV": "Hybrid Electric Vehicle.",
         "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-       },
-       "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+       }
       }
      },
      {
@@ -4781,6 +4820,1156 @@
      "declaredIn": "com.benomad.bgis.fe.protocol.service.v1_0_0.ChargingStationController"
     }
    }
+  },
+  "/api/login": {
+   "post": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "login",
+    "summary": "Exchange BeMap credentials for a session token",
+    "description": "Checks the account against the BeMap of this environment and returns a session token valid for one hour. The same token is set as the `session` cookie. No request body.",
+    "security": [
+     {
+      "bemapAccount": []
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Logged in.",
+      "headers": {
+       "Set-Cookie": {
+        "$ref": "#/components/headers/SetSessionCookie"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Login"
+        },
+        "example": {
+         "ok": true,
+         "username": "alice",
+         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZSIsImlhdCI6MTc4MDk4MDAwMCwiZXhwIjoxNzgwOTgzNjAwfQ.c2lnbmF0dXJl"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "No `Authorization: Basic` header.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Missing credentials: send Basic Auth or X-BeMap-Session"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "BeMap refused the login: wrong credentials, or an account without the geoserver `here` or `osm`, or without `ROLE_MAPPING`, on this environment's BeMap. Also returned when BeMap cannot be reached, in which case retrying later can succeed.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "examples": {
+         "rejected": {
+          "summary": "Wrong credentials, or an account unknown to this environment's BeMap",
+          "value": {
+           "error": "Bemap returned 401"
+          }
+         },
+         "noGeoserver": {
+          "summary": "No map geoserver",
+          "value": {
+           "error": "No tiles geoserver access (requires here or osm)"
+          }
+         },
+         "noRight": {
+          "summary": "No ROLE_MAPPING",
+          "value": {
+           "error": "Missing ROLE_MAPPING right"
+          }
+         },
+         "unreachable": {
+          "summary": "BeMap did not answer",
+          "value": {
+           "error": "Failed to reach Bemap API"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/status": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getStatus",
+    "summary": "Check the session",
+    "description": "Answers whether the token sent is still valid, and for whom.",
+    "responses": {
+     "200": {
+      "description": "The token is valid.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Status"
+        },
+        "example": {
+         "ok": true,
+         "username": "alice"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "No token was sent, or the token is expired or invalid.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "examples": {
+         "noToken": {
+          "value": {
+           "error": "No session"
+          }
+         },
+         "expired": {
+          "value": {
+           "error": "Session expired"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/logout": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "logout",
+    "summary": "Close the session",
+    "description": "Clears the `session` cookie. The token itself is not revoked: it stays valid until it expires, so a client holding it elsewhere should discard it.",
+    "security": [],
+    "responses": {
+     "200": {
+      "description": "The cookie is cleared.",
+      "headers": {
+       "Set-Cookie": {
+        "$ref": "#/components/headers/ClearSessionCookie"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ok"
+        },
+        "example": {
+         "ok": true
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/maps": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getMaps",
+    "summary": "List the tilesets and styles this environment serves",
+    "description": "Everything a client needs at startup: the default map and style, the aliases, every tileset and style it may request, and a version token per archive. Each environment has its own list. Served with `Cache-Control: no-store`: call it on every app start to pick up a rebuilt archive's new version token.",
+    "responses": {
+     "200": {
+      "description": "The environment's map configuration.",
+      "headers": {
+       "Cache-Control": {
+        "description": "Always `no-store`.",
+        "schema": {
+         "type": "string",
+         "const": "no-store"
+        }
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Maps"
+        },
+        "example": {
+         "default": "OSM_250901_WORLD_unified.pmtiles",
+         "defaultStyle": "styles/charte_2026.json",
+         "aliases": {
+          "here": "Here-2025-4_WORLD.pmtiles",
+          "default": "OSM_250901_WORLD_unified.pmtiles",
+          "osm": "OSM_250901_WORLD_unified.pmtiles"
+         },
+         "tilesets": [
+          "Here-2025-4_WORLD.pmtiles",
+          "OSM_250901_WORLD.pmtiles",
+          "OSM_250901_WORLD_unified.pmtiles",
+          "OSM_WORLD_250901_Protomaps_20260711.pmtiles"
+         ],
+         "styles": [
+          "styles/style_charte_single.json",
+          "styles/openfreemap_graylevel.json",
+          "styles/style_apple.json",
+          "styles/style_google.json",
+          "styles/style_liberty.json",
+          "styles/charte_2026.json"
+         ],
+         "versions": {
+          "Here-2025-4_WORLD.pmtiles": "07133c2b",
+          "OSM_250901_WORLD.pmtiles": "5e0a91d4",
+          "OSM_250901_WORLD_unified.pmtiles": "b2dd4bbe",
+          "OSM_WORLD_250901_Protomaps_20260711.pmtiles": "c41f0a67"
+         },
+         "aliasVersions": {
+          "here": "07133c2b",
+          "default": "b2dd4bbe",
+          "osm": "b2dd4bbe"
+         }
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/styles": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getStyles",
+    "summary": "List the styles this environment serves",
+    "responses": {
+     "200": {
+      "description": "The styles, and the one this environment recommends.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Styles"
+        },
+        "example": {
+         "styles": [
+          "styles/style_charte_single.json",
+          "styles/openfreemap_graylevel.json",
+          "styles/style_apple.json",
+          "styles/style_google.json",
+          "styles/style_liberty.json",
+          "styles/charte_2026.json"
+         ],
+         "defaultStyle": "styles/charte_2026.json"
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/default": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getDefaultMap",
+    "summary": "Get the default tileset",
+    "description": "The tileset the `default` alias points to, the same as `default` in `GET /api/maps`. A client rarely needs it: `default` works as `{file}` in tile URLs directly.",
+    "responses": {
+     "200": {
+      "description": "The default tileset's filename, or `null` when the environment sets none.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Default"
+        },
+        "example": {
+         "default": "OSM_250901_WORLD_unified.pmtiles"
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/api/default-style": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getDefaultStyle",
+    "summary": "Get the default style",
+    "description": "The style this environment recommends, the same as `defaultStyle` in `GET /api/maps`. The field is named `default` here.",
+    "responses": {
+     "200": {
+      "description": "The default style's path, or `null` when the environment sets none.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Default"
+        },
+        "example": {
+         "default": "styles/charte_2026.json"
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/{file}.pmtiles": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "readArchive",
+    "summary": "Read a byte range of a PMTiles archive",
+    "description": "The web path: pmtiles.js reads the archive's header, directories and tiles by byte range. Give the range one of two ways:\n\n- a `Range: bytes=START-END` header, answered with `206`;\n- the `r=START-END` query parameter and no `Range` header, answered with a plain `200`. Chrome does not cache a `206`; it caches a `200` like any file.\n\nEither way the range is one closed range of at most 10 MiB (10485760 bytes). A request with neither is refused: an archive is never served whole.\n\nThe `.pmtiles` suffix can be left out of the URL: `/osm` reads the same archive as `/osm.pmtiles`.",
+    "parameters": [
+     {
+      "$ref": "#/components/parameters/File"
+     },
+     {
+      "name": "Range",
+      "in": "header",
+      "required": false,
+      "description": "One closed byte range, `bytes=START-END`, of at most 10 MiB. Open (`bytes=START-`) and multi-part ranges are refused.",
+      "schema": {
+       "type": "string",
+       "pattern": "^bytes=\\d+-\\d+$"
+      },
+      "example": "bytes=0-16383"
+     },
+     {
+      "name": "r",
+      "in": "query",
+      "required": false,
+      "description": "The byte range as inclusive offsets `START-END`, of at most 10 MiB, when no `Range` header is sent.",
+      "schema": {
+       "type": "string",
+       "pattern": "^\\d+-\\d+$"
+      },
+      "example": "0-16383"
+     },
+     {
+      "name": "v",
+      "in": "query",
+      "required": false,
+      "description": "The archive's version token, from `versions` or `aliasVersions` in `GET /api/maps`. It changes nothing in the response; it only gives a rebuilt archive new URLs, so no browser or edge cache serves bytes of the previous build. A value outside the pattern is ignored.",
+      "schema": {
+       "type": "string",
+       "pattern": "^[A-Za-z0-9._-]{1,64}$"
+      },
+      "example": "b2dd4bbe"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "The bytes asked with `r`.",
+      "headers": {
+       "Cache-Control": {
+        "$ref": "#/components/headers/Immutable"
+       },
+       "ETag": {
+        "$ref": "#/components/headers/ETag"
+       },
+       "X-Cache": {
+        "$ref": "#/components/headers/XCache"
+       }
+      },
+      "content": {
+       "application/octet-stream": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "206": {
+      "description": "The bytes asked with `Range`. An archive starts with the 7 bytes `PMTiles`.",
+      "headers": {
+       "Content-Range": {
+        "description": "`bytes START-END/SIZE`, SIZE being the whole archive's size.",
+        "schema": {
+         "type": "string"
+        },
+        "example": "bytes 0-16383/82043328765"
+       },
+       "Accept-Ranges": {
+        "schema": {
+         "type": "string",
+         "const": "bytes"
+        }
+       },
+       "Cache-Control": {
+        "$ref": "#/components/headers/Immutable"
+       },
+       "ETag": {
+        "$ref": "#/components/headers/ETag"
+       },
+       "X-Cache": {
+        "$ref": "#/components/headers/XCache"
+       }
+      },
+      "content": {
+       "application/octet-stream": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "The range cannot be read: malformed, reversed, or running past the end of the archive (`r` only; the same with `Range` is a `416`).",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "examples": {
+         "badRange": {
+          "value": {
+           "error": "Invalid Range header"
+          }
+         },
+         "badSlice": {
+          "value": {
+           "error": "Slice requires ?r=START-END (closed range)"
+          }
+         },
+         "reversed": {
+          "value": {
+           "error": "Invalid slice: end < start"
+          }
+         },
+         "pastEnd": {
+          "value": {
+           "error": "Slice 82043328700-82043329000 is out of range for file of size 82043328765 bytes"
+          }
+         }
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "403": {
+      "description": "The archive is not in this environment's list, or the range is missing, open, multi-part or larger than 10 MiB.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "examples": {
+         "notListed": {
+          "value": {
+           "error": "Forbidden"
+          }
+         },
+         "noRange": {
+          "value": {
+           "error": "Range header required for PMTiles files"
+          }
+         },
+         "openRange": {
+          "value": {
+           "error": "Open-range requests are not allowed on PMTiles (use bytes=START-END)"
+          }
+         },
+         "multipart": {
+          "value": {
+           "error": "Multi-part range requests are not allowed"
+          }
+         },
+         "tooLarge": {
+          "value": {
+           "error": "Range too large (16777216 bytes). Max: 10485760 bytes"
+          }
+         }
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "The archive is listed but missing from storage.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Not Found"
+        }
+       }
+      }
+     },
+     "416": {
+      "description": "The `Range` runs past the end of the archive.",
+      "headers": {
+       "Content-Range": {
+        "description": "`bytes */SIZE`, SIZE being the whole archive's size.",
+        "schema": {
+         "type": "string"
+        },
+        "example": "bytes */82043328765"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Range 82043328700-82043329000 is out of range for file of size 82043328765 bytes"
+        }
+       }
+      }
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     },
+     "504": {
+      "description": "Storage did not answer in time. Retry.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Storage read timeout"
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/{file}/{z}/{x}/{y}.pbf": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getTile",
+    "summary": "Get one vector tile",
+    "description": "One Mapbox Vector Tile, by zoom and XYZ coordinates. The path for MapLibre Native, whose offline cache works per tile. Today's archives hold zoom 0 to 14; declare `maxzoom: 14` on the source so the map library overzooms z14 tiles beyond it instead of asking for tiles that do not exist.",
+    "parameters": [
+     {
+      "$ref": "#/components/parameters/File"
+     },
+     {
+      "name": "z",
+      "in": "path",
+      "required": true,
+      "description": "Zoom level.",
+      "schema": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "example": 14
+     },
+     {
+      "name": "x",
+      "in": "path",
+      "required": true,
+      "description": "Column, from 0 to 2^z − 1.",
+      "schema": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "example": 8298
+     },
+     {
+      "name": "y",
+      "in": "path",
+      "required": true,
+      "description": "Row, from 0 to 2^z − 1, counted from the north (XYZ, not TMS).",
+      "schema": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "example": 5634
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "The tile. A tile with nothing to draw inside the zoom range (open sea, for instance) is a `200` too, with a body of a few dozen bytes.",
+      "headers": {
+       "Content-Encoding": {
+        "description": "The archive's tile compression, `gzip` for today's archives. Browsers and MapLibre decompress it transparently.",
+        "schema": {
+         "type": "string",
+         "enum": [
+          "gzip",
+          "br",
+          "zstd"
+         ]
+        }
+       },
+       "Cache-Control": {
+        "$ref": "#/components/headers/Immutable"
+       },
+       "X-Cache": {
+        "$ref": "#/components/headers/XCache"
+       }
+      },
+      "content": {
+       "application/x-protobuf": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "204": {
+      "description": "The archive holds no tile at this address: in practice, `z` beyond the archive's maximum zoom (14 today). Not an error; draw nothing there, or overzoom the tile at z14."
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "403": {
+      "description": "The tileset is not in this environment's list.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Forbidden"
+        }
+       }
+      }
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     },
+     "500": {
+      "description": "The tile could not be read: `x` or `y` outside the grid of zoom `z` (both must be below 2^z), `z` above 26, or a storage error. `rid` identifies the request in the Worker's logs.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Tile read error",
+         "rid": "8138ef78"
+        }
+       }
+      }
+     },
+     "504": {
+      "description": "Storage did not answer in time. Retry; MapLibre does.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Tile resolution timeout"
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/styles/{name}.json": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getStyle",
+    "summary": "Get a MapLibre style",
+    "description": "A MapLibre style document, from `styles` in `GET /api/styles`. A style names its tiles one of two ways:\n\n- with URLs relative to the Worker, as the default style `charte_2026` does (`/OSM_250901_WORLD_unified/{z}/{x}/{y}.pbf`, `/fonts/{fontstack}/{range}.pbf`): resolve them against the Worker's base URL and add the session token to each request;\n- with placeholders, declared in `metadata.source_placeholder` (the name of the vector source whose URL the client fills in, `TILES_SOURCE`) and `metadata.place_label_placeholder` (a `text-field` value the client replaces with its own label expression). Replace them before handing the style to the map library.\n\nServed with `Cache-Control: no-cache`: a style can be edited in place, so the browser revalidates it on each load.",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "description": "The style's name: its entry in `styles` without the `styles/` prefix and the `.json` suffix.",
+      "schema": {
+       "type": "string"
+      },
+      "example": "charte_2026"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "The style.",
+      "headers": {
+       "Cache-Control": {
+        "description": "Always `no-cache`.",
+        "schema": {
+         "type": "string",
+         "const": "no-cache"
+        }
+       },
+       "ETag": {
+        "$ref": "#/components/headers/ETag"
+       }
+      },
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Style"
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "403": {
+      "description": "The style is not in this environment's list.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Forbidden"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "The style is listed but missing from storage.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Not Found"
+        }
+       }
+      }
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     },
+     "504": {
+      "description": "Storage did not answer in time. Retry.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Storage read timeout"
+        }
+       }
+      }
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
+  },
+  "/fonts/{fontstack}/{range}.pbf": {
+   "get": {
+    "tags": [
+     "BeNomad Tiles"
+    ],
+    "operationId": "getGlyphs",
+    "summary": "Get the glyphs of a font for a range of code points",
+    "description": "The glyph file a MapLibre style's `glyphs` URL points to. The map library requests it by itself while drawing labels.",
+    "parameters": [
+     {
+      "name": "fontstack",
+      "in": "path",
+      "required": true,
+      "description": "A font name, or several separated by commas, URL-encoded. Letters, digits, space, comma, `_`, `.` and `-` only.",
+      "schema": {
+       "type": "string",
+       "pattern": "^[A-Za-z0-9 ,_.-]+$"
+      },
+      "example": "Noto Sans Regular"
+     },
+     {
+      "name": "range",
+      "in": "path",
+      "required": true,
+      "description": "A block of 256 Unicode code points, `START-END`: `0-255`, `256-511`, … `65280-65535`.",
+      "schema": {
+       "type": "string",
+       "pattern": "^\\d+-\\d+$"
+      },
+      "example": "0-255"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "The glyphs.",
+      "headers": {
+       "Cache-Control": {
+        "$ref": "#/components/headers/Immutable"
+       },
+       "ETag": {
+        "$ref": "#/components/headers/ETag"
+       },
+       "X-Cache": {
+        "$ref": "#/components/headers/XCache"
+       }
+      },
+      "content": {
+       "application/x-protobuf": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "The font name is badly encoded, or contains a character outside the allowed set.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "examples": {
+         "encoding": {
+          "value": {
+           "error": "Invalid fontstack encoding"
+          }
+         },
+         "characters": {
+          "value": {
+           "error": "Invalid fontstack"
+          }
+         }
+        }
+       }
+      }
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "403": {
+      "description": "`range` is not of the form `START-END`.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Forbidden"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "No such font, or no such range for it.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Error"
+        },
+        "example": {
+         "error": "Not Found"
+        }
+       }
+      }
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     }
+    },
+    "servers": [
+     {
+      "url": "https://mptiles-api.benomad.net",
+      "description": "Production. Logs in against bemap.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-preprod.benomad.net",
+      "description": "Preprod. Logs in against bemap-preprod.benomad.com."
+     },
+     {
+      "url": "https://mptiles-api-beta.benomad.net",
+      "description": "Beta. Logs in against bemap-beta.benomad.com."
+     }
+    ],
+    "security": [
+     {
+      "sessionToken": []
+     },
+     {
+      "sessionCookie": []
+     },
+     {
+      "sessionQuery": []
+     }
+    ],
+    "x-benomad-platform": "maptiles"
+   }
   }
  },
  "components": {
@@ -5163,8 +6352,7 @@
        "SCATTERED_CLOUDS_25_50": "Scattered clouds: 25-50%.",
        "BROKEN_CLOUDS_51_84": "Broken clouds: 51-84%.",
        "OVERCAST_CLOUDS_85_100": "Overcast clouds: 85-100%."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.weather.WeatherCondCat"
+      }
      },
      "condition": {
       "type": "string",
@@ -5412,8 +6600,7 @@
        "EV": "Electric Vehicle.",
        "HEV": "Hybrid Electric Vehicle.",
        "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+      }
      },
      "chargerPowerDC": {
       "type": "number",
@@ -5480,8 +6667,7 @@
        "EV": "Electric Vehicle.",
        "HEV": "Hybrid Electric Vehicle.",
        "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+      }
      },
      "chargerPowerDC": {
       "type": "number",
@@ -5548,8 +6734,7 @@
        "HEV": "Hybrid Electric Vehicle.",
        "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_1_0.model.vehicle.MotorTypeInfo"
+      }
      },
      "key": {
       "type": "string",
@@ -5599,8 +6784,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.TransportType"
+      }
      },
      "height": {
       "type": "integer",
@@ -5746,8 +6930,7 @@
        "EV": "Electric Vehicle.",
        "HEV": "Hybrid Electric Vehicle.",
        "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.db.scheme.vehicle.MotorType"
+      }
      },
      "chargerPowerDC": {
       "type": "number",
@@ -5821,8 +7004,7 @@
        "HEV": "Hybrid Electric Vehicle.",
        "PHEV": "Plug-in Hybrid Electric Vehicle (with electric plug).",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.MotorTypeInfo"
+      }
      },
      "batteryName": {
       "type": "string",
@@ -5959,8 +7141,7 @@
         "TRAFFIC_HISTORICAL": "(Beta) Enable the historical traffic information.",
         "ONLY_BLOCKED_ROAD": "To get only the blocked roads (closed).",
         "EXCLUDE_BLOCKED_ROAD": "To exclude all blocked roads (closed)."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.traffic.TrafficOpt"
+       }
       }
      },
      "previousUpdateTimestamp": {
@@ -6050,8 +7231,7 @@
        "ROAD_CONDITION_DETERIORATED": "Road condition deteriorated.",
        "BLOCKED_ROAD": "Blocked road.",
        "ROAD_UNDER_CONTRUCTION": "Road under construction."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TrafficRes"
+      }
      },
      "reasonComments": {
       "type": "array",
@@ -6250,8 +7430,7 @@
       "x-enumDescriptions": {
        "CIRCLE": "Circle.",
        "POLYGON": "Polygon."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeoFenceShpType"
+      }
      },
      "center": {
       "$ref": "#/components/schemas/Coordinate",
@@ -6330,8 +7509,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route (only when fastest criteria is set).",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingPondType"
+      }
      },
      "factor": {
       "type": "number",
@@ -6350,8 +7528,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route (only when fastest criteria is set).",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingPondType"
+      }
      }
     },
     "required": [
@@ -6399,8 +7576,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "useStartAngle": {
       "type": "string",
@@ -6414,8 +7590,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "useStopRoadSide": {
       "type": "string",
@@ -6429,8 +7604,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "keptByMinimalWp": {
       "type": "boolean",
@@ -6556,8 +7730,7 @@
        "ALL": "Maximum speed apply to route calculation and to route ETA.",
        "CAL": "Maximum speed apply only to route calculation.",
        "ETA": "Maximum speed apply only to route ETA."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingMaxSpdType"
+      }
      }
     },
     "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingMaxSpd"
@@ -6627,8 +7800,7 @@
        "BRIDGE": "Roads on bridges.",
        "TAX": "Roads submitted to government tax (like German MAUT, etc.).",
        "CARPOOL": "Roads reserved to carpooling."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingRoadAttr"
+      }
      },
      "routingPonderationType": {
       "type": "string",
@@ -6642,8 +7814,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route (only when fastest criteria is set).",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingPondType"
+      }
      }
     },
     "required": [
@@ -6680,12 +7851,11 @@
       "x-enumDescriptions": {
        "MODE_VIAS": "Computes a serie of routes between successive couples of via coordinates. Examples: from C1 to C2 OR from C1 to C2 to ... to Cn.",
        "MODE_1_TO_N": "Computes routes between a start coordinate to a list of destination coordinates. Examples (Cd is departure): from Cd to C1 OR from Cd to C1, from Cd to C2, ..., from Cd to Cn.",
-       "MODE_N_TO_1": "Computes routes between a list of start coordinates to a destination coordinate. Examples (Ca is arrival): from C1 to Ca OR from C1 to Ca, from C2 to Ca, ... from Cn to Ca.",
+       "MODE_N_TO_1": "Computes routes between a list of start coordinates to a destination coordinate. Examples (Ca is arrival): from C1 to Ca OR from C1 to Ca, from C2 to Ca, ... from Cn  to Ca.",
        "MODE_N_TO_N": "Computes n² routes between each couples of a list of n coordinates.",
        "MODE_MATRIX": "Computes a n x p matrix of path weights between each pair of a list of origin and destination coordinates. Path weights are defined in seconds if `FASTEST` mode, meters if `SHORTEST` mode or Wh (Watt-hour) if `ECO_ENERGY` mode.",
        "MODE_ISOCHRONE": "Builds an isochrone polygon around one or two coordinates. With 1 coordinate: Builds an isochrone polygon representing the area that can be reached through the road network starting from this coordinate with a given limit of time or distance or energy. With two coordinates: Build the isochrone polygon representing the area that can be reached through the road network starting from start, ending at stop and with a given limit of time or distance or energy."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingMd"
+      }
      },
      "destinations": {
       "type": "array",
@@ -6723,8 +7893,7 @@
         "AVOID_UNPAVED": "Finds a route which avoids unpaved roads.",
         "AVOID_CROSSING_BORDER": "Finds a route which avoids country border crossings (only when all coordinates are in a same country).",
         "CARPOOL": "Finds a route which avoids roads reserved to carpooling."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingCrt"
+       }
       }
      },
      "preferredRoads": {
@@ -6878,12 +8047,11 @@
         "EVT_TAX_COST": "Sub option of `EVENT` option. Enables the tax cost calculation. This option requires the Vehicle Profile, see field `routingVehicleProfile` and sub field `routingVehicleFeature`. Contact the support for the required map data. See the response structure `RoutingTaxCst` and `RoutingTaxSect` of entry type `TaxCost`. Contact the support for the required map data.",
         "EVT_TRAFFIC": "Sub option of `EVENT` option. Returns the real time traffic info in event structure of type `TrafficElement`. The information contains the `jamFactor` in percentage, `reason` (text), `currentAvrSpeed` in km/h, `freeFlowAvrSpeed` in km/h, etc. NOTE: This option does not affect the route calculation, use the option `TRAFFIC` for that. Contact the support for the required map data.",
         "EVT_TRAFFIC_PREDICTIVE": "Sub option of `EVENT` option. Returns the real time predictive traffic info in event structure of type `TrafficElement`. The information contains the `jamFactor` in percentage, `reason` (text), `currentAvrSpeed` in km/h, `freeFlowAvrSpeed` in km/h, etc. NOTE: This option does not affect the route calculation. The route calculation is never affect by predictive traffic. Contact the support for the required map data.",
-        "EVT_TRAFFIC_HISTORICAL": "(Beta) Sub option of `EVENT` option. Returns the historical traffic info (i.e. the real time in the past) in event structure of type `TrafficElement`. Requires a `departureTime` in the past. The information contains the `jamFactor` in percentage, `reason` (text), `currentAvrSpeed` in km/h, `freeFlowAvrSpeed` in km/h, etc. NOTE: This option does not affect the route calculation. The route calculation is never affect by predictive traffic. Contact the support for the required map data.",
+        "EVT_TRAFFIC_HISTORICAL": "(Beta) Sub option of `EVENT` option. Returns the historical traffic info  (i.e. the real time in the past) in event structure of type `TrafficElement`. Requires a `departureTime` in the past. The information contains the `jamFactor` in percentage, `reason` (text), `currentAvrSpeed` in km/h, `freeFlowAvrSpeed` in km/h, etc. NOTE: This option does not affect the route calculation. The route calculation is never affect by predictive traffic. Contact the support for the required map data.",
         "EVT_ROUTESHEET": "Sub option of `EVENT` option. Enables the route-sheet turn-by-turn instructions in event structure with type `Routesheet`. See the class `RoutingInstruc`.",
         "EVT_TRAFFIC_SIGNS": "Sub option of `EVENT` option. Enables the traffic sign information in event structure with type `TrafficSign`. `text` (optional) text displayed below traffic sign, `matchedCoordinate` location of traffic sign, `category`, see available values: `NOT_SUPPORTED`, `ROAD_NARROWS`, `SHARP_CURVE_LEFT`, `SHARP_CURVE_RIGHT`, `WINDING_RD_LEFT`, `WINDING_RD_RIGHT`, `STEEP_HILL_UP`, `STEEP_HILL_DOWN`, `LATERAL_WIND`, `GENERAL_WARNING`, `RISK_OF_GROUNDING`, `GENERAL_CURVE`, `GENERAL_HILL`, `OBJECT_OVERHANG`, `ST_NO_OVERTAKING`, `END_NO_OVERTAKING`, `PR_OVERTAKING_EL`, `PR_OVERTAKING_ELR`, `PR_OVERTAKING_ELL`, `LANE_MERGE_RIGHT`, `LANE_MERGE_LEFT`, `LANE_MERGE_CENTER`, `RAILWAY_CROSS_PR`, `RAILWAY_CROSS_UNPR`, `ST_NO_OVERTAKING_TRUCKS`, `END_NO_OVERTAKING_TRUCKS`, `STOP`, `END_OF_ALL_RESTRICTIONS`, `ANIMAL_CROSSING`, `ICY_CONDITIONS`, `SLIPPERY_ROAD`, `FALLING_ROCKS`, `SCHOOL_ZONE`, `TRAMWAY_CROSSING`, `CONGESTION_HAZARD`, `ACCIDENT_HAZARD`, `PRIORITY_ONCOMING`, `YIELD_ONCOMING`, `RIGHT_PRIORITY`, `PEDESTRIAN_CROSSING`, `YIELD`, `NO_ENGINE_BRAKE`, `ENDOF_NO_ENGINE_BRAKE`, `NO_IDLING`, `TRUCK_ROLLOVER`, `LOW_GEAR`, `ENDOF_LOW_GEAR`, `LIGHT`, `DOUBLE_HAIRPIN`, `TRIPLE_HAIRPIN`, `TWO_WAY_TRAFFIC`, `URBAN_AREA`, `HUMP_BRIDGE`, `UNEVEN_ROAD`, `BICYCLE_CROSSING`, `YIELD_TO_BICYCLES`, `NO_TOWED_CARAVAN`, `NO_TOWED_TRAILER`, `NO_CAMPER`, `NO_TURN_ON_RED`, `TURN_ON_RED`, `EMBANKMENT`, `FLOOD_AREA`, `OBSTACLE`, `ROAD_SPLIT`.",
         "EVT_WAYPOINTS": "Sub option of `EVENT` option. Returns the waypoints of route in event structure. A waypoint is a coordinate with properties that can be used to reproduce the computed route on other device or server."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingOpt"
+       }
       }
      },
      "routingVehicleProfile": {
@@ -6994,8 +8162,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route (only when fastest criteria is set).",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingPondType"
+      }
      }
     },
     "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingRoadBlck"
@@ -7034,8 +8201,7 @@
        "PEDESTRIAN": "Pedestrian.",
        "ROUNDABOUNT": "Roundabout.",
        "SLIPROAD": "Slip road."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingRdType"
+      }
      },
      "pondType": {
       "type": "string",
@@ -7049,8 +8215,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route (only when fastest criteria is set).",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingPondType"
+      }
      }
     },
     "required": [
@@ -7144,8 +8309,7 @@
        "TUNNEL_CAT_D": "Tunnel Category D.",
        "TUNNEL_CAT_DE": "Tunnel Category D/E.",
        "TUNNEL_CAT_E": "Tunnel Category E."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.HazardousMat"
+      }
      },
      "nbTrailer": {
       "type": "integer",
@@ -7184,8 +8348,7 @@
        "SNOWMOBILE": "Snowmobile (US only).",
        "PICK_UP": "Pick up (US only).",
        "TRACTOR": "Tractor (US only)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollTransportCat"
+      }
      },
      "caravan": {
       "type": "string",
@@ -7199,8 +8362,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "hybrid": {
       "type": "string",
@@ -7214,8 +8376,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "disEquipped": {
       "type": "string",
@@ -7229,8 +8390,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "pollMin": {
       "type": "string",
@@ -7244,8 +8404,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "hov": {
       "type": "string",
@@ -7259,8 +8418,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "cial": {
       "type": "string",
@@ -7274,8 +8432,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollCap"
+      }
      },
      "nbVehAxles": {
       "type": "integer",
@@ -7354,8 +8511,7 @@
        "EURO6_CO2_4": "EURO VI CO2 4",
        "EURO6_CO2_5": "EURO VI CO2 5",
        "MAX": "Maximal value."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.VehicleEmissionClss"
+      }
      },
      "adrTunnelCategory": {
       "type": "string",
@@ -7373,8 +8529,7 @@
        "CAT_C": "Tunnel Category C.",
        "CAT_D": "Tunnel Category D.",
        "CAT_E": "Tunnel Category E."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.AdrTunnelCat"
+      }
      },
      "onlyPhysical": {
       "type": "boolean",
@@ -7411,8 +8566,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "maxSpeeds": {
       "type": "array",
@@ -7797,8 +8951,7 @@
        "ANY_LANG": "XX = Any language code.",
        "CHINESE_NAME": "ZH = Chinese name.",
        "CHINESE_LATIN_NAME": "ZL = Chinese name (latin alphabet)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.AttributeCd"
+      }
      },
      "key": {
       "type": "string",
@@ -7859,8 +9012,7 @@
       "x-enumDescriptions": {
        "CIRCLE": "Circle.",
        "POLYGON": "Polygon."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeoFenceShpType"
+      }
      },
      "fenceShape": {
       "$ref": "#/components/schemas/GeoFenceShp",
@@ -7882,8 +9034,7 @@
        "OUTWARD": "Defines if the tested coordinate is an outward intersection.",
        "OUTSIDE": "Defines if the tested coordinate is out of fence.",
        "INTERSECT": "Position is not completely inside or outside but the shapes are intersected."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeoFencePosState"
+      }
      },
      "position": {
       "$ref": "#/components/schemas/Coordinate",
@@ -7984,8 +9135,7 @@
        "SEGMENT": "Each entry values come from the road segmentation of map data.",
        "SAMPLING_TIME": "Each entry values are sampled by time.",
        "SAMPLING_DISTANCE": "Each entry values are sampled by distance."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingEvntType"
+      }
      },
      "distanceUnit": {
       "type": "string",
@@ -8088,8 +9238,7 @@
        "LEAVE_FERRY": "Leave ferry.",
        "STOP": "Stop.",
        "STOP_VIA": "Stop on via."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingInstructType"
+      }
      },
      "geoElementType": {
       "type": "string",
@@ -8167,8 +9316,7 @@
        "BUILT_UP_AREA_MEDIUM": "Urban area coverage size medium (not an administrative area).",
        "BUILT_UP_AREA_SMALL": "Urban area coverage size small (not an administrative area).",
        "VEHICLE_REPAIR": "POI."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeoItemType"
+      }
      },
      "length": {
       "type": "integer",
@@ -8214,8 +9362,7 @@
        "SLIGHT_RIGHT": "Turn slight right.",
        "BEAR_LEFT": "Bear left.",
        "BEAR_RIGHT": "Bear right."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingManouevType"
+      }
      },
      "coordinate": {
       "$ref": "#/components/schemas/Coordinate",
@@ -8570,8 +9717,7 @@
        "TAX_CATEGORY_1": "Tax category 1.",
        "TAX_CATEGORY_2": "Tax category 2.",
        "TAX_CATEGORY_3": "Tax category 3."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingTaxCat"
+      }
      },
      "meanOfPayments": {
       "type": "array",
@@ -8597,8 +9743,7 @@
         "PAYMENT_VIDEO_TOLL_CHARGE": "Video toll charge.",
         "PAYMENT_EXACT_CASH": "Exact cash.",
         "PAYMENT_TRAVEL_CARD": "Travel card."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.MeanOfPay"
+       }
       }
      },
      "countryCode": {
@@ -8788,8 +9933,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "useStartAngle": {
       "type": "string",
@@ -8803,8 +9947,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "useStopRoadSide": {
       "type": "string",
@@ -8818,8 +9961,7 @@
        "UNDEF": "Status undefined.",
        "YES": "Status yes.",
        "NO": "Status no."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.RoutingDestStatus"
+      }
      },
      "offRoad": {
       "$ref": "#/components/schemas/RoutingOffRd",
@@ -8866,8 +10008,7 @@
        "TOLL_OBTAIN_TICKET": "Obtain ticket (no fee).",
        "TOLL_PAY_PER_TICKET": "Pay per ticket (depends of origin).",
        "TOLL_ELECTRONIC": "Electronic."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TollTp"
+      }
      },
      "meanOfPayments": {
       "type": "array",
@@ -8893,8 +10034,7 @@
         "PAYMENT_VIDEO_TOLL_CHARGE": "Video toll charge.",
         "PAYMENT_EXACT_CASH": "Exact cash.",
         "PAYMENT_TRAVEL_CARD": "Travel card."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.MeanOfPay"
+       }
       }
      },
      "polylineIndex": {
@@ -9086,8 +10226,7 @@
         "EVT_ROUTESHEET": "Sub option of `EVENT` option. Enables the route-sheet turn-by-turn instructions in event structure with type `Routesheet`. See the class `RoutingInstruc`.",
         "EVT_TRAFFIC_SIGNS": "Sub option of `EVENT` option. Enables the traffic sign information in event structure with type `TrafficSign`. `text` (optional) text displayed below traffic sign, `matchedCoordinate` location of traffic sign, `category`, see available values: `NOT_SUPPORTED`, `ROAD_NARROWS`, `SHARP_CURVE_LEFT`, `SHARP_CURVE_RIGHT`, `WINDING_RD_LEFT`, `WINDING_RD_RIGHT`, `STEEP_HILL_UP`, `STEEP_HILL_DOWN`, `LATERAL_WIND`, `GENERAL_WARNING`, `RISK_OF_GROUNDING`, `GENERAL_CURVE`, `GENERAL_HILL`, `OBJECT_OVERHANG`, `ST_NO_OVERTAKING`, `END_NO_OVERTAKING`, `PR_OVERTAKING_EL`, `PR_OVERTAKING_ELR`, `PR_OVERTAKING_ELL`, `LANE_MERGE_RIGHT`, `LANE_MERGE_LEFT`, `LANE_MERGE_CENTER`, `RAILWAY_CROSS_PR`, `RAILWAY_CROSS_UNPR`, `ST_NO_OVERTAKING_TRUCKS`, `END_NO_OVERTAKING_TRUCKS`, `STOP`, `END_OF_ALL_RESTRICTIONS`, `ANIMAL_CROSSING`, `ICY_CONDITIONS`, `SLIPPERY_ROAD`, `FALLING_ROCKS`, `SCHOOL_ZONE`, `TRAMWAY_CROSSING`, `CONGESTION_HAZARD`, `ACCIDENT_HAZARD`, `PRIORITY_ONCOMING`, `YIELD_ONCOMING`, `RIGHT_PRIORITY`, `PEDESTRIAN_CROSSING`, `YIELD`, `NO_ENGINE_BRAKE`, `ENDOF_NO_ENGINE_BRAKE`, `NO_IDLING`, `TRUCK_ROLLOVER`, `LOW_GEAR`, `ENDOF_LOW_GEAR`, `LIGHT`, `DOUBLE_HAIRPIN`, `TRIPLE_HAIRPIN`, `TWO_WAY_TRAFFIC`, `URBAN_AREA`, `HUMP_BRIDGE`, `UNEVEN_ROAD`, `BICYCLE_CROSSING`, `YIELD_TO_BICYCLES`, `NO_TOWED_CARAVAN`, `NO_TOWED_TRAILER`, `NO_CAMPER`, `NO_TURN_ON_RED`, `TURN_ON_RED`, `EMBANKMENT`, `FLOOD_AREA`, `OBSTACLE`, `ROAD_SPLIT`.",
         "EVT_WAYPOINTS": "Sub option of `EVENT` option. Returns the waypoints of route in event structure. A waypoint is a coordinate with properties that can be used to reproduce the computed route on other device or server."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.routing.TraceRouteOpt"
+       }
       }
      },
      "routingVehicleProfile": {
@@ -9512,8 +10651,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "classIdFilters": {
       "type": "array",
@@ -9631,8 +10769,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.TransportType"
+      }
      }
     },
     "required": [
@@ -9783,8 +10920,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "orderBy": {
       "type": "string",
@@ -9800,8 +10936,7 @@
        "DISTANCE_DESC": "Sort by distance in either descending.",
        "DURATION_ASC": "Sort by duration in either ascending.",
        "DURATION_DESC": "Sort by duration in either descending."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.nearPoi.NearPoiOrder"
+      }
      },
      "pl": {
       "type": "boolean",
@@ -10106,8 +11241,7 @@
       "x-enumDescriptions": {
        "CIRCLE": "Circle.",
        "POLYGON": "Polygon."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.LandFeatureShpType"
+      }
      },
      "radius": {
       "type": "integer",
@@ -10184,8 +11318,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "maximumResults": {
       "type": "integer",
@@ -10235,8 +11368,7 @@
         "RAWDATA": "Returns the native value of map data base (like SVS attributes).",
         "SVS_ALL_CLASS": "Export all layers (class).",
         "SVS_ALL_ATTRIBUTE": "Export all attributes for each element found (form)."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.landFeature.FeatureOpt"
+       }
       }
      }
     },
@@ -10278,8 +11410,7 @@
        "VEHICULE_TYPE": "Vehicle type. Deprecated use VEHICLE_TYPE instead.",
        "SCHOOL": "School.",
        "ADVISORY": "Advisory."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ReasonOfSpd"
+      }
      },
      "value": {
       "type": "string",
@@ -10386,8 +11517,7 @@
        "BUILT_UP_AREA_MEDIUM": "Urban area coverage size medium (not an administrative area).",
        "BUILT_UP_AREA_SMALL": "Urban area coverage size small (not an administrative area).",
        "VEHICLE_REPAIR": "POI."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeoItemType"
+      }
      },
      "classCode": {
       "type": "string",
@@ -10749,8 +11879,7 @@
        "RENT_A_CAR_PARKING": "Rent-a-Car parking.",
        "MOUNTAIN_PASS": "Mountain pass.",
        "HIGHLIGHT_CLASS": "Highlight."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ClassType"
+      }
      },
      "classId": {
       "type": "integer",
@@ -11163,8 +12292,7 @@
        "RENT_A_CAR_PARKING": "Rent-a-Car parking.",
        "MOUNTAIN_PASS": "Mountain pass.",
        "HIGHLIGHT_CLASS": "Highlight."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.ClassType"
+      }
      },
      "postalAddressClassId": {
       "type": "integer",
@@ -11297,8 +12425,7 @@
         "BUILT_UP_AREA_MEDIUM": "Urban area coverage size medium (not an administrative area).",
         "BUILT_UP_AREA_SMALL": "Urban area coverage size small (not an administrative area).",
         "VEHICLE_REPAIR": "POI."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.GeoItemType"
+       }
       }
      },
      "polyline": {
@@ -11422,8 +12549,7 @@
        "OPEN_POS": "1 : open in positive direction.",
        "OPEN_NEG": "2 : open in negative direction.",
        "OPEN": "3 : Undefined matched direction and open in both directions."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.MatchedDestination"
+      }
      },
      "nbLanePos": {
       "type": "integer",
@@ -11463,8 +12589,7 @@
        "ELEVATOR": "Elevator.",
        "ESCALATOR": "Escalator.",
        "FOOTBRIDGE": "Footbridge."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.PedestrianInfraType"
+      }
      },
      "maxSpeed": {
       "type": "number",
@@ -11502,8 +12627,7 @@
        "OPEN_POS": "1 : open in positive direction.",
        "OPEN_NEG": "2 : open in negative direction.",
        "OPEN": "3 : open in both directions."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.DirectionFlw"
+      }
      }
     },
     "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geocodingService.RoadInfo"
@@ -11610,8 +12734,7 @@
        "CIRCLE": "Define type of xy parameter as circle to perform a comparison between fence shapes and a circle.",
        "POLYLINE": "Define the interpretation of coordinates of xy parameter to perform a comparison between fence shapes and a polyline.",
        "POLYGON": "Define the interpretation of coordinates of xy parameter to perform a comparison between fence shapes and a polygon."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingPosType"
+      }
      },
      "positions": {
       "type": "array",
@@ -11630,8 +12753,7 @@
        ],
        "x-enumDescriptions": {
         "SEARCH": "Enable to search the fences with coordinate, in this case the parameter `positions` can be use the radius."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeofencingOpt"
+       }
       }
      }
     },
@@ -11660,8 +12782,7 @@
       "x-enumDescriptions": {
        "CIRCLE": "Circle.",
        "POLYGON": "Polygon."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeoFenceShpType"
+      }
      },
      "fenceShape": {
       "$ref": "#/components/schemas/GeoFenceShp",
@@ -11685,8 +12806,7 @@
         "OUTWARD": "Defines if the tested coordinate is an outward intersection.",
         "OUTSIDE": "Defines if the tested coordinate is out of fence.",
         "INTERSECT": "Position is not completely inside or outside but the shapes are intersected."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geofencing.GeoFencePosState"
+       }
       }
      }
     },
@@ -11757,8 +12877,7 @@
        "POI": "POI.",
        "CITY_CENTER": "CITY_CENTER.",
        "ROAD": "ROAD."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.AssetSrchType"
+      }
      },
      "searchType": {
       "type": "string",
@@ -11779,8 +12898,7 @@
        "STRICT": "Means that the required string must be strictly equal to the pattern.",
        "STRICT_BEGINNING": "Means that the required strings must begin with the pattern.",
        "WORD_BEGINNING": "Means that one word of required strings must begin with the pattern (characters ' ', '-' and '/' are considered as word separators)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.GeocodingSrchType"
+      }
      },
      "maximumResults": {
       "type": "integer",
@@ -11884,8 +13002,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "radius": {
       "type": "integer",
@@ -11941,8 +13058,7 @@
         "TRAFFIC": "Return the traffic information.",
         "TRAFFIC_PREDICTIVE": "Return the predictive traffic information. The timestamp defined in each coordinate is used.",
         "TRAFFIC_HISTORICAL": "(Beta) Return the historical traffic information. The timestamp defined in each coordinate is used."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.RevGeocodingOpt"
+       }
       }
      }
     },
@@ -12025,8 +13141,7 @@
        "POI": "POI.",
        "CITY_CENTER": "CITY_CENTER.",
        "ROAD": "ROAD."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.AssetSrchType"
+      }
      },
      "searchType": {
       "type": "string",
@@ -12046,8 +13161,7 @@
        "STRICT": "Means that the required string must be strictly equal to the pattern.",
        "STRICT_BEGINNING": "Means that the required strings must begin with the pattern.",
        "WORD_BEGINNING": "Means that one word of required strings must begin with the pattern (characters ' ', '-' and '/' are considered as word separators)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.GeocodingSrchType"
+      }
      },
      "maximumResults": {
       "type": "integer",
@@ -12133,8 +13247,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+      }
      },
      "maximumResults": {
       "type": "integer",
@@ -12186,8 +13299,7 @@
         "TRAFFIC": "Return the traffic information.",
         "TRAFFIC_PREDICTIVE": "Return the predictive traffic information. The timestamp defined in each coordinate is used.",
         "TRAFFIC_HISTORICAL": "(Beta) Return the historical traffic information. The timestamp defined in each coordinate is used."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.RevGeocodingOpt"
+       }
       }
      }
     },
@@ -12252,8 +13364,7 @@
        "POI": "POI.",
        "CITY_CENTER": "CITY_CENTER.",
        "ROAD": "ROAD."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.AssetSrchType"
+      }
      },
      "searchType": {
       "type": "string",
@@ -12273,8 +13384,7 @@
        "STRICT": "Means that the required string must be strictly equal to the pattern.",
        "STRICT_BEGINNING": "Means that the required strings must begin with the pattern.",
        "WORD_BEGINNING": "Means that one word of required strings must begin with the pattern (characters ' ', '-' and '/' are considered as word separators)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.GeocodingSrchType"
+      }
      },
      "maximumResults": {
       "type": "integer",
@@ -12371,8 +13481,7 @@
        "NORMAL": "Uses speeds defined in map data, auxiliary consumption, accelerations and decelerations defined in vehicle profile. Set as default.",
        "SPORT": "Increases accelerations and decelerations and driving speeds.",
        "CUSTOM": "Allows to override accelerations, decelerations, driving speeds and maximum speed."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.evSmartRouting.request.EvDrivingMod"
+      }
      },
      "limitMaxSpeed": {
       "type": "integer",
@@ -12432,8 +13541,7 @@
         "AVOID_CROSSING_BORDER": "Find a route without country border crossing (makes sence only when the start and stop points are in the same country).",
         "LESS_EXPENSIVE": "Find the less expensive charging stations. Only with algorithm v2. Deprecated.",
         "TRAFFIC": "Use traffic info for route calculation."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.EvCriterionFront"
+       }
       }
      },
      "optimMode": {
@@ -12448,8 +13556,7 @@
        "FASTEST": "Find the route which optimizes travel time. Default value.",
        "SHORTEST": "Find the route which optimizes travel distance.",
        "ECO_ENERGY": "Find the route which optimizes travel energy consumption."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.OptimMode"
+      }
      },
      "geoserver": {
       "type": "string",
@@ -12752,8 +13859,7 @@
        "IN_SERVICE_BUSY": "In service but busy.",
        "IN_SERVICE_RESERVED": "In service but reserved.",
        "FUTURE": "Future."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.AvailabilityStatusFront"
+      }
      },
      "availabilityUntil": {
       "type": "integer",
@@ -12788,8 +13894,7 @@
        "AC_SINGLE_PHASE": "Alternating current (AC), single phase.",
        "AC_THREE_PHASES": "Alternating current (AC), three phases.",
        "DC": "Direct current (DC)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingCurrentType"
+      }
      },
      "voltage": {
       "type": "number",
@@ -12863,8 +13968,7 @@
        "AC_SINGLE_PHASE": "Alternating current (AC), single phase.",
        "AC_THREE_PHASES": "Alternating current (AC), three phases.",
        "DC": "Direct current (DC)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.chargingStation.ChargingCurrentType"
+      }
      },
      "power": {
       "type": "number",
@@ -12896,8 +14000,7 @@
        "PARKING_TIME": "time not charging, defined in hours.",
        "ENERGY": "defined in kWh.",
        "TIME": "time charging, defined in hours."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.chargingStation.ChargingPriceType"
+      }
      },
      "unit": {
       "type": "string",
@@ -13021,8 +14124,7 @@
       "x-enumDescriptions": {
        "VGROUP": "The data must not be interpreted as an actual physical object, but as a simple group.",
        "REAL": "The object exists in the real world."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.Nature"
+      }
      },
      "availabilityStatus": {
       "type": "string",
@@ -13046,8 +14148,7 @@
        "IN_SERVICE_BUSY": "In service but busy.",
        "IN_SERVICE_RESERVED": "In service but reserved.",
        "FUTURE": "Future."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.AvailabilityStatusFront"
+      }
      },
      "authenticationModes": {
       "type": "array",
@@ -13126,8 +14227,7 @@
        "LOCAL": "The charging station data come from the local database or cache (local request to spatial database).",
        "REMOTE": "The charging station data come directly from the provider database (remote request to provider API).",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ProviderSupplyMode"
+      }
      },
      "id": {
       "type": "string",
@@ -13197,8 +14297,7 @@
        "RESTRICTED": "Controlled or restricted area access.",
        "CAR_SHARING_ONLY": "Car sharing only.",
        "OTHER": "Other."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.PoolAccessibilityFront"
+      }
      },
      "availabilityStatus": {
       "type": "string",
@@ -13222,8 +14321,7 @@
        "IN_SERVICE_BUSY": "In service but busy.",
        "IN_SERVICE_RESERVED": "In service but reserved.",
        "FUTURE": "Future."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.AvailabilityStatusFront"
+      }
      },
      "longitude": {
       "type": "number",
@@ -13297,8 +14395,7 @@
        "BUILDING_PARKING": "Multi-storey car park.",
        "UNDERGROUND_PARKING": "Multi-storey car park, mainly underground.",
        "UNSUPPORTED_VALUE": "Not found, not supported new value."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.SiteCategoryFront"
+      }
      },
      "phoneNumber": {
       "type": "string",
@@ -13617,8 +14714,7 @@
        "OTHER": "Other",
        "OWNER": "Owner",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ImageLinkCat"
+      }
      },
      "format": {
       "type": "string",
@@ -13824,8 +14920,7 @@
        "PERPENDICULAR": "Parking happens perpendicular to the roadway on which vehicles approach the charging station.",
        "ANGLE": "Parking happens at an angle to the roadway on which vehicles approach the charging station (i.e. echelon parking).",
        "DRIVE_THROUGH": "A vehicle can stop, charge, and proceed without reversing into or out of a parking bay. This is particularly important for heavy vehicles with trailers."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ParkingOrientationFront"
+      }
      },
      "transportTypes": {
       "type": "array",
@@ -13854,8 +14949,7 @@
         "EMERGENCY": "Emergency vehicle.",
         "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
         "TRUCK": "Truck."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+       }
       }
      }
     },
@@ -13885,8 +14979,7 @@
        "FRIDAY": "FRIDAY.",
        "SATURDAY": "SATURDAY.",
        "SUNDAY": "SUNDAY."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.PoolOpenningHourDayOfweek"
+      }
      },
      "start": {
       "type": "string",
@@ -13923,8 +15016,7 @@
        "FRIDAY": "FRIDAY.",
        "SATURDAY": "SATURDAY.",
        "SUNDAY": "SUNDAY."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.PoolOpenningHourDayOfweek"
+      }
      },
      "start": {
       "type": "string",
@@ -14272,8 +15364,7 @@
        "PERPENDICULAR": "Parking happens perpendicular to the roadway on which vehicles approach the charging station.",
        "ANGLE": "Parking happens at an angle to the roadway on which vehicles approach the charging station (i.e. echelon parking).",
        "DRIVE_THROUGH": "A vehicle can stop, charge, and proceed without reversing into or out of a parking bay. This is particularly important for heavy vehicles with trailers."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ParkingOrientationFront"
+      }
      },
      "transportTypes": {
       "type": "array",
@@ -14302,8 +15393,7 @@
         "EMERGENCY": "Emergency vehicle.",
         "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
         "TRUCK": "Truck."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+       }
       }
      },
      "parkingOrientations": {
@@ -14411,8 +15501,7 @@
         "AVOID_CROSSING_BORDER": "Find a route without country border crossing (makes sence only when the start and stop points are in the same country).",
         "LESS_EXPENSIVE": "Find the less expensive charging stations. Only with algorithm v2. Deprecated.",
         "TRAFFIC": "Use traffic info for route calculation."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.EvCriterionFront"
+       }
       }
      },
      "startLon": {
@@ -14946,8 +16035,7 @@
        "REMOTE_OR_LOCAL": "Capability preference between remote and local request. If the provider have the remote capability mode, the request will be send to remote provider. If not, the local mode will be used (if local is available too).",
        "LOCAL_IFNOPOOLS_REMOTE": "Capability preference between local and remote request. If the provider have the local capability mode, the request will executed on local database in first. If not pools are found, the remote mode will be used (if remote is available too).",
        "REMOTE_IFNOPOOLS_LOCAL": "Capability preference between remote and local request. If the provider have the remote capability mode, the request will be send to remote provider in first. If not pools are found, the local mode will be used (if local is available too)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationMod"
+      }
      },
      "options": {
       "type": "array",
@@ -14973,8 +16061,7 @@
         "PATH_STATION": "Depth of path limited to the station information.",
         "PATH_POINT": "Depth of path limited to the charging point information.",
         "PATH_AUTO": "Automatic switching between PATH_POOL_MAP to PATH_POINT data precision. The depth of a path limits the charging point information."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationOpt"
+       }
       }
      },
      "pathAutoMaxPool": {
@@ -15116,8 +16203,7 @@
        "AC_SINGLE_PHASE": "Alternating current (AC), single phase.",
        "AC_THREE_PHASES": "Alternating current (AC), three phases.",
        "DC": "Direct current (DC)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.chargingStation.ChargingCurrentType"
+      }
      },
      "power": {
       "type": "number",
@@ -15284,8 +16370,7 @@
        ],
        "x-enumDescriptions": {
         "OPTIMUM_BATTERY_CHARGE": "Calculate the optimum charge level (in %) of the vehicle battery at the given charge point; Above this level, the power delivered by the charge point decreases, and the charge takes more time."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingTime.ChargingTimeOpt"
+       }
       }
      },
      "temperature": {
@@ -15319,8 +16404,7 @@
        "AC_SINGLE_PHASE": "Alternating current (AC), single phase.",
        "AC_THREE_PHASES": "Alternating current (AC), three phases.",
        "DC": "Direct current (DC)."
-      },
-      "x-enumSource": "com.benomad.bgis.be.model.chargingStation.ChargingCurrentType"
+      }
      },
      "connectorType": {
       "type": "string",
@@ -15403,8 +16487,7 @@
        "FASTEST": "Find the route which optimizes travel time. Default value.",
        "SHORTEST": "Find the route which optimizes travel distance.",
        "ECO_ENERGY": "Find the route which optimizes travel energy consumption."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.OptimizationModeFront"
+      }
      },
      "criterias": {
       "type": "array",
@@ -15429,8 +16512,7 @@
         "AVOID_CROSSING_BORDER": "Find a route without country border crossing (makes sence only when the start and stop points are in the same country).",
         "LESS_EXPENSIVE": "Find the less expensive charging stations. Only with algorithm v2. Deprecated.",
         "TRAFFIC": "Use traffic info for route calculation."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.EvCriterionFront"
+       }
       }
      },
      "alternative": {
@@ -15532,8 +16614,7 @@
        "TEXT": "Render only the text information.",
        "DETAILS": "Render only the detailed information in separated fields.",
        "TEXT_DETAILS": "Render both text and details information."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.RoutesheetModeFront"
+      }
      },
      "routesheetVerboseLevel": {
       "type": "string",
@@ -15547,8 +16628,7 @@
        "LOW": "Low verbosity, the minimal information about the route-sheet instruction will be returned.",
        "MEDIUM": "Medium verbosity, the normal information about the route-sheet instruction will be returned.",
        "HIGH": "High verbosity, the maximum details information about the route-sheet instruction will be returned."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.RoutesheetVerboseLevelFront"
+      }
      },
      "geometry": {
       "type": "boolean",
@@ -15608,8 +16688,7 @@
        "NORMAL": "Use the speed limitation in vehicles database.",
        "SPORT": "No speed limitation (only the legal speed limit of roads). Increase the acceleration/deceleration. Prefer the high-ways.",
        "CUSTOM": "Allow to override ponderation parameters."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.request.DrivingStyleModeFront"
+      }
      },
      "allowOverVehSpdLim": {
       "type": "boolean",
@@ -15823,8 +16902,7 @@
        "PEDESTRIAN": "Pedestrian.",
        "ROUNDABOUNT": "Roundabout.",
        "SLIPROAD": "Slip road."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.RoadTypeFront"
+      }
      },
      "pondType": {
       "type": "string",
@@ -15838,8 +16916,7 @@
        "ALL": "Speed coefficient applies both for finding the fastest route and calculating its ETA. Default value.",
        "CAL": "Speed coefficient applies only searching for the fastest route.",
        "ETA": "Speed coefficient applies only for calculating route's travel time (ETA)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.PonderationTypeFront"
+      }
      }
     },
     "required": [
@@ -15961,8 +17038,7 @@
        "TUNNEL_CAT_D": "Tunnel Category D.",
        "TUNNEL_CAT_DE": "Tunnel Category D/E.",
        "TUNNEL_CAT_E": "Tunnel Category E."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.HazardousMaterialsFront"
+      }
      },
      "nbTrailer": {
       "type": "integer",
@@ -16001,8 +17077,7 @@
        "SNOWMOBILE": "Snowmobile (US only).",
        "PICK_UP": "Pick up (US only).",
        "TRACTOR": "Tractor (US only)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollTransportCategoryFront"
+      }
      },
      "caravan": {
       "type": "string",
@@ -16016,8 +17091,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "hybrid": {
       "type": "string",
@@ -16031,8 +17105,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "disEquipped": {
       "type": "string",
@@ -16046,8 +17119,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "pollMin": {
       "type": "string",
@@ -16061,8 +17133,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "hov": {
       "type": "string",
@@ -16076,8 +17147,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "cial": {
       "type": "string",
@@ -16091,8 +17161,7 @@
        "UNDEFINED": "Undefined.",
        "YES": "Yes.",
        "NO": "No."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.TollCapabilityFront"
+      }
      },
      "nbVehAxles": {
       "type": "integer",
@@ -16171,8 +17240,7 @@
        "EURO6_CO2_4": "EURO VI CO2 4",
        "EURO6_CO2_5": "EURO VI CO2 5",
        "MAX": "Maximal value."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.VehicleEmissionClassFront"
+      }
      },
      "adrTunnelCategory": {
       "type": "string",
@@ -16190,8 +17258,7 @@
        "CAT_C": "Tunnel Category C.",
        "CAT_D": "Tunnel Category D.",
        "CAT_E": "Tunnel Category E."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.routing.AdrTunnelCategoryFront"
+      }
      },
      "onlyPhysical": {
       "type": "boolean",
@@ -16302,8 +17369,7 @@
        "EMERGENCY": "Emergency vehicle.",
        "DELIVERY_TRUCK": "Delivery truck.",
        "TRUCK": "Truck."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.TransportTypeFront"
+      }
      },
      "maxSpeed": {
       "type": "integer",
@@ -16420,8 +17486,7 @@
        "TOLL": "Toll along the journey.",
        "EXCEPTION": "Exception event can show the information about a error on the API conversion between backend and frontend.",
        "NOT_SUPPORTED_ENUM": "The event type is not supported by this API version, please check if a newer API is already released."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v2_0_0.model.evSmartRouting.response.events.EventTypeFront"
+      }
      }
     },
     "required": [
@@ -16747,8 +17812,7 @@
         "EMERGENCY": "Emergency vehicle.",
         "DELIVERY_TRUCK": "Delivery truck. Deprecated, use `TRUCK` instead.",
         "TRUCK": "Truck."
-       },
-       "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.TransportMode"
+       }
       }
      },
      "truckAttributes": {
@@ -16819,8 +17883,7 @@
        "NA": "Name of BeMap service (like mapping, geocoding, routing, etc.).",
        "MIN": "Name of BeMap service (like mapping, geocoding, routing, etc.).",
        "MAX": "Name of BeMap service (like mapping, geocoding, routing, etc.)."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.ServiceLimitArg"
+      }
      },
      "type": {
       "type": "string",
@@ -16840,8 +17903,7 @@
        "FLOAT": "Float.",
        "LONG": "Long.",
        "DOUBLE": "Double."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.geoServerInfo.ServiceLmtType"
+      }
      },
      "value": {
       "type": "string",
@@ -17204,8 +18266,7 @@
        "PERSPECTIVE": "Perspective View of the vehicle's picture.",
        "UP": "Up View of the vehicle's picture.",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.vehicle.PictureViewInfo"
+      }
      },
      "pictureFileFormat": {
       "type": "string",
@@ -17223,8 +18284,7 @@
        "GIF": "GIF format: Indexed color (8 bits per pixel).",
        "JPEG": "JPEG format: RGB (24 bits per pixel).",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.ImageFileFormatInfo"
+      }
      },
      "picture": {
       "type": "string",
@@ -17300,8 +18360,7 @@
        "GIF": "GIF format: Indexed color (8 bits per pixel).",
        "JPEG": "JPEG format: RGB (24 bits per pixel).",
        "NOT_SUPPORTED_VALUE": "Not supported value for this API version."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.ImageFileFormatInfo"
+      }
      },
      "logo": {
       "type": "string",
@@ -17383,8 +18442,7 @@
        "DAY": "By day.",
        "WEEK": "By week.",
        "MONTH": "By month."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.quotas.QuotasRangeFront"
+      }
      },
      "type": {
       "type": "string",
@@ -17396,8 +18454,7 @@
       "x-enumDescriptions": {
        "SOFT": "Soft, an alert (e-mail) was raised. The service keep to works.",
        "HARD": "Hard, an alert (e-mail) was raised and the service is blocked."
-      },
-      "x-enumSource": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.quotas.QuotasLimitTypeFront"
+      }
      },
      "autoUnlock": {
       "type": "boolean",
@@ -17689,6 +18746,217 @@
      }
     },
     "x-javaClass": "com.benomad.bgis.fe.protocol.service.v1_0_0.model.chargingStation.ChargingStationBrandResponse"
+   },
+   "Error": {
+    "type": "object",
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "string",
+      "description": "What went wrong, for people. The text may change; branch on the status code."
+     },
+     "rid": {
+      "type": "string",
+      "description": "Identifies the request in the Worker's logs. On `Tile read error` only."
+     }
+    }
+   },
+   "Login": {
+    "type": "object",
+    "required": [
+     "ok",
+     "username",
+     "token"
+    ],
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "const": true
+     },
+     "username": {
+      "type": "string",
+      "description": "The account's username, as BeMap returns it."
+     },
+     "token": {
+      "type": "string",
+      "description": "The session token: a JWT valid for one hour, whose `exp` claim is its expiry in seconds since the epoch."
+     }
+    }
+   },
+   "Status": {
+    "type": "object",
+    "required": [
+     "ok",
+     "username"
+    ],
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "const": true
+     },
+     "username": {
+      "type": "string",
+      "description": "The account the token was issued to."
+     }
+    }
+   },
+   "Ok": {
+    "type": "object",
+    "required": [
+     "ok"
+    ],
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "const": true
+     }
+    }
+   },
+   "Maps": {
+    "type": "object",
+    "required": [
+     "default",
+     "defaultStyle",
+     "aliases",
+     "tilesets",
+     "styles",
+     "versions",
+     "aliasVersions"
+    ],
+    "properties": {
+     "default": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The tileset the `default` alias points to; `null` when the environment sets none."
+     },
+     "defaultStyle": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The style this environment recommends, as a path to request (`styles/<name>.json`); `null` when it sets none."
+     },
+     "aliases": {
+      "type": "object",
+      "description": "Alias, lower-case, to tileset filename. Every alias works as `{file}` in tile URLs.",
+      "additionalProperties": {
+       "type": "string"
+      }
+     },
+     "tilesets": {
+      "type": "array",
+      "description": "Every tileset this environment serves, as filenames with their `.pmtiles` suffix.",
+      "items": {
+       "type": "string"
+      }
+     },
+     "styles": {
+      "type": "array",
+      "description": "Every style this environment serves, as paths to request (`styles/<name>.json`).",
+      "items": {
+       "type": "string"
+      }
+     },
+     "versions": {
+      "type": "object",
+      "description": "Tileset filename to the archive's version token, the value of the `v` parameter. A token changes only when the archive is rebuilt. A tileset whose version cannot be read is left out.",
+      "additionalProperties": {
+       "$ref": "#/components/schemas/VersionToken"
+      }
+     },
+     "aliasVersions": {
+      "type": "object",
+      "description": "The same version tokens, by alias.",
+      "additionalProperties": {
+       "$ref": "#/components/schemas/VersionToken"
+      }
+     }
+    }
+   },
+   "VersionToken": {
+    "type": "string",
+    "description": "Eight lower-case hexadecimal characters, derived from the stored archive's entity tag.",
+    "pattern": "^[0-9a-f]{8}$"
+   },
+   "Styles": {
+    "type": "object",
+    "required": [
+     "styles",
+     "defaultStyle"
+    ],
+    "properties": {
+     "styles": {
+      "type": "array",
+      "description": "Every style this environment serves, as paths to request (`styles/<name>.json`).",
+      "items": {
+       "type": "string"
+      }
+     },
+     "defaultStyle": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The style this environment recommends; `null` when it sets none."
+     }
+    }
+   },
+   "Default": {
+    "type": "object",
+    "required": [
+     "default"
+    ],
+    "properties": {
+     "default": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "Style": {
+    "type": "object",
+    "description": "A MapLibre style document: https://maplibre.org/maplibre-style-spec/",
+    "required": [
+     "version",
+     "sources",
+     "layers"
+    ],
+    "properties": {
+     "version": {
+      "type": "integer",
+      "const": 8
+     },
+     "metadata": {
+      "type": "object",
+      "description": "On styles with placeholders, `source_placeholder` and `place_label_placeholder` name what the client replaces.",
+      "properties": {
+       "source_placeholder": {
+        "type": "string"
+       },
+       "place_label_placeholder": {
+        "type": "string"
+       }
+      }
+     },
+     "sources": {
+      "type": "object"
+     },
+     "glyphs": {
+      "type": "string"
+     },
+     "layers": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     }
+    }
    }
   },
   "securitySchemes": {
@@ -17702,6 +18970,143 @@
     "description": "Session identifier returned by the authentication API.",
     "name": "X-Auth-ID",
     "in": "header"
+   },
+   "bemapAccount": {
+    "type": "http",
+    "scheme": "basic",
+    "description": "A BeMap account of this environment's BeMap, with the geoserver `here` or `osm` and the right `ROLE_MAPPING`. Used only by `POST /api/login`."
+   },
+   "sessionToken": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-Session-Token",
+    "description": "The session token returned by `POST /api/login`. The preferred channel."
+   },
+   "sessionCookie": {
+    "type": "apiKey",
+    "in": "cookie",
+    "name": "session",
+    "description": "The session token, in the cookie `POST /api/login` sets (`HttpOnly; Secure; SameSite=None`). A browser sends it back by itself on credentialed requests."
+   },
+   "sessionQuery": {
+    "type": "apiKey",
+    "in": "query",
+    "name": "token",
+    "description": "The session token as a query parameter, for clients that cannot set headers on the requests their map library makes. It ends up in logs and browser history; use the header wherever you can."
+   }
+  },
+  "parameters": {
+   "File": {
+    "name": "file",
+    "in": "path",
+    "required": true,
+    "description": "An alias from `aliases` in `GET /api/maps` (case-insensitive), or a filename from `tilesets` without its `.pmtiles` suffix (case-sensitive).",
+    "schema": {
+     "type": "string"
+    },
+    "examples": {
+     "alias": {
+      "value": "osm"
+     },
+     "filename": {
+      "value": "OSM_250901_WORLD_unified"
+     }
+    }
+   }
+  },
+  "headers": {
+   "SetSessionCookie": {
+    "description": "The session token as the `session` cookie, for as long as the token is valid.",
+    "schema": {
+     "type": "string"
+    },
+    "example": "session=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=3600"
+   },
+   "ClearSessionCookie": {
+    "description": "Clears the `session` cookie.",
+    "schema": {
+     "type": "string",
+     "const": "session=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0"
+    }
+   },
+   "Immutable": {
+    "description": "Cached for 30 days, never revalidated.",
+    "schema": {
+     "type": "string",
+     "const": "public, max-age=2592000, immutable"
+    }
+   },
+   "ETag": {
+    "description": "The stored object's entity tag.",
+    "schema": {
+     "type": "string"
+    }
+   },
+   "XCache": {
+    "description": "Whether the Worker served the response from its edge cache (`HIT`), from storage (`MISS`), or from a storage read shared with a simultaneous identical request (`COALESCED`). Readable only by same-origin callers in a browser, since CORS does not expose it.",
+    "schema": {
+     "type": "string",
+     "enum": [
+      "HIT",
+      "MISS",
+      "COALESCED"
+     ]
+    }
+   }
+  },
+  "responses": {
+   "Unauthorized": {
+    "description": "No session token was sent (`Unauthorized`), or it is expired or invalid (`Session expired`, and the `session` cookie is cleared). Log in again.",
+    "headers": {
+     "Set-Cookie": {
+      "description": "Sent with `Session expired` only: clears the `session` cookie.",
+      "schema": {
+       "type": "string",
+       "const": "session=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0"
+      }
+     }
+    },
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/Error"
+      },
+      "examples": {
+       "noToken": {
+        "value": {
+         "error": "Unauthorized"
+        }
+       },
+       "expired": {
+        "value": {
+         "error": "Session expired"
+        }
+       }
+      }
+     }
+    }
+   },
+   "RateLimited": {
+    "description": "Over the per-user rate limit. Wait a second and retry.",
+    "headers": {
+     "Retry-After": {
+      "description": "Seconds to wait: always 1.",
+      "schema": {
+       "type": "integer",
+       "const": 1
+      }
+     }
+    },
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/Error"
+      },
+      "example": {
+       "error": "Rate limit exceeded (101/100 req/s)"
+      }
+     }
+    }
    }
   }
  }

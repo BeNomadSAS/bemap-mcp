@@ -8,13 +8,14 @@ You’ve built your JSON request body — now let’s send it using **Postman** 
 
 Whether using Postman or cURL, make sure to include these HTTP headers:
 
-| Header Name       | Value                        |
-|-------------------|------------------------------|
-| `Content-Type`    | `application/json`           |
-| `accept`          | `application/json`           |
-| `Authorization`   | `Bearer <your_access_token>` |
+| Header Name       | Value                              |
+|-------------------|------------------------------------|
+| `Content-Type`    | `application/json`                 |
+| `accept`          | `application/json`                 |
+| `Authorization`   | `Basic <base64 of account:apikey>` |
 
-> 🛡️ You must first authenticate using the `/authenticate` endpoint to get a valid token.  
+> 🛡️ BeMap uses HTTP Basic authentication: join your account and your API key with `:` and encode the result in Base64. There is no token to fetch first.  
+> A request without Basic credentials is redirected (`302`) to the login page; wrong credentials answer `401`.  
 > See the [authentication tutorial](index.html#page-authentication.md).
 
 ---
@@ -24,16 +25,17 @@ Whether using Postman or cURL, make sure to include these HTTP headers:
 1. Open **Postman** and create a new `POST` request.
 2. Set the URL to:
 
-https://bemap-beta.benomad.com/bgis/service/routing/1.0
+   ```
+   https://bemap.benomad.com/bgis/service/routing/1.0
+   ```
 
+3. Under the **Headers** tab, add:
 
-1. Under the **Headers** tab, add:
-
-| KEY            | VALUE                         |
-|----------------|-------------------------------|
-| Content-Type   | application/json              |
-| accept         | application/json              |
-| Authorization  | Bearer `your_access_token`    |
+| KEY            | VALUE                              |
+|----------------|------------------------------------|
+| Content-Type   | application/json                   |
+| accept         | application/json                   |
+| Authorization  | Basic `<base64 of account:apikey>` |
 
 4. Under the **Body** tab:
    - Select `raw` and choose `JSON`.
@@ -72,10 +74,10 @@ https://bemap-beta.benomad.com/bgis/service/routing/1.0
 ## 💻 Using cURL
 
 ```
-curl -X POST "https://bemap-beta.benomad.com/bgis/service/routing/1.0" \
+curl -X POST "https://bemap.benomad.com/bgis/service/routing/1.0" \
   -H "Content-Type: application/json" \
   -H "accept: application/json" \
-  -H "Authorization: Bearer <your_access_token>" \
+  -H "Authorization: Basic <base64 of account:apikey>" \
   -d '{
     "destinations": [
       { "coordinateSat": { "lon": 2.3522, "lat": 48.8566 } },
@@ -89,4 +91,8 @@ curl -X POST "https://bemap-beta.benomad.com/bgis/service/routing/1.0" \
   }'
 ```
 
-📌 Make sure to replace <your_access_token> with a valid token retrieved from the /authenticate endpoint.
+📌 Make sure to replace `<base64 of account:apikey>` with your account and API key, joined by `:` and encoded in Base64 — or let cURL build the header with `-u "<account>:<apikey>"` in place of the `Authorization` line.
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

@@ -16,7 +16,7 @@ You want the API to **suggest a recommended maximum speed** that helps:
 
 💡 **What it does**
 
-When this option is enabled (`true`) **and algorithm version 3 is used**, the EV routing engine may suggest a **maximum speed** limit for certain sections of the route. This recommendation helps the vehicle:
+When this option is enabled (`true`), the EV routing engine is meant to suggest a **maximum speed** limit for certain sections of the route — the specification describes the option as available *"since algorithm v3"*. This recommendation would help the vehicle:
 
 - **Arrive at the next destination or charging station without depleting the battery**
 - **Optimize energy consumption**
@@ -25,6 +25,8 @@ When this option is enabled (`true`) **and algorithm version 3 is used**, the EV
 Instead of simply driving as fast as possible, the algorithm may recommend slowing down **to skip an extra charging stop** — resulting in faster **total travel time.**
 
 > ⚠️ This is a recommendation, not a restriction — the driver is still free to ignore it.
+
+> ⚠️ Measured on prod (29 September 2026): no request field selects an algorithm version, and no response field carries a recommended speed. The example below answers exactly as it does without the flag — the same route, the same charge, the same response, with or without `routeDetails`.
 
 🔧 How to enable
 
@@ -46,7 +48,6 @@ Add `allowMaxSpeedRecommendation: true` in the `condition` block of your routing
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -58,9 +59,6 @@ Add `allowMaxSpeedRecommendation: true` in the `condition` block of your routing
   "condition": {
     "minBatLvl": 10.0,
     "allowMaxSpeedRecommendation": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -261,7 +259,6 @@ Add `allowNaStatus: true` to the `condition` block in your routing request.
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -273,9 +270,6 @@ Add `allowNaStatus: true` to the `condition` block in your routing request.
   "condition": {
     "minBatLvl": 10.0,
     "allowNaStatus": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -468,6 +462,7 @@ Add `alternative: 1` (or other non-zero index) to the condition block of your re
   "alternative": 1
 },
 ```
+> ⚠️ Send `alternative` as a number. The specification shows it as a base64 string (`format: byte`), but BeMap reads a number: `1` and `"1"` answer `200`, while `"AQ=="` answers `400 INVALID_ARGUMENT` *"Invalid request"*, which names no field (measured on prod, 29 September 2026).
 
 📦 **Example**
 ```
@@ -479,7 +474,6 @@ Add `alternative: 1` (or other non-zero index) to the condition block of your re
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -491,9 +485,6 @@ Add `alternative: 1` (or other non-zero index) to the condition block of your re
   "condition": {
     "minBatLvl": 10.0,
     "alternative": 1
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -620,12 +611,14 @@ You want to simulate more realistic charging stops by accounting for **fixed tim
 Adds a fixed time (in seconds) to every charging stop during the trip.  
 This reflects the real-world time needed to plug, begin charging and unplug.
 
+📌 Default: `300` seconds — a request without the field already adds 5 minutes to each stop. Send `0` to leave it out.
+
 🔧 **How to enable**  
 
 Add the `chargePluggingTime` parameter in the `condition` block.
 ```
 "condition": {
-  "chargePluggingTime": 300
+  "chargePluggingTime": 600
 }
 ```
 
@@ -639,7 +632,6 @@ Add the `chargePluggingTime` parameter in the `condition` block.
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -650,17 +642,14 @@ Add the `chargePluggingTime` parameter in the `condition` block.
   },
   "condition": {
     "minBatLvl": 10.0,
-    "chargePluggingTime": 300
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "chargePluggingTime": 600
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "1f2ce6ab-4f82-4877-b40b-225566775ffd",
+  "logTag": "b2ecdc7d-a9bb-4a51-92dd-b807d8534db3",
   "journeys": [
     {
       "summary": {
@@ -670,99 +659,105 @@ Add the `chargePluggingTime` parameter in the `condition` block.
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
+        "distance": 325881,
+        "duration": 12744,
         "batteryLevel": 10,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752756683000,
-        "arrivalTime": 1752770030000,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692268000,
+        "arrivalTime": 1790706066000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752756683000
+          "departureTime": 1790692268000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025
         },
         {
           "eventType": "CHARGE",
           "coord": {
-            "lon": 3.08922127,
-            "lat": 50.12222526
+            "lon": 3.86916221,
+            "lat": 50.6693674
           },
-          "arrivalTime": 1752763212000,
-          "departureTime": 1752764120000,
-          "arrivalBatteryLevel": 39.78895418742362,
-          "departureBatteryLevel": 58.08151994321714,
-          "chargingTime": 608,
+          "arrivalTime": 1790702406000,
+          "departureTime": 1790703460000,
+          "arrivalBatteryLevel": 10.416628678789777,
+          "departureBatteryLevel": 24.080891420749417,
+          "chargingTime": 454,
           "chargingPower": {
             "currentType": "DC",
             "power": 77,
             "cnnTypeId": 38
           },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 5.4207706,
+            "includeVat": 6.5591326,
+            "tariffChargePassHashId": "2f0581a4648e0889b77321d14d2d7c36"
+          },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
-            "id": "c8109b7c-e8ad-11ef-9543-42010aa400b8",
-            "sourceProvider": "TotalEnergies",
-            "updateDate": 1752462431048,
-            "brand": "TotalEnergies",
-            "name": "RELAIS DE HAVRINCOURT",
-            "countryCode": "FRA",
+            "id": "1bb8cd94-c71f-11f0-b52b-42010aa400b8",
+            "sourceProvider": "IONITY",
+            "brand": "IONITY",
+            "name": "IONITY GmbH IONITY Ath",
+            "countryCode": "BEL",
             "address": {
-              "countryCode": "FRA",
-              "country": "FRA",
-              "city": "Havrincourt",
-              "postalCode": "62147",
-              "street": "A2"
+              "countryCode": "BEL",
+              "country": "BEL",
+              "city": "Gellingen",
+              "postalCode": "7822",
+              "street": "Avenue des Artisans 1"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 3.08922127,
-              "lat": 50.12222526
-            },
-            "phoneNumber": "+(33)-(9)-77405060",
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
-            "numberOfChargingPoint": 8,
-            "reliabilityScore": 50,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "18:59",
-                "predictedOccupancy": 5
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "19:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
-              {
-                "dayOfweek": "TUESDAY",
-                "start": "00:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 12,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 49315,
+          "duration": 2606,
+          "consumed": 9.018081990076134
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
+The stop lasts `chargingTime` plus the plugging time: from `arrivalTime` to `departureTime`, 1,054 s = 454 + 600.
+
 ---
 <a name="evsmartrouting_chargeTimeSlots_tutorial"></a>
 ## ⏰ chargeTimeSlots – Define allowed time windows for charging
@@ -788,12 +783,16 @@ If a charging station is reached outside those windows, the algorithm will **wai
 🔧 **How to enable**
 
 Include a list of objects inside the `chargeTimeSlots` array in the `condition` block.
-Each object is of type `ChargeTimeSlotFront` and must include:
-- `duration`: Duration of the charging stop in seconds (e.g. 1800 = 30 minutes)
-- `startDateTime`: Start date/time of the window in ISO format (e.g. `2025-07-10T08:00:00`)
-- `stopDateTime	`: End date/time of the window in ISO format
-- `maxWalkingDistance`: Max distance (in meters) from POI to the vehicle (default: `1000`)
+Each object is of type `ChargeTimeSlotFront`; only `duration` is required:
+- `duration` (required): Duration of the charging stop in seconds (e.g. 1800 = 30 minutes)
+- `startDateTime`: Start date/time of the window, as an ISO local date and time without offset (e.g. `2025-07-10T08:00:00`)
+- `stopDateTime`: End date/time of the window, in the same format
+- `maxWalkingDistance`: Max distance (in meters) from POI to the vehicle, from `50` to `1000` (default: `1000`)
 - `serviceCategory`: Logical expression to filter POI categories. Example: (`7315`) [Service Category Reference](index.html#page-sdk-jsiv-classids.md)
+
+> ⚠️ The window is read as local time, and an offset such as `+02:00` is dropped. Measured on prod (29 September 2026), the example below: departing from Paris at `1752126600000` (epoch milliseconds, see `departureTime`: 05:50 UTC, 07:50 Paris time), a `08:00:00`–`10:00:00` window gave a stop from 07:11 to 07:41 UTC, i.e. 09:11–09:41 Paris time.
+
+A window the journey cannot use is reported in `journeys[].timeSlotWarns` — `TSS_NO_POOL_FOUND`, `TSS_IGNORED_BEGIN_AFTER_ARRIVAL` — and the route is computed without it; a window that ends before the departure answers `400 CANNOT_PERFORM_ROUTING` (measured on prod, 29 September 2026).
 ```
   "condition": {
     "chargeTimeSlots": [
@@ -826,7 +825,6 @@ Use the following operators:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -836,27 +834,24 @@ Use the following operators:
     "lat": 50.83857
   },
   "condition": {
-    "departureTime": "2025-07-10T07:50:00+02:00",
+    "departureTime": "1752126600000",
     "minBatLvl": 10.0,
     "chargeTimeSlots": [
       {
         "duration": 1800,
-        "startDateTime": "2025-07-10T08:00:00+02:00",
-        "stopDateTime": "2025-07-10T10:00:00+02:00",
+        "startDateTime": "2025-07-10T08:00:00",
+        "stopDateTime": "2025-07-10T10:00:00",
         "maxWalkingDistance": 500,
         "serviceCategory": "(7315|9105)&!7395"
       }
     ]
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "3c5e4ba2-875b-4fb3-9f54-14acea57ce3c",
+  "logTag": "449d0791-27ab-4165-b4a1-84e8e8e66830",
   "journeys": [
     {
       "summary": {
@@ -866,51 +861,51 @@ Use the following operators:
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 315442,
-        "duration": 12813,
-        "batteryLevel": 21.1,
-        "consumed": 69.64,
+        "distance": 328404,
+        "duration": 13066,
+        "batteryLevel": 24.4,
+        "consumed": 66.64,
         "chargingTime": 1500,
-        "departureTime": 1752133800000,
-        "arrivalTime": 1752148413000,
+        "departureTime": 1752126600000,
+        "arrivalTime": 1752141466000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
         },
         "chargingCost": {
           "currency": "EUR",
-          "withoutVat": 0,
-          "includeVat": 0
+          "withoutVat": 10.1327,
+          "includeVat": 12.15924
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752133800000
+          "departureTime": 1752126600000
         },
         {
           "eventType": "ROUTE",
-          "distance": 114056,
-          "duration": 4959,
-          "consumed": 25.138592854519352
+          "distance": 114088,
+          "duration": 4870,
+          "consumed": 23.173799783103476
         },
         {
           "eventType": "CHARGE",
           "coord": {
-            "lon": 2.77397302,
-            "lat": 49.70755659
+            "lon": 2.77400205,
+            "lat": 49.7097668
           },
-          "arrivalTime": 1752138759000,
-          "departureTime": 1752140559000,
-          "arrivalBatteryLevel": 60.72094866481351,
-          "departureBatteryLevel": 90.67673474907342,
+          "arrivalTime": 1752131470000,
+          "departureTime": 1752133270000,
+          "arrivalBatteryLevel": 63.79700945157574,
+          "departureBatteryLevel": 92.36860005105049,
           "chargingTime": 1500,
           "chargingPower": {
             "currentType": "DC",
@@ -919,69 +914,71 @@ Use the following operators:
           },
           "chargingCost": {
             "currency": "EUR",
-            "withoutVat": 0,
-            "includeVat": 0
+            "withoutVat": 10.1327,
+            "includeVat": 12.15924
           },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
-            "id": "cd0570ca-2c16-11ef-b8a5-42010aa40043",
-            "sourceProvider": "IZIVIA Fast",
-            "updateDate": 1752462431048,
-            "brand": "IZIVIA Fast",
-            "name": "IZIVIA FAST - McDonald's - Roye Le Moulin",
+            "id": "88098be2-f842-11f0-a6d8-42010aa400b8",
+            "sourceProvider": "Plug Inn fast charge",
+            "brand": "Plug Inn fast charge",
+            "name": "Plug Inn fast charge Rue Émile Pluchet",
             "countryCode": "FRA",
             "address": {
               "countryCode": "FRA",
               "country": "FRA",
               "city": "Roye",
               "postalCode": "80700",
-              "street": "2 Impasse du Moulin"
+              "street": "Rue Émile Pluchet"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 2.77397302,
-              "lat": 49.70755659
-            },
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
-            "numberOfChargingPoint": 3,
-            "reliabilityScore": 25,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "09:59",
-                "predictedOccupancy": 2
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "10:00",
-                "end": "12:59",
-                "predictedOccupancy": 3
-              },
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 7,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 214316,
+          "duration": 8196,
+          "consumed": 43.46643751863997
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_chargingStationDeprecatedConnector_tutorial"></a>
 ## 🔌 chargingStationDeprecatedConnector – Allow deprecated charging connector types
 ✅ **Use case**
 
-Your EV may support **older or deprecated connector types** (e.g., CHAdeMO, older Type 1 standards), and you want the routing engine to include **charging stations with these deprecated connectors**, even if they are not recommended anymore.
+Some charging stations are still described with **deprecated connector types** — legacy ids of BeMap's connector catalogue, which duplicate current ones (e.g. `3` "Attached cable Combo-Type 2" beside `38` "Type 2 Combo", `2` "Attached cable CHAdeMO" beside `36` "CHAdeMO") — and you want the routing engine to include **charging stations with these deprecated connectors**.
+
+> 📘 Deprecated does not mean an old plug standard: CHAdeMO (`36`) and Type 1 (`31`) are current ids (`deprecated: false`). The deprecated ids are `0`–`29`, `33`, `56`–`57`, `59`–`64` and `67`: `GET /bgis/service/chargingstation/connector/list/1.0?deprecatedConnector=true` lists them with `deprecated: true` — see the [Charging station connector service](index.html#subpage-rest_1_0_0-chargingstation-connector-service.md).
 
 💡 **What it does**
 
-By default, the EV Routing API uses only the connector types specified in the vehicle profile (vehicle.connectorTypes) to filter compatible charging stations.
+By default, the EV Routing API uses only the connector types of the vehicle — those the vehicle database defines for it, or the list you send in `condition.connectorTypes` — to filter compatible charging stations.
 
 If `chargingStationDeprecatedConnector` is set to `true`, then stations that only support deprecated types can be included in the route, if those connectors match your vehicle's capabilities.
 
 This is useful when:
 
-- You're driving an **older EV model** still compatible with deprecated connectors.
+- The stations on your route are still described with **legacy connector ids**.
 - You're planning **routes in rural** or poorly equipped areas.
-- You need **maximum flexibility**, even if it means using obsolete plugs.
+- You need **maximum flexibility**.
 
-> ⚠️ This flag **does not override the connector list**, but allows inclusion of stations with deprecated types **only if they match the declared vehicle connectors**.
+> ⚠️ This flag **does not override the connector list**, but allows inclusion of stations with deprecated types **only if they match the vehicle's connectors or `condition.connectorTypes`**.
 
 🔧 **How to enable**
 
@@ -999,7 +996,6 @@ Set the boolean field in the `condition` block:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1011,9 +1007,6 @@ Set the boolean field in the `condition` block:
   "condition": {
     "minBatLvl": 10.0,
     "chargingStationDeprecatedConnector": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -1152,7 +1145,6 @@ Set the boolean field in the `condition` block:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1164,9 +1156,6 @@ Set the boolean field in the `condition` block:
   "condition": {
     "minBatLvl": 10.0,
     "co2emissions": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -1293,8 +1282,9 @@ Provide a list of connector IDs in the `connectorTypes` field inside the `condit
 ```
 "connectorTypes": [32, 38]
 ```
-> 📘 The connector IDs correspond to internal enum values (e.g., 32 = CCS Combo 2, 38 = Type 2).
-Refer to the API glossary for the full list of IDs. 
+> 📘 The connector IDs correspond to internal enum values (e.g., 32 = Type 2, AC; 38 = Type 2 Combo, the CCS, DC).
+The full list of IDs, with each one's current type and maximum power, is returned by `GET /bgis/service/chargingstation/connector/list/1.0` — see the [Charging station connector service](index.html#subpage-rest_1_0_0-chargingstation-connector-service.md).
+Measured on prod (29 September 2026), the example trip with `[32]` alone charges on AC at 7.2 kW for 4,772 s; with `[38]`, on DC at 77 kW for 454 s.
 
 📦 **Example**
 ```
@@ -1306,7 +1296,6 @@ Refer to the API glossary for the full list of IDs.
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1318,9 +1307,6 @@ Refer to the API glossary for the full list of IDs.
   "condition": {
     "minBatLvl": 10.0,
     "connectorTypes": [32, 38]
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -1424,7 +1410,11 @@ Refer to the API glossary for the full list of IDs.
                 "predictedOccupancy": 4
               },
               ...
-              "bookable": false,
+            ],
+            "chargingStations": [
+              {
+                ...
+                "bookable": false,
                 "chargingPoints": [
                   {
                     "id": "CU-TOTAL-NF080350-002-1",
@@ -1470,6 +1460,7 @@ Useful when:
 💡 **What it does**
 
 Defines the **currency code** (ISO 4217 format, e.g., "EUR", "USD", "GBP") to be used when calculating **charging costs, tolls, or other monetary estimations** during routing.
+The charging costs are `summary.chargingCost` and each `CHARGE` event's `chargingCost`; the toll costs are returned only with `tollCost: true` (see `tollCost` below), in the same currency.
 
 🔧 **How to enable**
 
@@ -1489,7 +1480,6 @@ Set the `currency` field inside the `condition` block.
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1500,17 +1490,14 @@ Set the `currency` field inside the `condition` block.
   },
   "condition": {
     "minBatLvl": 10.0,
-    "currency": "EUR"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "currency": "GBP"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "4a36b91e-9c82-41e9-8a95-f19076f09758",
+  "logTag": "0c0a50c3-8791-435d-80c4-4d8252e2c918",
   "journeys": [
     {
       "summary": {
@@ -1520,93 +1507,102 @@ Set the `currency` field inside the `condition` block.
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
+        "distance": 325881,
+        "duration": 12744,
         "batteryLevel": 10,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752757421000,
-        "arrivalTime": 1752770768000,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692272000,
+        "arrivalTime": 1790705770000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "GBP",
+          "withoutVat": 4.744215,
+          "includeVat": 5.7405005
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752757421000
+          "departureTime": 1790692272000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025
         },
         {
           "eventType": "CHARGE",
           "coord": {
-            "lon": 3.08922127,
-            "lat": 50.12222526
+            "lon": 3.86916221,
+            "lat": 50.6693674
           },
-          "arrivalTime": 1752763950000,
-          "departureTime": 1752764858000,
-          "arrivalBatteryLevel": 39.78895418742362,
-          "departureBatteryLevel": 58.08151994321714,
-          "chargingTime": 608,
+          "arrivalTime": 1790702410000,
+          "departureTime": 1790703164000,
+          "arrivalBatteryLevel": 10.416628678789777,
+          "departureBatteryLevel": 24.080891420749417,
+          "chargingTime": 454,
           "chargingPower": {
             "currentType": "DC",
             "power": 77,
             "cnnTypeId": 38
           },
+          "chargingCost": {
+            "currency": "GBP",
+            "withoutVat": 4.744215,
+            "includeVat": 5.7405005,
+            "tariffChargePassHashId": "2f0581a4648e0889b77321d14d2d7c36"
+          },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
-            "id": "c8109b7c-e8ad-11ef-9543-42010aa400b8",
-            "sourceProvider": "TotalEnergies",
-            "updateDate": 1752462431048,
-            "brand": "TotalEnergies",
-            "name": "RELAIS DE HAVRINCOURT",
-            "countryCode": "FRA",
+            "id": "1bb8cd94-c71f-11f0-b52b-42010aa400b8",
+            "sourceProvider": "IONITY",
+            "brand": "IONITY",
+            "name": "IONITY GmbH IONITY Ath",
+            "countryCode": "BEL",
             "address": {
-              "countryCode": "FRA",
-              "country": "FRA",
-              "city": "Havrincourt",
-              "postalCode": "62147",
-              "street": "A2"
+              "countryCode": "BEL",
+              "country": "BEL",
+              "city": "Gellingen",
+              "postalCode": "7822",
+              "street": "Avenue des Artisans 1"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 3.08922127,
-              "lat": 50.12222526
-            },
-            "phoneNumber": "+(33)-(9)-77405060",
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
-            "numberOfChargingPoint": 8,
-            "reliabilityScore": 50,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "18:59",
-                "predictedOccupancy": 5
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "19:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
-              ...
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 12,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 49315,
+          "duration": 2606,
+          "consumed": 9.018081990076134
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_departureTime_tutorial"></a>
@@ -1631,17 +1627,19 @@ Provide the `departureTime` field inside the `condition` block.
 
 You can use two formats:
 
-- 📅 **ISO 8601 string** (recommended for clarity):
+- 🕰️ **Epoch timestamp in milliseconds** (UTC) — recommended:
+
+  - `"1672531200000"` (a number is accepted too)
+
+- 📅 **ISO 8601 string**:
 
   - `"2011-12-03T10:15:30"`
   - `"2011-12-03T10:15:30+01:00"`
   - `"2011-12-03T10:15:30+01:00[Europe/Paris]"`
 
-- 🕰️ **Epoch timestamp in milliseconds** (UTC):
+> ⚠️ An ISO time loses its offset: the wall-clock time is read as UTC. Measured on prod (29 September 2026): `"2026-10-10T08:00:00+02:00"`, `"2026-10-10T08:00:00"` and `"2026-10-10T08:00:00+02:00[Europe/Paris]"` all depart at `1791619200000` — 08:00 UTC, two hours late for Paris — while the same instant in epoch milliseconds, `"1791612000000"`, departs at 06:00 UTC as sent. Send epoch milliseconds.
 
-  - 1672531200000
-
-📦 **Example**
+📦 **Example** — departing on 10 July 2025 at 08:00 Paris time (06:00 UTC):
 ```
 {
   "geoserver": "osm",
@@ -1651,7 +1649,6 @@ You can use two formats:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1662,17 +1659,14 @@ You can use two formats:
   },
   "condition": {
     "minBatLvl": 10.0,
-    "departureTime": "2025-07-10T08:00:00+02:00"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "departureTime": "1752127200000"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "81fe113a-8c37-4c39-aa8a-35f328058f19",
+  "logTag": "8f6b7fe3-9810-4d69-84f9-3ae71fb25bb3",
   "journeys": [
     {
       "summary": {
@@ -1682,126 +1676,102 @@ You can use two formats:
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
+        "distance": 325881,
+        "duration": 12744,
         "batteryLevel": 10,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752134400000,
-        "arrivalTime": 1752147747000,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1752127200000,
+        "arrivalTime": 1752140698000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752134400000
+          "departureTime": 1752127200000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025
         },
         {
           "eventType": "CHARGE",
           "coord": {
-            "lon": 3.08922127,
-            "lat": 50.12222526
+            "lon": 3.86916221,
+            "lat": 50.6693674
           },
-          "arrivalTime": 1752140929000,
-          "departureTime": 1752141837000,
-          "arrivalBatteryLevel": 39.78895418742362,
-          "departureBatteryLevel": 58.08151994321714,
-          "chargingTime": 608,
+          "arrivalTime": 1752137338000,
+          "departureTime": 1752138092000,
+          "arrivalBatteryLevel": 10.416628678789777,
+          "departureBatteryLevel": 24.080891420749417,
+          "chargingTime": 454,
           "chargingPower": {
             "currentType": "DC",
             "power": 77,
             "cnnTypeId": 38
           },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 5.4207706,
+            "includeVat": 6.5591326,
+            "tariffChargePassHashId": "2f0581a4648e0889b77321d14d2d7c36"
+          },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
-            "id": "c8109b7c-e8ad-11ef-9543-42010aa400b8",
-            "sourceProvider": "TotalEnergies",
-            "updateDate": 1752462431048,
-            "brand": "TotalEnergies",
-            "name": "RELAIS DE HAVRINCOURT",
-            "countryCode": "FRA",
+            "id": "1bb8cd94-c71f-11f0-b52b-42010aa400b8",
+            "sourceProvider": "IONITY",
+            "brand": "IONITY",
+            "name": "IONITY GmbH IONITY Ath",
+            "countryCode": "BEL",
             "address": {
-              "countryCode": "FRA",
-              "country": "FRA",
-              "city": "Havrincourt",
-              "postalCode": "62147",
-              "street": "A2"
+              "countryCode": "BEL",
+              "country": "BEL",
+              "city": "Gellingen",
+              "postalCode": "7822",
+              "street": "Avenue des Artisans 1"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 3.08922127,
-              "lat": 50.12222526
-            },
-            "phoneNumber": "+(33)-(9)-77405060",
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
-            "numberOfChargingPoint": 8,
-            "reliabilityScore": 50,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "18:59",
-                "predictedOccupancy": 5
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "19:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
-              ...
-              ],
-              "bookable": false,
-                "chargingPoints": [
-                  {
-                    "id": "CU-TOTAL-NF080350-002-1",
-                    "operatorId": "FR*HPC*ENF080350*002*1",
-                    "availabilityStatus": "IN_SERVICE",
-                    "currentType": "DC",
-                    "voltage": 900,
-                    "ampere": 333,
-                    "power": 300,
-                    "remoteCharging": true,
-                    "type": 38,
-                    "connectorTypes": [
-                      {
-                        "id": 38,
-                        "key": "TYPE_2-CABLE_COMBO_CCS",
-                        "deprecated": false,
-                        "name": "Type 2 Combo",
-                        "norm": "Combo Type 2 based, DC",
-                        "maxPower": 350,
-                        "acSingle": false,
-                        "acThree": false,
-                        "dc": true,
-                        "cable": true
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 12,
+            ...
           }
         },
+        {
+          "eventType": "ROUTE",
+          "distance": 49315,
+          "duration": 2606,
+          "consumed": 9.018081990076134
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_drivingStyle_tutorial"></a>
@@ -1860,7 +1830,6 @@ To use custom values:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -1874,9 +1843,6 @@ To use custom values:
     "drivingStyle": {
       "mode": "ECO"
     }
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -1980,7 +1946,10 @@ To use custom values:
                 "predictedOccupancy": 4
               },
               ...
-                              ],
+            ],
+            "chargingStations": [
+              {
+                ...
                 "bookable": false,
                 "chargingPoints": [
                   {
@@ -2048,7 +2017,6 @@ Add the `encodedGeometry` field in your `condition` block and set it to `true`:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2060,9 +2028,6 @@ Add the `encodedGeometry` field in your `condition` block and set it to `true`:
   "condition": {
     "minBatLvl": 10.0,
     "encodedGeometry": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -2167,7 +2132,10 @@ Add the `encodedGeometry` field in your `condition` block and set it to `true`:
                 "predictedOccupancy": 4
               },
               ...
-              ],
+            ],
+            "chargingStations": [
+              {
+                ...
                 "bookable": false,
                 "chargingPoints": [
                   {
@@ -2248,7 +2216,6 @@ Add the `criterias` array to your `condition` block with one or more of the supp
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2259,10 +2226,7 @@ Add the `criterias` array to your `condition` block with one or more of the supp
   },
   "condition": {
     "minBatLvl": 10.0,
-	"criterias": ["AVOID_TOLLS"]
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "criterias": ["AVOID_TOLLS"]
   }
 }
 ```
@@ -2334,6 +2298,8 @@ You want to **display the full route line** on a map using raw coordinates (poly
 When `geometry` is set to `true`, the API returns the entire route geometry as a sequence of longitude/latitude points.<br>
 If set to `false`, no route shape is returned — you’ll still receive steps, distances, and metadata, but not the full path.
 
+📌 Default: `false` — a request without the field returns no geometry (measured on prod, 29 September 2026, with the example below: 4,456 characters and no `geometry` without the field, 66,576 characters with `geometry: true`). The specification says *"True by default"*.
+
 🔧 **How to enable**
 ```
 "condition": {
@@ -2350,7 +2316,6 @@ If set to `false`, no route shape is returned — you’ll still receive steps, 
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2361,10 +2326,7 @@ If set to `false`, no route shape is returned — you’ll still receive steps, 
   },
   "condition": {
     "minBatLvl": 10.0,
-	  "geometry": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "geometry": true
   }
 }
 ```
@@ -2453,7 +2415,6 @@ By default (`false`), only charging pools with a known and available status are 
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2465,9 +2426,6 @@ By default (`false`), only charging pools with a known and available status are 
   "condition": {
     "minBatLvl": 10.0,
     "ignoreAvailableStatus": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -2610,7 +2568,6 @@ This parameter **caps the maximum state of charge (SoC)** the vehicle is allowed
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2622,16 +2579,13 @@ This parameter **caps the maximum state of charge (SoC)** the vehicle is allowed
   "condition": {
     "minBatLvl": 10.0,
     "maxAfterChargeBatLvl": 80.0
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "2c8e3c94-9625-4b68-b29e-09e490c82a69",
+  "logTag": "6912d4ad-e479-45f3-a462-718ec3117fd6",
   "journeys": [
     {
       "summary": {
@@ -2641,92 +2595,151 @@ This parameter **caps the maximum state of charge (SoC)** the vehicle is allowed
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
+        "distance": 325342,
+        "duration": 12958,
         "batteryLevel": 10,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758090000,
-        "arrivalTime": 1752771437000,
+        "consumed": 65.97,
+        "chargingTime": 3095,
+        "departureTime": 1790692276000,
+        "arrivalTime": 1790708929000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 30.279942,
+          "includeVat": 36.33593
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758090000
+          "departureTime": 1790692276000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888
+          "distance": 37664,
+          "duration": 2365,
+          "consumed": 6.290317179907371
         },
         {
           "eventType": "CHARGE",
           "coord": {
-            "lon": 3.08922127,
-            "lat": 50.12222526
+            "lon": 2.55297002,
+            "lat": 49.07188492
           },
-          "arrivalTime": 1752764619000,
-          "departureTime": 1752765527000,
-          "arrivalBatteryLevel": 39.78895418742362,
-          "departureBatteryLevel": 58.08151994321714,
-          "chargingTime": 608,
+          "arrivalTime": 1790694641000,
+          "departureTime": 1790696660000,
+          "arrivalBatteryLevel": 10.171379406394733,
+          "departureBatteryLevel": 61.876,
+          "chargingTime": 1719,
           "chargingPower": {
             "currentType": "DC",
             "power": 77,
             "cnnTypeId": 38
           },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 16.820156,
+            "includeVat": 20.184187,
+            "tariffChargePassHashId": "de14cf91a4b464ba931f552fa31951ae"
+          },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
-            "id": "c8109b7c-e8ad-11ef-9543-42010aa400b8",
-            "sourceProvider": "TotalEnergies",
-            "updateDate": 1752462431048,
-            "brand": "TotalEnergies",
-            "name": "RELAIS DE HAVRINCOURT",
+            "id": "bf65480e-7f9d-11ed-8c95-42010aa40048",
+            "sourceProvider": "Fastned",
+            "brand": "Fastned",
+            "name": "Fastned Aire de Vémars Est",
             "countryCode": "FRA",
             "address": {
               "countryCode": "FRA",
               "country": "FRA",
-              "city": "Havrincourt",
-              "postalCode": "62147",
-              "street": "A2"
+              "city": "Vémars",
+              "postalCode": "95470",
+              "street": "A1"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 3.08922127,
-              "lat": 50.12222526
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 16,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 138683,
+          "duration": 4500,
+          "consumed": 31.137040371186032
+        },
+        {
+          "eventType": "CHARGE",
+          "coord": {
+            "lon": 2.8641582,
+            "lat": 50.26148552
+          },
+          "arrivalTime": 1790701160000,
+          "departureTime": 1790702836000,
+          "arrivalBatteryLevel": 13.224374420021825,
+          "departureBatteryLevel": 54.59933631133972,
+          "chargingTime": 1376,
+          "chargingPower": {
+            "currentType": "DC",
+            "power": 77,
+            "cnnTypeId": 38
+          },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 13.4597845,
+            "includeVat": 16.151741,
+            "tariffChargePassHashId": "de14cf91a4b464ba931f552fa31951ae"
+          },
+          "pool": {
+            "providerName": "ecoMovement",
+            "providerMode": "LOCAL",
+            "id": "d66f3672-a3c9-11ed-bc56-42010aa40fc6",
+            "sourceProvider": "Fastned",
+            "brand": "Fastned",
+            "name": "Fastned Aire de Wancourt Est",
+            "countryCode": "FRA",
+            "address": {
+              "countryCode": "FRA",
+              "country": "FRA",
+              "city": "Wancourt",
+              "postalCode": "62128",
+              "street": "Échangeur d'Arras-Est"
             },
-            "phoneNumber": "+(33)-(9)-77405060",
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
+            "accessibility": "PUBLIC",
+            "availabilityStatus": "IN_SERVICE_FREE",
             "numberOfChargingPoint": 8,
-            "reliabilityScore": 50,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "18:59",
-                "predictedOccupancy": 5
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "19:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 148995,
+          "duration": 6093,
+          "consumed": 28.543575239257407
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_minArrivalBatLvl_tutorial"></a>
@@ -2754,7 +2767,6 @@ The routing engine will ensure charging stops are added if needed so that this l
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2765,9 +2777,6 @@ The routing engine will ensure charging stops are added if needed so that this l
   },
   "condition": {
     "minArrivalBatLvl": 15.0
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -2900,7 +2909,6 @@ The routing algorithm will add charging stops if needed to stay above this thres
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -2911,9 +2919,6 @@ The routing algorithm will add charging stops if needed to stay above this thres
   },
   "condition": {
     "minBatLvl": 10.0
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -3049,7 +3054,6 @@ Controls the routing algorithm’s **optimization strategy**:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3061,9 +3065,6 @@ Controls the routing algorithm’s **optimization strategy**:
   "condition": {
     "minBatLvl": 10.0,
     "optimMode": "ECO_ENERGY"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -3196,7 +3197,6 @@ If `false` (default), only **publicly available** stations are considered.
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3208,9 +3208,6 @@ If `false` (default), only **publicly available** stations are considered.
   "condition": {
     "minBatLvl": 10.0,
     "restrictedEvse": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -3333,6 +3330,10 @@ These details may include:
 - Temperature impact (if enabled)
 - Speed, elevation, etc.
 
+Each `ROUTE` event then carries `routeConsumptions[]`, one point every `routeDetailsFreq` seconds (60 by default), each with `lon`, `lat`, `alt`, `time`, `distFromStart`, `speed`, `cumulativeConsumption`, `consumption` and `batteryLevel`. No extra key is needed.
+
+> ⚠️ Measured on prod (29 September 2026): turning `routeDetails` on can change the trip's battery levels and charging cost, depending on `routeDetailsFreq` — on the same 325,881 m and 66.35 kWh. Without `routeDetails`, the example arrives at 10 %, with a charge arriving at 10.42 % for 5.42 EUR (without VAT); with `routeDetailsFreq: 120`, at 10.1 % and 5.45 EUR; with `routeDetailsFreq: 3600`, at 24.1 %, with a charge arriving at 4.12 % — below `minBatLvl` — for 7.92 EUR. Read the levels and the cost from a request without `routeDetails`.
+
 🔧 **How to enable**
 ```
 "condition": {
@@ -3349,7 +3350,6 @@ These details may include:
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3361,16 +3361,13 @@ These details may include:
   "condition": {
     "minBatLvl": 10.0,
     "routeDetails": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "32662cfa-de02-485e-a91b-926c2685d223",
+  "logTag": "836cf8d5-9a7e-4d91-99e1-be55577078a7",
   "journeys": [
     {
       "summary": {
@@ -3380,164 +3377,82 @@ These details may include:
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758280000,
-        "arrivalTime": 1752771627000,
+        "distance": 325881,
+        "duration": 12744,
+        "batteryLevel": 10,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692324000,
+        "arrivalTime": 1790705822000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758280000
+          "departureTime": 1790692324000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025,
           "routeConsumptions": [
             {
+              "lon": 2.3475670788198015,
+              "lat": 48.857108751160624,
+              "alt": 43.781492667805864,
               "time": 0,
               "distFromStart": 0,
+              "speed": 7.760658070398802,
               "cumulativeConsumption": 0,
               "consumption": 0,
               "batteryLevel": 100
             },
             {
+              "lon": 2.3515140999490054,
+              "lat": 48.85576790922998,
+              "alt": 30.44263131055584,
               "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
-            },
-```
----
-<a name="evsmartrouting_routeDetailsExtKey_tutorial"></a>
-## 🔐 routeDetailsExtKey – Unlock extended route event details
-✅ **Use case**
-
-You need **high-resolution route event data** such as:
-
-- Instantaneous **speed**,
-- **Acceleration** and **deceleration**,
-- **Slope**, **road angles**, or **elevation variations**.
-
-This level of detail is particularly useful for **advanced simulations**, **vehicle dynamics studies**, or **driving behavior analysis**.
-
-💡 **What it does**
-
-This field unlocks additional **granular route event data** in the response.
-It must be used **in combination with** `"routeDetails": true`.
-
-To obtain a valid `routeDetailsExtKey`, you must contact your BeMap account manager. Without this key, only basic route details will be returned.
-
-🔧 **How to enable**
-```
-"condition": {
-  "routeDetails": true,
-  "routeDetailsExtKey": "your-api-extension-key"
-}
-```
-📦 **Example**
-```
-{
-  "geoserver": "osm",
-  "csps": ["ecoMovement"],
-  "vehicle": {
-    "initBatLvl": 100,
-    "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
-    "payload": 75
-  },
-  "routingMode": "MODE_VIAS",
-  "start": {
-    "lon": 2.34755,
-    "lat": 48.85708
-  },
-  "stop": {
-    "lon": 4.35497,
-    "lat": 50.83857
-  },
-  "condition": {
-    "minBatLvl": 10.0,
-    "routeDetails": true,
-    "routeDetailsExtKey": "abcd1234-ef56-7890-ghij-klmnopqrstuv"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
-  }
-}
-```
-**Response**
-```
-{
-  "logTag": "4a9f396e-f26a-41fe-b8d6-7573491d406f",
-  "journeys": [
-    {
-      "summary": {
-        "vehicleInfo": {
-          "brand": "Kia",
-          "name": "e-Niro",
-          "variant": "64 kWh",
-          "year": "2018"
-        },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758325000,
-        "arrivalTime": 1752771672000,
-        "boundingBox": {
-          "minLon": 2.347567485574783,
-          "minLat": 48.82658,
-          "maxLon": 4.35548,
-          "maxLat": 50.83906
-        }
-      },
-      "events": [
-        {
-          "eventType": "START",
-          "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
-          },
-          "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758325000
-        },
-        {
-          "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
-          "routeConsumptions": [
-            {
-              "time": 0,
-              "distFromStart": 0,
-              "cumulativeConsumption": 0,
-              "consumption": 0,
-              "batteryLevel": 100
+              "distFromStart": 325.44239910002307,
+              "speed": 8.39106276978498,
+              "cumulativeConsumption": 0.08777182501355431,
+              "consumption": 0.08777182501355431,
+              "batteryLevel": 99.86285652341633
             },
             {
-              "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
+              "lon": 2.35494,
+              "lat": 48.85438,
+              "alt": 37,
+              "time": 120,
+              "distFromStart": 620.8643125231465,
+              "speed": 1.2523033189455646,
+              "cumulativeConsumption": 0.17775575324519866,
+              "consumption": 0.08998392823164436,
+              "batteryLevel": 99.72225663555437
             },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_routeDetailsFreq_tutorial"></a>
@@ -3554,13 +3469,15 @@ Defines the **interval in seconds** at which route event data is sampled and ret
 - A **lower value** gives **finer granularity** (more data points, more precision).
 - A **higher value** gives **coarser granularity** (fewer points, lighter response).
 
-📌 Default: `60` seconds
+📌 Default: `60` seconds, which is also the minimum. A lower value is read as `60` without any error — measured on prod (29 September 2026): `30` returns points at 0, 60, 120 s…; `120` at 0, 120, 240 s…
+
+> ⚠️ The sampling frequency can change the trip's battery levels and charging cost — see the note under `routeDetails`.
 
 🔧 **How to enable**
 ```
 "condition": {
   "routeDetails": true,
-  "routeDetailsFreq": 30
+  "routeDetailsFreq": 120
 }
 ```
 📦 **Example**
@@ -3573,7 +3490,6 @@ Defines the **interval in seconds** at which route event data is sampled and ret
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3585,17 +3501,14 @@ Defines the **interval in seconds** at which route event data is sampled and ret
   "condition": {
     "minBatLvl": 10.0,
     "routeDetails": true,
-    "routeDetailsFreq": 30
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
+    "routeDetailsFreq": 120
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "d9649df1-ad0f-46e7-a163-9a3b24b5d0b4",
+  "logTag": "3f8a43d7-7b04-49e9-afa3-1cf113dc8df3",
   "journeys": [
     {
       "summary": {
@@ -3605,50 +3518,82 @@ Defines the **interval in seconds** at which route event data is sampled and ret
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758633000,
-        "arrivalTime": 1752771980000,
+        "distance": 325881,
+        "duration": 12744,
+        "batteryLevel": 10.1,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692326000,
+        "arrivalTime": 1790705824000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.45424,
+          "includeVat": 6.5996304
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758633000
+          "departureTime": 1790692326000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025,
           "routeConsumptions": [
             {
+              "lon": 2.3475670788198015,
+              "lat": 48.857108751160624,
+              "alt": 43.781492667805864,
               "time": 0,
               "distFromStart": 0,
+              "speed": 7.760658070398802,
               "cumulativeConsumption": 0,
               "consumption": 0,
               "batteryLevel": 100
             },
             {
-              "time": 30,
-              "distFromStart": 108.5632777869273,
-              "cumulativeConsumption": 0.04458432192735585,
-              "consumption": 0.04458432192735585,
-              "batteryLevel": 99.93033699698852
+              "lon": 2.35494,
+              "lat": 48.85438,
+              "alt": 37,
+              "time": 120,
+              "distFromStart": 620.8643125231465,
+              "speed": 1.2523033189455646,
+              "cumulativeConsumption": 0.17775575324519866,
+              "consumption": 0.17775575324519866,
+              "batteryLevel": 99.72225663555437
             },
+            {
+              "lon": 2.36143,
+              "lat": 48.85078523698524,
+              "alt": 33,
+              "time": 240,
+              "distFromStart": 1285.966562371676,
+              "speed": 2.028112361078229,
+              "cumulativeConsumption": 0.28509560699191766,
+              "consumption": 0.10733985374671898,
+              "batteryLevel": 99.55453811407513
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_routesheet_tutorial"></a>
@@ -3663,6 +3608,8 @@ When enabled, the response includes a **route sheet** containing the full list o
 
 - Often used in **printed documents**, **driver instructions**, or **dispatch systems**.
 - Can be combined with `routesheetMode`, `routesheetLanguage`, and `routesheetVerboseLevel` to customize output.
+
+The route sheet is the `routesheet[]` array of each `ROUTE` event: in the default `TEXT` mode, one `{ "textDist", "text" }` item per instruction.
 
 🔧 **How to enable**
 ```
@@ -3680,7 +3627,6 @@ When enabled, the response includes a **route sheet** containing the full list o
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3695,16 +3641,13 @@ When enabled, the response includes a **route sheet** containing the full list o
     "routesheetLanguage": "en",
     "routesheetMode": "TEXT",
     "routesheetVerboseLevel": "MEDIUM"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "9992afd7-e302-4f24-bdaa-c960c0d08eb9",
+  "logTag": "f14954ca-815d-4c9d-9676-8710218f84fa",
   "journeys": [
     {
       "summary": {
@@ -3714,50 +3657,61 @@ When enabled, the response includes a **route sheet** containing the full list o
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758680000,
-        "arrivalTime": 1752772027000,
+        "distance": 325881,
+        "duration": 12744,
+        "batteryLevel": 10,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692328000,
+        "arrivalTime": 1790705826000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758680000
+          "departureTime": 1790692328000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
-          "routeConsumptions": [
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025,
+          "routesheet": [
             {
-              "time": 0,
-              "distFromStart": 0,
-              "cumulativeConsumption": 0,
-              "consumption": 0,
-              "batteryLevel": 100
+              "textDist": "At 258 meters",
+              "text": "From Quai de Gesvres straight on Quai de l'Hôtel de Ville"
             },
             {
-              "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
+              "textDist": "At 1 kilometer",
+              "text": "From Quai des Célestins straight on Quai Henri IV"
             },
+            {
+              "textDist": "At 854 meters",
+              "text": "From Voie Mazas straight on Quai de la Rapée"
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_routesheetLanguage_tutorial"></a>
@@ -3788,7 +3742,6 @@ This is particularly useful when generating instructions for drivers who speak d
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3801,16 +3754,13 @@ This is particularly useful when generating instructions for drivers who speak d
     "routesheet": true,
     "routesheetLanguage": "fr",
     "routesheetMode": "TEXT"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "695e19f0-6ced-4e66-94b8-a074a5caea32",
+  "logTag": "65b45acb-1899-4dc1-a72a-197d73c98b47",
   "journeys": [
     {
       "summary": {
@@ -3820,50 +3770,61 @@ This is particularly useful when generating instructions for drivers who speak d
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758762000,
-        "arrivalTime": 1752772109000,
+        "distance": 325364,
+        "duration": 12705,
+        "batteryLevel": 0,
+        "consumed": 66.33,
+        "chargingTime": 121,
+        "departureTime": 1790692330000,
+        "arrivalTime": 1790705456000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 1.9587,
+          "includeVat": 2.3700268
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758762000
+          "departureTime": 1790692330000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
-          "routeConsumptions": [
+          "distance": 306432,
+          "duration": 11186,
+          "consumed": 63.316992820515885,
+          "routesheet": [
             {
-              "time": 0,
-              "distFromStart": 0,
-              "cumulativeConsumption": 0,
-              "consumption": 0,
-              "batteryLevel": 100
+              "textDist": "À 1,3 kilomètre",
+              "text": "Depuis Quai des Célestins continuer tout droit sur Quai Henri IV"
             },
             {
-              "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
+              "textDist": "À 854 mètres",
+              "text": "Depuis Voie Mazas continuer tout droit sur Quai de la Rapée"
             },
+            {
+              "textDist": "À 1,8 kilomètre",
+              "text": "Depuis Quai de Bercy continuer tout droit sur Quai de Bercy"
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_routesheetMode_tutorial"></a>
@@ -3880,8 +3841,8 @@ Combined with `"routesheet": true`, this field defines how the journey instructi
 
 🔧 **Available values**
 
-- `TEXT` (default): Returns only human-readable route instructions.
-- `DETAILS`: Returns only structured routing steps, useful for processing.
+- `TEXT` (default): Returns only human-readable route instructions (`textDist`, `text`).
+- `DETAILS`: Returns only structured routing steps, useful for processing (`type`, `geoElementType`, `length`, `duration`, `fromName`, `manoeuvre`, `coordinate`, `roundAboutExitNumber`, `toName`, `toOn`).
 - `TEXT_DETAILS`: Returns both formats – ideal if you want a complete view.
 
 🔧 **How to enable**
@@ -3901,7 +3862,6 @@ Combined with `"routesheet": true`, this field defines how the journey instructi
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -3914,16 +3874,13 @@ Combined with `"routesheet": true`, this field defines how the journey instructi
     "routesheet": true,
     "routesheetMode": "TEXT_DETAILS",
     "routesheetLanguage": "en"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "debe331d-6c53-4e16-a3ac-12c035e208bb",
+  "logTag": "14798cd6-6392-454a-9e11-544a7a8b6226",
   "journeys": [
     {
       "summary": {
@@ -3933,69 +3890,121 @@ Combined with `"routesheet": true`, this field defines how the journey instructi
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752758818000,
-        "arrivalTime": 1752772165000,
+        "distance": 325364,
+        "duration": 12705,
+        "batteryLevel": 0,
+        "consumed": 66.33,
+        "chargingTime": 121,
+        "departureTime": 1790692332000,
+        "arrivalTime": 1790705458000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 1.9587,
+          "includeVat": 2.3700268
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752758818000
+          "departureTime": 1790692332000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
-          "routeConsumptions": [
+          "distance": 306432,
+          "duration": 11186,
+          "consumed": 63.316992820515885,
+          "routesheet": [
             {
-              "time": 0,
-              "distFromStart": 0,
-              "cumulativeConsumption": 0,
-              "consumption": 0,
-              "batteryLevel": 100
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 1283,
+              "duration": 231,
+              "fromName": "Quai des Célestins",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.36143,
+                "lat": 48.85083
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai Henri IV",
+              "toOn": "Quai Henri IV",
+              "textDist": "At 1.3 kilometer",
+              "text": "From Quai des Célestins straight on Quai Henri IV"
             },
             {
-              "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 854,
+              "duration": 134,
+              "fromName": "Voie Mazas",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.36777,
+                "lat": 48.84471
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai de la Rapée",
+              "toOn": "Quai de la Rapée",
+              "textDist": "At 854 meters",
+              "text": "From Voie Mazas straight on Quai de la Rapée"
             },
+            {
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 1784,
+              "duration": 170,
+              "fromName": "Quai de Bercy",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.38348,
+                "lat": 48.83258
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai de Bercy",
+              "toOn": "Quai de Bercy",
+              "textDist": "At 1.8 kilometer",
+              "text": "From Quai de Bercy straight on Quai de Bercy"
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_routesheetVerboseLevel_tutorial"></a>
 ## 🗣️ routesheetVerboseLevel – Control the amount of detail in the route-sheet instructions
 ✅ **Use case**
 
-You want to **adjust the level of detail** in the textual guidance returned by the `routesheet`. This is useful to match different user needs: minimal instructions for experienced drivers, or highly descriptive ones for novices.
+You want to **adjust the level of detail** in the guidance returned by the `routesheet`. This is useful to match different user needs: only the main instructions for experienced drivers, or every one of them for novices.
 
 💡 **What it does**
 
-Determines the **verbosity** of each instruction in the route-sheet. A higher verbosity provides more contextual and descriptive information about maneuvers.
+Determines **how many instructions** the route-sheet returns. The wording of an instruction is the same at every level — it names the roads at `LOW` as at `MEDIUM` (e.g. "From Quai des Célestins straight on Quai Henri IV"); a higher level adds instructions.
 
 🔧 **Available values**
 
-- `LOW` – Basic and minimal instructions (e.g., "Turn right").
+- `LOW` – The fewest instructions. A request without `routesheetVerboseLevel` answers like `LOW`.
 
-- `MEDIUM` – Standard instructions with road names or directions (e.g., "Turn right onto Rue de Lyon").
+- `MEDIUM` – More instructions.
 
-- `HIGH` – Full instructions with detailed context (e.g., "At the intersection, turn right onto Rue de Lyon, continuing east").
+- `HIGH` – The most instructions.
+
+Measured on prod (29 September 2026), the example below in `TEXT_DETAILS`: 55 instructions at `LOW`, 70 at `MEDIUM`, 188 at `HIGH`.
 
 >⚠️ **Note**: Has effect only if `routesheet` is enabled.
 
@@ -4016,7 +4025,6 @@ Determines the **verbosity** of each instruction in the route-sheet. A higher ve
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -4031,16 +4039,13 @@ Determines the **verbosity** of each instruction in the route-sheet. A higher ve
     "routesheetMode": "TEXT_DETAILS",
     "routesheetVerboseLevel": "HIGH",
     "routesheetLanguage": "en"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "4e143873-d41d-486c-b243-86aa4d16c0be",
+  "logTag": "409dc474-b2a3-4982-9685-4d36c9353d04",
   "journeys": [
     {
       "summary": {
@@ -4050,50 +4055,266 @@ Determines the **verbosity** of each instruction in the route-sheet. A higher ve
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
-        "batteryLevel": 9.8,
-        "consumed": 69.31,
-        "chargingTime": 608,
-        "departureTime": 1752760134000,
-        "arrivalTime": 1752773481000,
+        "distance": 325881,
+        "duration": 12744,
+        "batteryLevel": 10,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790692334000,
+        "arrivalTime": 1790705832000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752760134000
+          "departureTime": 1790692334000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 38.53506932004888,
-          "routeConsumptions": [
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025,
+          "routesheet": [
             {
-              "time": 0,
-              "distFromStart": 0,
-              "cumulativeConsumption": 0,
-              "consumption": 0,
-              "batteryLevel": 100
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 111,
+              "duration": 20,
+              "fromName": "Quai de Gesvres",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.34896,
+                "lat": 48.85672
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai de Gesvres",
+              "toOn": "Quai de Gesvres",
+              "textDist": "At 111 meters",
+              "text": "From Quai de Gesvres straight on Quai de Gesvres"
             },
             {
-              "time": 60,
-              "distFromStart": 246.4027160287868,
-              "cumulativeConsumption": 0.11167172760407368,
-              "consumption": 0.11167172760407368,
-              "batteryLevel": 99.82551292561863
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 45,
+              "duration": 11,
+              "fromName": "Quai de Gesvres",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.34949,
+                "lat": 48.85652
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai de Gesvres",
+              "toOn": "Quai de Gesvres",
+              "textDist": "At 45 meters",
+              "text": "From Quai de Gesvres straight on Quai de Gesvres"
             },
+            {
+              "type": "FOLLOW",
+              "geoElementType": "ROAD",
+              "length": 102,
+              "duration": 14,
+              "fromName": "Quai de Gesvres",
+              "manoeuvre": "STRAIGHT",
+              "coordinate": {
+                "lon": 2.3507,
+                "lat": 48.85607
+              },
+              "roundAboutExitNumber": 0,
+              "toName": "Quai de l'Hôtel de Ville",
+              "toOn": "Quai de l'Hôtel de Ville",
+              "textDist": "At 102 meters",
+              "text": "From Quai de Gesvres straight on Quai de l'Hôtel de Ville"
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+  ]
+}
+```
+---
+<a name="evsmartrouting_startUTurnThreshold_tutorial"></a>
+## ↩️ startUTurnThreshold – Limit the detour made to respect the departure direction
+✅ **Use case**
+
+Your vehicle is parked on a two-way road, facing a known direction, and you want the route to leave in that direction — unless turning around saves a lot.
+
+💡 **What it does**
+
+At the start point, and at any via point where `useStartAngle` (with a `heading`) or `avoidUTurn` is set, respecting the direction can cost a detour. `startUTurnThreshold` is the extra cost **above** which the engine gives up the requested direction and turns around anyway: below the threshold the direction is kept, above it the U-turn is taken.
+
+- Type: `integer`
+- Default: `3000`
+- The unit follows `optimMode`: the specification gives *"1/10th seconds / meters / Wh in resp. FASTEST / SHORTEST / ECO mode"*. Measured on the routing service (`/routing/1.0`), it is **metres** for `SHORTEST` and **tenths of a second** for `FASTEST` — `3000` is 300 s.
+- `0` disables the threshold: the direction is always kept. Do not send a negative value.
+
+> ⚠️ Measured on prod (29 September 2026), Paris → Arc de Triomphe, start heading 180° with `useStartAngle`, `optimMode: "SHORTEST"`: EV smart routing answered the same 4,859 m route with `startUTurnThreshold` at `1`, at the default and at `99999`, while the routing service, from the same start, turned around at `1` (5,063 m) and kept the direction at `99999` (5,847 m). Check the answer before relying on this field here.
+
+🔧 **How to enable**
+```
+"start": {
+  "lon": 2.34755,
+  "lat": 48.85708,
+  "heading": 90,
+  "useStartAngle": true
+},
+"condition": {
+  "startUTurnThreshold": 1000
+}
+```
+📦 **Example**
+```
+{
+  "geoserver": "osm",
+  "csps": ["ecoMovement"],
+  "vehicle": {
+    "initBatLvl": 100,
+    "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
+    "payload": 75
+  },
+  "start": {
+    "lon": 2.34755,
+    "lat": 48.85708,
+    "heading": 90,
+    "useStartAngle": true
+  },
+  "stop": {
+    "lon": 4.35497,
+    "lat": 50.83857
+  },
+  "condition": {
+    "minBatLvl": 10.0,
+    "startUTurnThreshold": 1000
+  }
+}
+```
+**Response**
+```
+{
+  "logTag": "cc396ff1-70d3-4aac-9b0a-bcd542ce35d5",
+  "journeys": [
+    {
+      "summary": {
+        "vehicleInfo": {
+          "brand": "Kia",
+          "name": "e-Niro",
+          "variant": "64 kWh",
+          "year": "2018"
+        },
+        "distance": 325881,
+        "duration": 12744,
+        "batteryLevel": 10,
+        "consumed": 66.35,
+        "chargingTime": 454,
+        "departureTime": 1790691915000,
+        "arrivalTime": 1790705413000,
+        "boundingBox": {
+          "minLon": 2.3475670788198015,
+          "minLat": 48.82658,
+          "maxLon": 4.35548,
+          "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 5.4207706,
+          "includeVat": 6.5591326
+        }
+      },
+      "events": [
+        {
+          "eventType": "START",
+          "coord": {
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
+          },
+          "address": "Quai de Gesvres, 75004 Paris, France",
+          "departureTime": 1790691915000
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 276566,
+          "duration": 10138,
+          "consumed": 57.327046164778025
+        },
+        {
+          "eventType": "CHARGE",
+          "coord": {
+            "lon": 3.86916221,
+            "lat": 50.6693674
+          },
+          "arrivalTime": 1790702053000,
+          "departureTime": 1790702807000,
+          "arrivalBatteryLevel": 10.416628678789777,
+          "departureBatteryLevel": 24.080891420749417,
+          "chargingTime": 454,
+          "chargingPower": {
+            "currentType": "DC",
+            "power": 77,
+            "cnnTypeId": 38
+          },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 5.4207706,
+            "includeVat": 6.5591326,
+            "tariffChargePassHashId": "2f0581a4648e0889b77321d14d2d7c36"
+          },
+          "pool": {
+            "providerName": "ecoMovement",
+            "providerMode": "LOCAL",
+            "id": "1bb8cd94-c71f-11f0-b52b-42010aa400b8",
+            "sourceProvider": "IONITY",
+            "brand": "IONITY",
+            "name": "IONITY GmbH IONITY Ath",
+            "countryCode": "BEL",
+            "address": {
+              "countryCode": "BEL",
+              "country": "BEL",
+              "city": "Gellingen",
+              "postalCode": "7822",
+              "street": "Avenue des Artisans 1"
+            },
+            "accessibility": "PUBLIC",
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 12,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 49315,
+          "duration": 2606,
+          "consumed": 9.018081990076134
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_temperature_tutorial"></a>
@@ -4116,6 +4337,8 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
   "temperature": 5
 }
 ```
+> ⚠️ Measured on prod (29 September 2026): `temperature` is applied even when `weather` is `true` — see the note under `weather`.
+
 📦 **Example**
 ```
 {
@@ -4126,7 +4349,6 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -4136,18 +4358,16 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
     "lat": 50.83857
   },
   "condition": {
+    "minBatLvl": 10.0,
     "temperature": -5,
     "weather": false
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
 **Response**
 ```
 {
-  "logTag": "1e31671d-b25a-46a3-a4cf-95718443670e",
+  "logTag": "2dcb9311-e547-43f6-8290-e32d956752ed",
   "journeys": [
     {
       "summary": {
@@ -4157,35 +4377,221 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
           "variant": "64 kWh",
           "year": "2018"
         },
-        "distance": 312050,
-        "duration": 12439,
+        "distance": 325281,
+        "duration": 12790,
         "batteryLevel": 10,
-        "consumed": 88.37,
-        "chargingTime": 1930,
-        "departureTime": 1752760213000,
-        "arrivalTime": 1752774882000,
+        "consumed": 85.08,
+        "chargingTime": 1657,
+        "departureTime": 1790692279000,
+        "arrivalTime": 1790707026000,
         "boundingBox": {
-          "minLon": 2.347567485574783,
+          "minLon": 2.3475670788198015,
           "minLat": 48.82658,
           "maxLon": 4.35548,
           "maxLat": 50.83906
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 13.970626,
+          "includeVat": 16.764751
         }
       },
       "events": [
         {
           "eventType": "START",
           "coord": {
-            "lon": 2.347567485574783,
-            "lat": 48.85710875
+            "lon": 2.3475670788198015,
+            "lat": 48.857108751160624
           },
           "address": "Quai de Gesvres, 75004 Paris, France",
-          "departureTime": 1752760213000
+          "departureTime": 1790692279000
         },
         {
           "eventType": "ROUTE",
-          "distance": 168024,
-          "duration": 6529,
-          "consumed": 50.61196233161227
+          "distance": 176286,
+          "duration": 6697,
+          "consumed": 49.30487450315385
+        },
+        {
+          "eventType": "CHARGE",
+          "coord": {
+            "lon": 2.8641582,
+            "lat": 50.26148552
+          },
+          "arrivalTime": 1790698976000,
+          "departureTime": 1790700933000,
+          "arrivalBatteryLevel": 22.961133588822108,
+          "departureBatteryLevel": 65.90625868776897,
+          "chargingTime": 1657,
+          "chargingPower": {
+            "currentType": "DC",
+            "power": 77,
+            "cnnTypeId": 38
+          },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 13.970626,
+            "includeVat": 16.764751,
+            "tariffChargePassHashId": "de14cf91a4b464ba931f552fa31951ae"
+          },
+          "pool": {
+            "providerName": "ecoMovement",
+            "providerMode": "LOCAL",
+            "id": "d66f3672-a3c9-11ed-bc56-42010aa40fc6",
+            "sourceProvider": "Fastned",
+            "brand": "Fastned",
+            "name": "Fastned Aire de Wancourt Est",
+            "countryCode": "FRA",
+            "address": {
+              "countryCode": "FRA",
+              "country": "FRA",
+              "city": "Wancourt",
+              "postalCode": "62128",
+              "street": "Échangeur d'Arras-Est"
+            },
+            "accessibility": "PUBLIC",
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 8,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 148995,
+          "duration": 6093,
+          "consumed": 35.780005560172135
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.35463449209338,
+            "lat": 50.838761144465366
+          },
+          "address": "34 Rue de la Régence, 1000 Bruxelles, België"
+        }
+      ]
+    }
+  ]
+}
+```
+---
+<a name="evsmartrouting_tollCost_tutorial"></a>
+## 💶 tollCost – Include toll costs and toll events in the journey
+✅ **Use case**
+
+You want to know **how much the tolls of the trip cost** and where they are met — to budget a trip, or to compare it with a toll-free one (`criterias: ["AVOID_TOLLS"]`).
+
+💡 **What it does**
+
+When `tollCost` is `true`, the response adds:
+
+- `summary.tollSumFees`: the toll fees of the whole journey, as `feeMin` and `feeMax` with their `currency` — in the example below, the motorcycle price (9.6 EUR) and the price for the `ALL (HT_VEH_MAX,200)(WT_VEH_MAX,3500)` category (16.3 EUR);
+- a `TOLL` event at each toll point, with its `tollType` (`OBTAIN_TICKET`, `PAY_PER_TICKET`…) and `coord`; the event where the toll is paid also carries `meanOfPayments` and `charges[]`, one price per vehicle category.
+
+The prices follow `currency`.
+
+🔧 **How to use**
+
+- Type: `boolean`
+- Default: `false`
+
+```
+"condition": {
+  "tollCost": true
+}
+```
+> ⚠️ Measured on prod (29 September 2026), on the example trip: the toll data came with `"geoserver": "here"`. With `"osm"`, the same request answered `200` with no toll at all — no `tollSumFees`, no `TOLL` event, and nothing saying why.
+
+📦 **Example**
+```
+{
+  "geoserver": "here",
+  "csps": ["ecoMovement"],
+  "vehicle": {
+    "initBatLvl": 100,
+    "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
+    "payload": 75
+  },
+  "start": {
+    "lon": 2.34755,
+    "lat": 48.85708
+  },
+  "stop": {
+    "lon": 4.35497,
+    "lat": 50.83857
+  },
+  "condition": {
+    "minBatLvl": 10.0,
+    "tollCost": true
+  }
+}
+```
+**Response**
+```
+{
+  "logTag": "e6ee462f-36f7-4ac4-b760-53574d9c7abf",
+  "journeys": [
+    {
+      "summary": {
+        "vehicleInfo": {
+          "brand": "Kia",
+          "name": "e-Niro",
+          "variant": "64 kWh",
+          "year": "2018"
+        },
+        "distance": 312013,
+        "duration": 12454,
+        "batteryLevel": 10,
+        "consumed": 63.98,
+        "chargingTime": 332,
+        "departureTime": 1790691135000,
+        "arrivalTime": 1790704221000,
+        "boundingBox": {
+          "minLon": 2.347551814585281,
+          "minLat": 48.82655,
+          "maxLon": 4.35679,
+          "maxLat": 50.83971
+        },
+        "chargingCost": {
+          "currency": "EUR",
+          "withoutVat": 3.7919002,
+          "includeVat": 4.55028
+        },
+        "tollSumFees": {
+          "currency": "EUR",
+          "feeMin": 9.6,
+          "feeMax": 16.3
+        }
+      },
+      "events": [
+        {
+          "eventType": "START",
+          "coord": {
+            "lon": 2.347551814585281,
+            "lat": 48.857082927794195
+          },
+          "address": "Quai de Gesvres, 75004 Paris, France",
+          "departureTime": 1790691135000
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 55459,
+          "duration": 2972,
+          "consumed": 9.910327142358156
+        },
+        {
+          "tollType": "OBTAIN_TICKET",
+          "eventType": "TOLL",
+          "coord": {
+            "lon": 2.62796,
+            "lat": 49.21563
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 112459,
+          "duration": 3515,
+          "consumed": 25.367759883085316
         },
         {
           "eventType": "CHARGE",
@@ -4193,22 +4599,27 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
             "lon": 3.08922127,
             "lat": 50.12222526
           },
-          "arrivalTime": 1752766742000,
-          "departureTime": 1752768972000,
-          "arrivalBatteryLevel": 20.918808856855833,
-          "departureBatteryLevel": 68.99584443837378,
-          "chargingTime": 1930,
+          "arrivalTime": 1790697622000,
+          "departureTime": 1790698254000,
+          "arrivalBatteryLevel": 44.88039675356762,
+          "departureBatteryLevel": 54.853260627451604,
+          "chargingTime": 332,
           "chargingPower": {
             "currentType": "DC",
             "power": 77,
             "cnnTypeId": 38
+          },
+          "chargingCost": {
+            "currency": "EUR",
+            "withoutVat": 3.7919002,
+            "includeVat": 4.55028,
+            "tariffChargePassHashId": "54f7f457a004285cbd9eeed89df76986"
           },
           "pool": {
             "providerName": "ecoMovement",
             "providerMode": "LOCAL",
             "id": "c8109b7c-e8ad-11ef-9543-42010aa400b8",
             "sourceProvider": "TotalEnergies",
-            "updateDate": 1752462431048,
             "brand": "TotalEnergies",
             "name": "RELAIS DE HAVRINCOURT",
             "countryCode": "FRA",
@@ -4219,30 +4630,61 @@ Defines the outside **temperature in Celsius** that impacts energy consumption e
               "postalCode": "62147",
               "street": "A2"
             },
-            "siteCategory": "ON_STREET",
             "accessibility": "PUBLIC",
-            "entrance": {
-              "lon": 3.08922127,
-              "lat": 50.12222526
+            "availabilityStatus": "IN_SERVICE_FREE",
+            "numberOfChargingPoint": 16,
+            ...
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 17936,
+          "duration": 636,
+          "consumed": 3.7619065455423044
+        },
+        {
+          "tollType": "PAY_PER_TICKET",
+          "meanOfPayments": [
+            "CASH",
+            "BANK_CARD",
+            "CREDIT_CARD"
+          ],
+          "charges": [
+            {
+              "currency": "EUR",
+              "category": "MOTORCYCLE",
+              "price": 9.6
             },
-            "phoneNumber": "+(33)-(9)-77405060",
-            "availabilityStatus": "IN_SERVICE",
-            "open24x7": true,
-            "numberOfChargingPoint": 8,
-            "reliabilityScore": 50,
-            "predictedOccupancyTimeSlots": [
-              {
-                "dayOfweek": "MONDAY",
-                "start": "00:00",
-                "end": "18:59",
-                "predictedOccupancy": 5
-              },
-              {
-                "dayOfweek": "MONDAY",
-                "start": "19:00",
-                "end": "23:59",
-                "predictedOccupancy": 4
-              },
+            {
+              "currency": "EUR",
+              "category": "ALL (HT_VEH_MAX,200)(WT_VEH_MAX,3500)",
+              "price": 16.3
+            }
+          ],
+          "eventType": "TOLL",
+          "coord": {
+            "lon": 3.2721,
+            "lat": 50.22922
+          }
+        },
+        {
+          "eventType": "ROUTE",
+          "distance": 126159,
+          "duration": 5331,
+          "consumed": 24.942639308299977
+        },
+        {
+          "eventType": "STOP",
+          "coord": {
+            "lon": 4.354965993372832,
+            "lat": 50.83856781880828
+          },
+          "address": "4 Joseph Dupontstraat, 1000 Brussel, België"
+        }
+      ]
+    }
+  ]
+}
 ```
 ---
 <a name="evsmartrouting_weather_tutorial"></a>
@@ -4253,18 +4695,19 @@ You want the routing engine to consider **real-time weather conditions** (temper
 
 💡 **What it does**
 
-When set to `true`, the routing system fetches **real-time weather data** from a provider (e.g., temperature, wind, precipitation) and overrides the manual `temperature` value if provided.
+When set to `true`, the routing system is meant to fetch **real-time weather data** from a provider (e.g., temperature, wind, precipitation) and to override the manual `temperature` value if provided.
 
 🔧 **How to use**
 
 - Type: `boolean`
 - Default: `false`
-- If enabled, it overrides the `temperature` field
+- If enabled, it is meant to override the `temperature` field (see the note below)
 ```
 "condition": {
   "weather": true
 }
 ```
+> ⚠️ Measured on prod (29 September 2026): `weather: true` has no measurable effect, and the manual `temperature` is still applied. With `temperature: -5`, `weather: true` and `weatherProvider: "owm"`, the example trip consumes 85.08 kWh and charges for 1,657 s — exactly as with `weather: false`; with `weather: true` and no `temperature`, it consumes 66.35 kWh, the same as at the 20 °C default. Every answer is `200`, and nothing in it says the weather was not applied. Set `temperature` to the expected temperature.
 📦 **Example**
 ```
 {
@@ -4275,7 +4718,6 @@ When set to `true`, the routing system fetches **real-time weather data** from a
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -4287,9 +4729,6 @@ When set to `true`, the routing system fetches **real-time weather data** from a
   "condition": {
     "minBatLvl": 10.0,
     "weather": true
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -4407,8 +4846,8 @@ Defines which weather API provider will be used to retrieve live weather data du
 🔧 **How to use**
 
 - Type: `String`
-- Only effective if `"weather": true`
-- Only Accepted values (`openweathermap`)
+- Only effective if `"weather": true` (see the note under `weather`)
+- Accepted value: `owm` (OpenWeatherMap). `"openweathermap"` answers `400` *"Weather provider not found 'openweathermap'"* (measured on prod, 29 September 2026)
 
 ```
 "condition": {
@@ -4426,7 +4865,6 @@ Defines which weather API provider will be used to retrieve live weather data du
     "key": "eb1e9464-8654-4c01-bedd-b2f95412a60d",
     "payload": 75
   },
-  "routingMode": "MODE_VIAS",
   "start": {
     "lon": 2.34755,
     "lat": 48.85708
@@ -4439,9 +4877,6 @@ Defines which weather API provider will be used to retrieve live weather data du
     "minBatLvl": 10.0,
     "weather": true,
     "weatherProvider": "owm"
-  },
-  "routingVehicleProfile": {
-    "transportMode": "CAR"
   }
 }
 ```
@@ -4545,3 +4980,7 @@ Defines which weather API provider will be used to retrieve live weather data du
                 "predictedOccupancy": 4
               },
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

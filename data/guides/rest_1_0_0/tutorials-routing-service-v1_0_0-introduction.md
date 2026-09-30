@@ -4,7 +4,7 @@ This section guides you through the steps to construct a complete request for th
 Each request is composed of multiple blocks, each defining a key aspect of the route calculation.
 
 ## 🧱 Basic Structure
-A standard request is a JSON object that includes at minimum:
+A standard request is a JSON object that includes `destinations`, the only required field, and usually `routingVehicleProfile` (optional: without it, the vehicle is a `CAR`):
 
 ```
 {
@@ -34,7 +34,7 @@ The first point is the **starting point**, the last one is the **destination**, 
 ### 🚗 2. routingVehicleProfile
 Defines the **vehicle type**, **transport mode**, and **physical or legal characteristics** used during routing.
 
-This includes parameters like height, width, length, weight, and axle weight in centimeters.
+This includes parameters like height, width and length, in centimeters, and weight and axle weight, in tenths of a metric ton (`35` = 3.5 t, `10` = 1 t). The specification's descriptions of `weight` and `axleWeight` say "in tens of metric tons"; their own example, `35` = 3.5 t, is tenths.
 
 **Example:**
 ```
@@ -42,13 +42,14 @@ This includes parameters like height, width, length, weight, and axle weight in 
   "routingVehicleProfile": {
     "transportMode": "CAR",
     "routingVehicleFeature": {
-      "height": "190",
-      "width": "230",
-      "length": "1875",
-      "weight": "35",
-      "axleWeight": "10"
+      "height": 190,
+      "width": 230,
+      "length": 1875,
+      "weight": 35,
+      "axleWeight": 10
     }
   }
+}
 ```
 
 ### 🧭 3. routingCriterias (optional)
@@ -93,13 +94,16 @@ Enables additional output features such as polyline geometry.
   "routingVehicleProfile": {
     "transportMode": "CAR",
     "routingVehicleFeature": {
-      "height": "190",
-      "width": "230",
-      "length": "1875",
-      "weight": "35",
-      "axleWeight": "10"
+      "height": 190,
+      "width": 230,
+      "length": 1875,
+      "weight": 35,
+      "axleWeight": 10
     }
   }
 }
 ```
 
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

@@ -12,7 +12,8 @@ To define the routing criteria, simply include the `routingCriterias` field in y
 ```json
 "routingCriterias": ["FASTEST"]
 ```
-You can combine it with options like `EVENT`, `OPTIMIZED_TRIP`, and `routingVehicleProfiles`.
+You can combine it with options like `EVENT` and `OPTIMIZED_TRIP`, and with the `routingVehicleProfile` field.
+
 ---
 <a name="criteria_avoid_crossing_border"></a>
 
@@ -26,7 +27,7 @@ Useful for local deliveries, national travel restrictions, or border-sensitive l
 💡 **What it does**
 
 If all coordinates are in the same country, this option will enforce a route that avoids crossing any borders.
-If the route cannot be computed without crossing a border, an error will be returned.
+If the route cannot be computed without crossing a border, an error will be returned — and it names the start point, not the criterion. Measured on production (29 September 2026), from Büsingen am Hochrhein, a German enclave in Switzerland, to Konstanz, Germany: `400` `{"code":"ServiceInternalException.DEPARTURE_NOT_ACCESSIBLE","message":"Service internal exception: Start Location not accessible"}`. The same request without `AVOID_CROSSING_BORDER` answers `200` (51.8 km, through Switzerland).
 
 🔧 **How to enable**
 
@@ -374,7 +375,7 @@ Add the value `AVOID_TOLLS` to the `routingCriterias` array:
 
 📦**Example**
 
-Routing between Lyon, France and Nice, France, avoiding toll roads:
+Routing between Paris, France and Brussels, Belgium, avoiding toll roads:
 ```
 {
   "destinations": [ 
@@ -483,12 +484,12 @@ Add the value `AVOID_UNPAVED` to the `routingCriterias` array:
 ```
 📦 **Example**
 
-Routing between Arezzo, Italy and Badia Tedalda, Italy, avoiding unpaved mountain roads:
+Routing between Pienza, Italy and Monticchiello, Italy, avoiding the unpaved road between them. Measured on production (29 September 2026), the route is 9.9 km with `AVOID_UNPAVED`; without it, the route takes the unpaved road and is 5.9 km:
 ```
 {
   "destinations": [ 
-    { "coordinateSat": { "lon": 2.32158, "lat": 48.86533 } },
-    { "coordinateSat": { "lon": 4.35655, "lat": 50.8447  } }
+    { "coordinateSat": { "lon": 11.679, "lat": 43.07663 } },
+    { "coordinateSat": { "lon": 11.72414, "lat": 43.06648 } }
   ],
   "routingVehicleProfile": {
     "transportMode": "CAR"
@@ -507,11 +508,11 @@ Routing between Arezzo, Italy and Badia Tedalda, Italy, avoiding unpaved mountai
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
+        "lon": 11.679,
+        "lat": 43.07663
       },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
+      "confidenceValue": 0.06269804794272028,
+      "distanceFromRequest": 0,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -521,64 +522,69 @@ Routing between Arezzo, Italy and Badia Tedalda, Italy, avoiding unpaved mountai
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
+        "lon": 11.724141155005986,
+        "lat": 43.066479563973985
       },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
+      "confidenceValue": 0.3862891207153502,
+      "distanceFromRequest": 0.05,
       "polylineIndex": -1,
-      "duration": 12422,
-      "length": 308422
+      "duration": 959,
+      "length": 9929
     }
   ],
   "routingRoutes": [
     {
-      "length": 308422,
-      "duration": 12422,
+      "length": 9929,
+      "duration": 959,
+      "totalDuration": 959,
       "trafficDelay": 0,
-      "averageSpeed": 89.383286,
+      "departureTime": 0,
+      "arrivalTime": 0,
+      "averageSpeed": 37.272575,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
+        "minLon": 11.67323,
+        "minLat": 43.04315,
+        "maxLon": 11.724141155005986,
+        "maxLat": 43.07698
       },
       "startStopInfo": {
         "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
+          "lon": 11.679,
+          "lat": 43.07663
         },
         "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
+          "lon": 11.72414,
+          "lat": 43.06648
         },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
+        "distanceFirstMatched": 0,
+        "distanceLastMatched": 0.05,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 2.321574222824279,
-          "lat": 48.86533125
+          "lon": 11.679,
+          "lat": 43.07663
         },
         {
-          "lon": 2.3217,
-          "lat": 48.86551
+          "lon": 11.67911,
+          "lat": 43.07662
         },
 ```
 ---
 <a name="criteria_carpool"></a>
-## 🚗 CARPOOL – Avoid carpool-only roads
+## 🚗 CARPOOL – Allow carpool-only roads
 ✅ **Use case**
 
-Avoid roads that are restricted to carpooling vehicles (e.g., HOV lanes).
+Let the route use roads restricted to carpooling vehicles (e.g., HOV lanes), for a vehicle that meets carpooling requirements.
 
 💡 **What it does**
 
-Excludes roads reserved for high occupancy vehicles (HOV) or carpooling from the computed route.
-Useful when your vehicle does not meet carpooling requirements (e.g., solo driver).
+Allows roads reserved for high occupancy vehicles (HOV) or carpooling in the computed route; without `CARPOOL`, the route avoids them.
+Do not send it when your vehicle does not meet carpooling requirements (e.g., solo driver).
+
+📘 **Note:** this is what the service does, measured on production (29 September 2026). The specification describes `CARPOOL` the other way round: "Finds a route which avoids roads reserved to carpooling."
 
 🔧 **How to enable**
 
@@ -587,11 +593,13 @@ Add the value `CARPOOL` to the `routingCriterias` array in your request.
 "routingCriterias": [ "CARPOOL" ],
 ```
 📦 **Example**
+
+Routing from Las Rozas to Moncloa, Madrid, Spain, where the A-6 has a carpool lane. With `CARPOOL`, the route takes the "Carril Bus-VAO A-6" for 9 km (16.3 km, 1 083 s; the `ROUTESHEET` option names the lane); without it, the route stays on the A-6 (16.4 km, 1 106 s):
 ```
 {
   "destinations": [ 
-    { "coordinateSat": { "lon": 2.32158, "lat": 48.86533 } },
-    { "coordinateSat": { "lon": 4.35655, "lat": 50.8447  } }
+    { "coordinateSat": { "lon": -3.8766, "lat": 40.4930 } },
+    { "coordinateSat": { "lon": -3.7190, "lat": 40.4350 } }
   ],
   "options": [
     "POLYLINE"
@@ -611,11 +619,11 @@ Add the value `CARPOOL` to the `routingCriterias` array in your request.
       "used": true,
       "usedOrder": 0,
       "matchedCoordinateGps": {
-        "lon": 2.321574222824279,
-        "lat": 48.86533125
+        "lon": -3.876625055974863,
+        "lat": 40.493018662419516
       },
-      "confidenceValue": 0.21240678521674997,
-      "distanceFromRequest": 0.45,
+      "confidenceValue": 0.2366999359033056,
+      "distanceFromRequest": 2.97,
       "polylineIndex": -1,
       "duration": -1,
       "length": -1
@@ -625,51 +633,54 @@ Add the value `CARPOOL` to the `routingCriterias` array in your request.
       "used": true,
       "usedOrder": 1,
       "matchedCoordinateGps": {
-        "lon": 4.356551936132446,
-        "lat": 50.84469875
+        "lon": -3.719241222545371,
+        "lat": 40.434906833818054
       },
-      "confidenceValue": 0.07687516682978913,
-      "distanceFromRequest": 0.14,
+      "confidenceValue": 0.09515449438202249,
+      "distanceFromRequest": 22.92,
       "polylineIndex": -1,
-      "duration": 12422,
-      "length": 308422
+      "duration": 1083,
+      "length": 16258
     }
   ],
   "routingRoutes": [
     {
-      "length": 308422,
-      "duration": 12422,
+      "length": 16258,
+      "duration": 1083,
+      "totalDuration": 1083,
       "trafficDelay": 0,
-      "averageSpeed": 89.383286,
+      "departureTime": 0,
+      "arrivalTime": 0,
+      "averageSpeed": 54.043213,
       "maximumSpeed": 0,
       "startUTurnThreshold": 3000,
       "boundingBox": {
-        "minLon": 2.30156,
-        "minLat": 48.86533125,
-        "maxLon": 4.356551936132446,
-        "maxLat": 50.84507
+        "minLon": -3.87719,
+        "minLat": 40.43302,
+        "maxLon": -3.71734,
+        "maxLat": 40.493018662419516
       },
       "startStopInfo": {
         "start": {
-          "lon": 2.32157,
-          "lat": 48.86533
+          "lon": -3.87663,
+          "lat": 40.49302
         },
         "stop": {
-          "lon": 4.35655,
-          "lat": 50.8447
+          "lon": -3.71924,
+          "lat": 40.43491
         },
-        "distanceFirstMatched": 0.14,
-        "distanceLastMatched": 0.14,
+        "distanceFirstMatched": 0.15,
+        "distanceLastMatched": 0.35,
         "interDests": null
       },
       "polyline": [
         {
-          "lon": 2.321574222824279,
-          "lat": 48.86533125
+          "lon": -3.876625055974863,
+          "lat": 40.493018662419516
         },
         {
-          "lon": 2.3217,
-          "lat": 48.86551
+          "lon": -3.87719,
+          "lat": 40.49258
         },
 ```
 ---
@@ -712,8 +723,8 @@ Provide a valid `routingEnergyVehicleFeature` object with your vehicle’s specs
       "dryWeight": 1600,
       "auxConsumption": 500,
       "extTemp": 20,
-      "maxAccel": 100,
-      "maxDecel": -100
+      "maxAccel": 1.5,
+      "maxDecel": -1.5
     }
   },
   "routingCriterias": [ "ECO_ENERGY" ],
@@ -791,7 +802,8 @@ Provide a valid `routingEnergyVehicleFeature` object with your vehicle’s specs
           "lat": 48.86551
         },
 ```
-**📘 Note:** This criterion is meaningful only if `routingEnergyVehicleFeature` is provided.
+**📘 Note:** This criterion requires `routingVehicleProfile.routingEnergyVehicleFeature`. Without it, the service answers `400` `{"code":"VehicleProfileIsRequiredException","message":"Vehicle profile (vp) is required! Or add energy vehicle profile (evf) !"}`, even when a `routingVehicleProfile` is sent: `evf` there is `routingEnergyVehicleFeature`. `maxAccel` and `maxDecel` are in m/s².
+
 ---
 <a name="criteria_fastest"></a>
 ## 🚀 FASTEST – Optimize for travel time (default)
@@ -897,7 +909,7 @@ Simply omit `routingCriterias`, or explicitly add `FASTEST` to it.
 ```
 ---
 <a name="criteria_shortest"></a>
-##🛣️ SHORTEST – Optimize for travel distance
+## 🛣️ SHORTEST – Optimize for travel distance
 ✅ **Use case**
 
 Compute the route with the shortest distance between two or more points, even if it takes longer in terms of time.
@@ -999,3 +1011,7 @@ Add "SHORTEST" to the routingCriterias array in your request.
           "lat": 48.86551
         },
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._

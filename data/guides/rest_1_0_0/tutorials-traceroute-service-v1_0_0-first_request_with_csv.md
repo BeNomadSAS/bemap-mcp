@@ -1,12 +1,14 @@
 # 📄 TraceRoute – Beginner Tutorial with a CSV Route
 *“How to convert a CSV file into a routing request”*
+
 ---
 ## 🎯 What We Want to Do
 “I have a list of GPS points in a CSV file and I want to build a route from it using TraceRoute.”
+
 ---
 ### 🗂 Step 1: Understand Your CSV
 Here’s a sample of the CSV you might have:
-```css
+```text
 latitude;longitude;date;section;speed;time;heading
 43.7316541;7.4207476;23/10/2020;1;6;09:43:35;90.0
 43.7310649;7.4184731;23/10/2020;1;6;09:43:38;93.0
@@ -20,6 +22,7 @@ What we care about:
 - `time` → the hour/minute/second
 - `heading` → optional direction
 We will ignore `date`, `section`, etc. for now.
+
 ---
 ### 🛠 Step 2: Convert CSV to JSON Coordinates
 Each row becomes a **destination** in the request. For example:
@@ -34,7 +37,8 @@ Each row becomes a **destination** in the request. For example:
   }
 }
 ```
-> 🕒 The `time` must be converted into **Unix timestamp in milliseconds**. If you don’t know how to do this, just use tools or ask for help — it’s usually okay to reuse existing examples.
+> 🕒 The `time` must be converted into **Unix timestamp in milliseconds**. For example, `Date.parse("2020-10-23T09:43:35Z")` gives `1603446215000`: the first row, read as UTC.
+
 ---
 ### ⚙️ Step 3: Build the Full Request
 We will add:
@@ -42,6 +46,7 @@ We will add:
 - A **transport mode** (e.g. CAR)
 - **Options** like `ROUTESHEET` and `POLYLINE`
 - The list of destinations from your CSV
+
 ---
 ## ✅ Final JSON Request Example
 Here’s a complete JSON built from the first 10 rows of your CSV:
@@ -145,3 +150,7 @@ Here’s a complete JSON built from the first 10 rows of your CSV:
   ]
 }
 ```
+
+---
+
+_BeNomad MCP: a corrected copy of BeMap's page, served until BeMap publishes the correction (BEMAP-1938)._
